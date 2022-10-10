@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>D3 Pie Chart</title>
+
+		<style>
+            body
+            {
+                font-size: 12px;
+                font-family: arial;
+            }
+
+            .pieDashboard
+            {
+                height: 3em;
+                width: 100%;
+                text-align: center;
+            }
+
+            .pieChart
+            {
+                width: 100%;
+                height: 100%;
+            }
+
+            .pieChartContainer
+            {
+                width: 100em;
+                height: 20em;
+                margin: 0 auto 0 auto;
+            }
+
+            .pieChartSvg
+            {
+                width: 50%;
+                height: 100%;
+                float: left;
+            }
+
+            .pieChartSvg text
+            {
+                fill: rgba(255, 255, 0, 1);
+                text-anchor: middle;
+                font-weight: bold;
+            }  
+
+            .pieLegendSvg
+            {
+                width: 40%;
+                height: 100%;
+                float: right;
+                outline: 1px solid rgba(200, 0, 0, 1);
+            }
+
+            .pieLegendSvg text
+            {
+                fill: rgba(200, 0, 0, 1);
+                text-anchor: left;
+                font-weight: bold;
+            }        
+		</style>
+
+		<script src="https://d3js.org/d3.v4.min.js"></script>
+	</head>
+
+	<body>
+        <div class="pieChartContainer">
+            <div class="pieDashboard">
+                <select id="ddlYear">
+
+                </select>
+
+                <select id="ddlStat">
+
+                </select>
+            </div>
+
+            <div class="pieChart">
+                <svg class="pieChartSvg">
+
+                </svg>
+
+                <svg class="pieLegendSvg">
+
+                </svg>
+            </div>
+        </div>
+
+		<script>
+        var graphData = 
+        {
+            "cols":
+            [
+                {
+                    "title": "Adam Lallana",
+                    "color": "rgb(100, 50, 0)",
+                    "stats": 
+                    [
+                        {"year": 2015, "goals": 7, "appearances": 49},
+                        {"year": 2016, "goals": 8, "appearances": 35},
+                        {"year": 2017, "goals": 0, "appearances": 15},
+                        {"year": 2018, "goals": 0, "appearances": 16}
+                    ]
+                },
+                {
+                    "title": "Sadio Mané",
+                    "color": "rgb(255, 0, 0)",
+                    "stats": 
+                    [
+                        {"year": 2016, "goals": 13, "appearances": 29},
+                        {"year": 2017, "goals": 20, "appearances": 44},
+                        {"year": 2018, "goals": 26, "appearances": 50}
+                    ]
+                },
+                {
+                    "title": "Roberto Firminho",
+                    "color": "rgb(255, 50, 50)",
+                    "stats": 
+                    [
+                        {"year": 2015, "goals": 11, "appearances": 49},
+                        {"year": 2016, "goals": 12, "appearances": 41},
+                        {"year": 2017, "goals": 27, "appearances": 54},
+                        {"year": 2018, "goals": 16, "appearances": 48}
+                    ]
+                },
+                {
+                    "title": "Divock Origi",
+                    "color": "rgb(255, 100, 0)",
+                    "stats": 
+                    [
+                        {"year": 2015, "goals": 10, "appearances": 33},
+                        {"year": 2016, "goals": 11, "appearances": 43},
+                        {"year": 2017, "goals": 0, "appearances": 1},
+                        {"year": 2018, "goals": 7, "appearances": 21}
+                    ]
+                },
+                {
+                    "title": "Daniel Sturridge",
+                    "color": "rgb(0, 0, 0)",
+                    "stats": 
+                    [
+                        {"year": 2015, "goals": 13, "appearances": 25},
+                        {"year": 2016, "goals": 7, "appearances": 27},
+                        {"year": 2017, "goals": 3, "appearances": 14},
+                        {"year": 2018, "goals": 4, "appearances": 27}
+                    ]
+                },
+                {
+                    "title": "James Milner",
+                    "color": "rgb(100, 0, 50)",
+                    "stats": 
+                    [
+                        {"year": 2015, "goals": 7, "appearances": 45},
+                        {"year": 2016, "goals": 7, "appearances": 40},
+                        {"year": 2017, "goals": 1, "appearances": 47},
+                        {"year": 2018, "goals": 7, "appearances": 45}
+                    ]
+                },
+            ],
+            "rows": [2015, 2016, 2017, 2018],
+            "stats": ["goals", "appearances"]
+        }; 
+
+        var config = 
+        {
+            "scale": 12,
+            "dataWidth": 20,
+            "dataSpacing": 2,
+            "setData": function ()
+            {
+                var year = d3.select("#ddlYear").node().value;
+                var stat = d3.select("#ddlStat").node().value;
+
+                var dataSet = 
+                {
+                  "labels": [],
+                  "stats": []
+                };
+
+                for (var i = 0; i < graphData.cols.length; i++)
+                {
+                    var filtered = graphData.cols[i].stats.filter(function(x) { return x.year == year;})
+
+                    if (filtered.length > 0)
+                    {
+                    	if (filtered[0][stat] > 0)
+                    	{
+	                    	dataSet.labels.push({title: graphData.cols[i].title, color: graphData.cols[i].color});
+	                    	dataSet.stats.push({value: filtered[0][stat], color: graphData.cols[i].color}); 		
+                    	}
+                    }
+                }
+
+                var container = d3.select(".pieChartContainer");
+                var wrapper = d3.select(".pieChart");
+                var chart = d3.select(".pieChartSvg");
+                var legend = d3.select(".pieLegendSvg");
+
+                container
+                .style("width", function(d) 
+                {
+                    return ((config.dataSpacing + config.dataWidth) * 2) + "em";
+                });
+
+                wrapper
+                .style("height", function(d) 
+                {
+                	var legendHeight = (config.dataSpacing * dataSet.labels.length) + 2;
+                	var chartHeight = (config.dataSpacing + config.dataWidth);
+
+                    return (chartHeight > legendHeight ? chartHeight : legendHeight) + "em";
+                }); 
+                
+                chart
+                .html("")
+                .append("g")
+                .attr("transform", "translate(" + (config.dataSpacing + config.dataWidth) * (config.scale / 2) + "," + (config.dataSpacing + config.dataWidth) * (config.scale / 2) + ")");
+
+                chart = d3.select(".pieChartSvg g");
+
+                legend
+                .html("")
+                .style("height", function(d) {
+                    return ((config.dataSpacing * dataSet.labels.length) + 2) + "em";
+                }); 
+
+                var pie = 
+                d3.pie()
+				.value(function(d) 
+				{
+					return d.value; 
+				});
+
+				var data = pie(dataSet.stats);
+
+				var zeroArc = 
+				d3.arc()
+			    .innerRadius(0)
+			    .outerRadius(this.dataWidth);
+
+				var arc = 
+				d3.arc()
+			    .innerRadius(0)
+			    .outerRadius(this.dataWidth * (config.scale / 2));
+
+				chart
+				.selectAll("path")
+			    .data(data)
+			    .enter()
+			    .append("path")
+			    .attr("d", zeroArc)
+			    .attr("fill", function(d) {
+			    	return d.data.color;
+			    })
+                .transition()
+                .duration(500)
+                .attr("d", arc);
+
+			    chart
+				.selectAll("text")
+			    .data(data)
+			    .enter()
+			    .append("text")
+                .attr("x", function(d) 
+                {
+                	var midpoint = d.startAngle + ((d.endAngle - d.startAngle) / 2);
+                    return d3.pointRadial(midpoint, config.dataWidth * 3)[0];
+                })
+                .attr("y", function(d) 
+                {
+                	var midpoint = d.startAngle + ((d.endAngle - d.startAngle) / 2);
+                    return d3.pointRadial(midpoint, config.dataWidth * 3)[1]; 
+                })
+                .text(function(d) 
+                {
+                    return d.value;
+                });
+
+			    legend
+				.selectAll("rect")
+			    .data(dataSet.labels)
+			    .enter()
+			    .append("rect")
+                .attr("x", function(d) 
+                {
+                    return config.dataSpacing + "em";
+                })
+                .attr("y", function(d, i) 
+                {
+                	return ((config.dataSpacing * i) + 1)  + "em";
+                })
+                .attr("fill", function(d) 
+                {
+                	return d.color;
+                })
+                .attr("width", function(d) 
+                {
+                    return (config.dataSpacing / 2) + "em";
+                })
+                .attr("height", function(d) 
+                {
+                    return (config.dataSpacing / 2) + "em";
+                });
+
+			    legend
+				.selectAll("text")
+			    .data(dataSet.labels)
+			    .enter()
+			    .append("text")
+                .attr("x", function(d) 
+                {
+                    return (config.dataSpacing * 2) + "em";
+                })
+                .attr("y", function(d, i) 
+                {
+                	return ((config.dataSpacing * i) + 2)  + "em";
+                })
+                .text(function(d) 
+                {
+                    return d.title;
+                });
+            }
+        };
+
+        var ddlYear = d3.select("#ddlYear");
+
+        ddlYear.selectAll("option")
+        .data(graphData.rows)
+        .enter()
+        .append("option")
+        .property("selected", function(d, i) 
+        {
+            return i == 0;
+        })
+        .attr("value", function(d) 
+        {
+            return d;
+        })
+        .text(function(d) 
+        {
+            return d;
+        });
+
+        var ddlStat = d3.select("#ddlStat");
+
+        ddlStat.selectAll("option")
+        .data(graphData.stats)
+        .enter()
+        .append("option")
+        .property("selected", function(d, i) 
+        {
+            return i == 0;
+        })
+        .attr("value", function(d) 
+        {
+            return d;
+        })
+        .text(function(d) 
+        {
+            return d;
+        });
+
+        config.setData();
+
+        d3.select("#ddlYear").on("change", function() { config.setData(); });
+        d3.select("#ddlStat").on("change", function() { config.setData(); });
+		</script>
+	</body>
+</html>

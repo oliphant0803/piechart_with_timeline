@@ -106,20 +106,59 @@ var config =
             "stats": [],
             "radius": []
         };
+        var filteredYear = [];
+        var combinedStats = [];
 
         for (var i = 0; i < graphData.cols.length; i++)
         {
             var filtered = graphData.cols[i].stats.filter(function(x) { return x.year == year;})
+            console.log(filtered);
             if (filtered.length > 0)
             {
                 if (filtered[0]["frequency"] > 0)
                 {
                     dataSet.labels.push({title: graphData.cols[i].title, color: graphData.cols[i].color});
+                    dataSet.stats.push({label: graphData.cols[i].title, value: filtered[0]["frequency"], radius: 0, color: graphData.cols[i].color});
                     dataSet.radius.push({label: graphData.cols[i].title, value: filtered[0]["frequency"], radius: filtered[0]["price"]/this.rScale, color: graphData.cols[i].color}); 	
                 }
             }
+
+            var unfiltered = graphData.cols[i].stats.filter(function(x) { return x.year != year;})
+            console.log(unfiltered);
+            for (var j = 0; j < unfiltered.length; j++)
+            {
+                filteredYear.push({label: graphData.cols[i].title, time: unfiltered[j]["year"], radius: unfiltered[j]["price"]/this.rScale});
+            }
+            
         }
 
+        console.log(filteredYear);
+
+        //generate list of data corresponding the different years
+        for (var i = 0; i < graphData.rows.length; i++)
+        {   
+            var currYear = graphData.rows[i];
+            if(currYear == year){
+                continue;
+            }
+            
+            var currStats = {
+                time: currYear, 
+                data: dataSet.stats
+            }
+            for (var j = 0; j < filteredYear.length; j++)
+            {   
+                //same year same label
+                if(currYear == filteredYear[j]["time"] && filteredYear[j]["label"] == currStats.data["label"])
+                {   
+                    currStats.data["radius"] = filteredYear[j]["value"]
+                    
+                }
+            }
+            combinedStats.push(currStats);
+        }
+
+        console.log(combinedStats);
         console.log(dataSet);
 
         var container = d3.select(".pieChartContaine");
@@ -167,9 +206,10 @@ var config =
             return d.value; 
         });
 
+        var stats = dataSet.stats;
         var radius = dataSet.radius;
 
-        console.log(dataSet.stats);
+        console.log(stats);
         console.log(radius);
 
         
@@ -199,6 +239,18 @@ var config =
         })
         .attr('stroke','white')
         .style("opacity", 0.7)
+
+        svg.selectAll("arc")
+        .data(pie(stats))
+        .enter()
+        .append('path')
+        .attr('d',arc)
+        .attr('transform','translate(250,250)')
+        .attr("fill", function(d) {
+            return d.data.color;
+        })
+        .attr('stroke','white')
+        .style("opacity", 0.4)
 
         // svg.selectAll('text')
         // .data(pie(data))

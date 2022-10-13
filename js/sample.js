@@ -87,13 +87,13 @@ var graphData =
     // color.domain(participants);
 
 var config = 
-{
-    "scale": 12, 
-    "rScale": 5000, // 3000 is just a hard coded scale for this dataset, will implement a function to automatically adjust it
-    "dataWidth": 20,
+{   
+    "rScale": 4200, // 4200 is just a hard coded scale for this dataset, will implement a function to automatically adjust it
     "dataSpacing": 2,
     "setData": function ()
     {   
+        var width = d3.select('.pieChartSvg').node().getBoundingClientRect().width*2;
+        var height = width;
         document.querySelectorAll('.pieChartSvg').forEach(pie => {
             pie.removeChild(pie.lastChild);
         });
@@ -144,26 +144,41 @@ var config =
             
             var currStats = {
                 time: currYear, 
-                data: dataSet.stats
+                data: []
             }
-            for (var j = 0; j < filteredYear.length; j++)
-            {   
-                //same year same label
-                if(currYear == filteredYear[j]["time"] && filteredYear[j]["label"] == currStats.data["label"])
-                {   
-                    currStats.data["radius"] = filteredYear[j]["value"]
-                    
+            currStats.data = JSON.parse(JSON.stringify(dataSet.stats));
+            //filter the set with year = currYear
+            var currYearSet = []
+
+            for(var j = 0; j < filteredYear.length; j++){
+                if(filteredYear[j]["time"] == currYear){
+                    currYearSet.push(filteredYear[j]);
                 }
             }
+            console.log(currStats.data);
+            for(var k = 0; k < currStats.data.length; k++){
+                for(var j = 0; j < currYearSet.length; j++){
+                    if(currStats.data[k]["label"] == currYearSet[j]["label"]){
+                        currStats.data[k]["radius"] = currYearSet[j]["radius"]
+                    }
+                }
+            }
+            console.log(currStats);
             combinedStats.push(currStats);
         }
 
         console.log(combinedStats);
         console.log(dataSet);
 
+        //cleanup the dataset combined Stats with radius of 0 ?
+
+        //is is nessary ?
+
+
+
+        //Plot the pie chart
         var container = d3.select(".pieChartContaine");
         var wrapper = d3.select(".pieChart");
-        var chart = d3.select(".pieChartSvg");
         var legend = d3.select(".pieLegendSvg");
 
         container
@@ -182,16 +197,6 @@ var config =
         }); 
         
 
-
-
-        chart = d3.select(".pieChartSvg")
-        .append('svg')
-        .attr('width',500)
-        .attr('height',500)
-        .append("g")
-        .attr("transform", "translate(" + (config.dataSpacing + config.dataWidth) * (config.scale / 2) + "," + (config.dataSpacing + config.dataWidth) * (config.scale / 2) + ")");
-        
-
         legend
         .html("")
         .style("height", function(d) {
@@ -206,10 +211,8 @@ var config =
             return d.value; 
         });
 
-        var stats = dataSet.stats;
         var radius = dataSet.radius;
 
-        console.log(stats);
         console.log(radius);
 
         
@@ -226,7 +229,7 @@ var config =
             return d.value; 
         });
             
-        var svg =  d3.select('.pieChartSvg').append('svg').attr('width',500).attr('height',500)
+        var svg =  d3.select('.pieChartSvg').append('svg').attr('width',width).attr('height',height)
         
         svg.selectAll('path')
         .data(pie(radius))
@@ -238,19 +241,21 @@ var config =
             return d.data.color;
         })
         .attr('stroke','white')
-        .style("opacity", 0.7)
+        .style("opacity", 0.8)
 
-        svg.selectAll("arc")
-        .data(pie(stats))
-        .enter()
-        .append('path')
-        .attr('d',arc)
-        .attr('transform','translate(250,250)')
-        .attr("fill", function(d) {
-            return d.data.color;
-        })
-        .attr('stroke','white')
-        .style("opacity", 0.4)
+        for(var i=0; i<combinedStats.length; i++){
+            svg.selectAll("arc")
+            .data(pie(combinedStats[i].data))
+            .enter()
+            .append('path')
+            .attr('d',arc)
+            .attr('transform','translate(250,250)')
+            .attr("fill", function(d) {
+                return d.data.color;
+            })
+            .attr('stroke','white')
+            .style("opacity", 0.4)
+        }
 
         // svg.selectAll('text')
         // .data(pie(data))

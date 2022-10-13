@@ -242,6 +242,19 @@ var config =
         })
         .attr('stroke','white')
         .style("opacity", 0.8)
+        .on("mouseover", function (d) {
+            d3.select("#tooltip")
+            .style("left", d3.event.pageX + "px")
+            .style("top", d3.event.pageY + "px")
+            .style("opacity", 1)
+            .select("#value")
+            .text(d.value);
+        })
+        .on("mouseout", function () {
+        // Hide the tooltip
+            d3.select("#tooltip")
+            .style("opacity", 0);;
+        });
 
         for(var i=0; i<combinedStats.length; i++){
             svg.selectAll("arc")
@@ -255,10 +268,23 @@ var config =
             })
             .attr('stroke','white')
             .style("opacity", 0.4)
+            .on("mouseover", function (d) {
+                d3.select("#tooltip")
+                .style("left", d3.event.pageX + "px")
+                .style("top", d3.event.pageY + "px")
+                .style("opacity", 1)
+                .select("#value")
+                .text(d.value);
+            })
+            .on("mouseout", function () {
+            // Hide the tooltip
+                d3.select("#tooltip")
+                .style("opacity", 0);;
+            });
         }
 
         // svg.selectAll('text')
-        // .data(pie(data))
+        // .data(pie(radius))
         // .enter()
         // .append('text')
         // .attr("transform", function(d) { 
@@ -270,6 +296,12 @@ var config =
         // })
         // .style("text-anchor", "middle")
         // .style("font-size", 17)
+        d3.select("#tooltip")
+        .style("left", d3.event.pageX + "px")
+        .style("top", d3.event.pageY + "px")
+        .style("opacity", 1)
+        .select("#value")
+        .text(d.value);
         
         legend
         .selectAll("rect")

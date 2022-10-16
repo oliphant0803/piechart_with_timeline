@@ -1,5 +1,12 @@
 // Note: for animation and fancy styling, https://www.amcharts.com/demos/variable-radius-pie-chart/ is an library to enhance the visualization for pie chart that I found, but not sure if I can use it
 
+
+//1. wedges are stacks sequancially in time
+//2. think about the math to implement the area of each slice (from outer to inner if overlap)
+//3. tooltip should include percentage of catagory of the current year (number), curr year, value of that year (price)
+//4. if click on the wedge of a year, change to that year's chart
+
+
 function read_csv(){
 
 }
@@ -12,6 +19,148 @@ function count_freq(){
 // generate/randomize color and assign them to each of the catogorical variables
 function generate_color(){
 
+}
+
+//
+function computeRadius(val, oldRad, angle){
+    //val is new value need to be add in to 
+    //oldRad is the previous circle's radius
+
+    // then compute the area of the inner slice
+    var innerA = angle*Math.PI*oldRad^2;
+    var outerA = innerA + val;
+    //innerA/outerA = innerR^2/outerR^2;
+    //Math.SQRT(innerA/outerA) = innerR/outerR
+    //outerR=innerR/Math.SQRT(innerA/outerA)
+    var r = oldRad/Math.sqrt(innerA/outerA);
+    return r;
+}
+
+function shallow_copy(item){
+    return JSON.parse(JSON.stringify(item));
+}
+
+// 
+function generate_current_data(radius, length, labels, sumA, timeList){
+
+    var data = [];
+    for(var i=0; i<length; i++){
+        var currData=[];
+        for(var j=0; j<radius.length; j++){
+            var index = labels.indexOf(radius[j]["label"]);
+            if(index != -1){
+                //currData.push(radius[index]);
+                if(i==0){
+                    radius[index].inner = 0;
+                    radius[index].outer = radius[index].radius;
+                    radius[index].time = timeList[i];
+                    // delete radius[index].radius;
+                    currData.push(shallow_copy(radius[index]));
+                }else{
+                    var oldRadius = shallow_copy(data[i-1][j].outer);
+                    //compute the radius]
+                    var angle = radius[index].value/sumA;
+                    radius[index].inner = oldRadius;
+                    radius[index].outer = computeRadius(radius[index].radius, oldRadius, angle);
+                    radius[index].time = timeList[i];
+                    // delete radius[index].radius;
+                    currData.push(shallow_copy(radius[index]));
+                }
+            }
+        }
+        console.log(currData);
+        data.push(currData);
+    }
+    return data;
+}
+
+function reScale(data){
+    //rescale the graph to max of 200 for d3 to visualize
+    //go to the last interval's index
+    var max = 0;
+    for(var i=0; i<data[data.length-1].length; i++){
+        if (max < data[data.length-1][i].outer){
+            max = data[data.length-1][i].outer;
+        }
+    }
+    return max/200;
+}
+
+//summarize the data the return the below format
+function summarize_data(){
+
+    var summary = [
+        [
+            {label: '1 Bedroom', time: 2007, radius: 327000, color: "rgb(100, 50, 0)"},
+            {label: '1 Bedroom', time: 2008, radius: 380000, color: "rgb(100, 50, 0)"},
+        ],
+        [
+            {label: '2 Bedrooms', time: 2008, radius: 363250, color: "rgb(255, 0, 0)"},
+            {label: '2 Bedrooms', time: 2010, radius: 420000, color: "rgb(255, 0, 0)"},
+            {label: '2 Bedrooms', time: 2009, radius: 372500, color: "rgb(255, 0, 0)"}
+        ],
+        [
+            {label: '3 Bedrooms', time: 2007, radius: 336888.9, color: "rgb(0, 50, 50)"},
+            {label: '3 Bedrooms', time: 2008, radius: 389900, color: "rgb(0, 50, 50)"},
+            {label: '3 Bedrooms', time: 2009, radius: 392450, color: "rgb(0, 50, 50)"},
+            {label: '3 Bedrooms', time: 2010, radius: 428262.5, color: "rgb(0, 50, 50)"},
+            {label: '3 Bedrooms', time: 2011, radius: 455396.4, color: "rgb(0, 50, 50)"},
+            {label: '3 Bedrooms', time: 2012, radius: 459958.8, color: "rgb(0, 50, 50)"}
+        ],
+        [               
+            {label: '4 Bedrooms', time: 2011, radius: 741500, color: "rgb(255, 100, 0)"},
+            {label: '4 Bedrooms', time: 2009, radius: 594730.8, color: "rgb(255, 100, 0)"},
+            {label: '4 Bedrooms', time: 2010, radius: 538118.8, color: "rgb(255, 100, 0)"},
+            {label: '4 Bedrooms', time: 2008, radius: 578062.5, color: "rgb(255, 100, 0)"},
+            {label: '4 Bedrooms', time: 2012, radius: 533875, color: "rgb(255, 100, 0)"},
+            {label: '4 Bedrooms', time: 2007, radius: 637818.2, color: "rgb(255, 100, 0)"}
+        ],
+        [
+            {label: '5 Bedrooms', time: 2011, radius: 800000, color: "rgb(0, 100, 0)"},
+            {label: '5 Bedrooms', time: 2008, radius: 610000, color: "rgb(0, 100, 0)"},
+            {label: '5 Bedrooms', time: 2009, radius: 750000, color: "rgb(0, 100, 0)"},
+            {label: '5 Bedrooms', time: 2007, radius: 816333.3, color: "rgb(0, 100, 0)"},
+            {label: '5 Bedrooms', time: 2010, radius: 560000, color: "rgb(0, 100, 0)"},
+            {label: '5 Bedrooms', time: 2012, radius: 1015000, color: "rgb(0, 100, 0)"}
+        ],
+    ]
+    // summary = [
+    //     [
+    //         {label: '1 Bedroom', time: 2007, inner: 0, outer: 77.85714285714286, color: "rgb(100, 50, 0)"},
+    //         {label: '1 Bedroom', time: 2008, inner: 77.85714285714286, outer: 90.47619047619048, color: "rgb(100, 50, 0)"},
+    //     ],
+    //     [
+    //         {label: '2 Bedrooms', time: 2008, inner: 0, outer: 86.48809523809524, color: "rgb(255, 0, 0)"},
+    //         {label: '2 Bedrooms', time: 2009, inner: 88.69047619047619, outer: 100, color: "rgb(255, 0, 0)"},
+    //         {label: '2 Bedrooms', time: 2010, inner: 86.48809523809524, outer: 88.69047619047619, color: "rgb(255, 0, 0)"}
+    //     ],
+    //     [
+    //         {label: '3 Bedrooms', time: 2007, inner: 0, outer: 80.21164285714286, color: "rgb(0, 50, 50)"},
+    //         {label: '3 Bedrooms', time: 2008, inner: 80.21164285714286, outer: 92.83333333333333, color: "rgb(0, 50, 50)"},
+    //         {label: '3 Bedrooms', time: 2009, inner: 92.83333333333333, outer: 93.44047619047619, color: "rgb(0, 50, 50)"},
+    //         {label: '3 Bedrooms', time: 2010, inner: 93.44047619047619, outer: 101.9672619047619, color: "rgb(0, 50, 50)"},
+    //         {label: '3 Bedrooms', time: 2011, inner: 101.9672619047619, outer: 108.42771428571429, color: "rgb(0, 50, 50)"},
+    //         {label: '3 Bedrooms', time: 2012, inner: 108.42771428571429, outer: 109.514, color: "rgb(0, 50, 50)"}
+    //     ],
+    //     [   
+    //         {label: '4 Bedrooms', time: 2007, inner: 0, outer: 176.54761904761904, color: "rgb(255, 100, 0)"}, 
+    //         {label: '4 Bedrooms', time: 2008, inner: 141.60257142857145, outer: 141.60257142857145, color: "rgb(255, 100, 0)"},    
+    //         {label: '4 Bedrooms', time: 2009, inner: 127.11309523809524, outer: 128.12352380952382, color: "rgb(255, 100, 0)"},
+    //         {label: '4 Bedrooms', time: 2010, inner: 137.63392857142858, outer: 137.63392857142858, color: "rgb(255, 100, 0)"},
+    //         {label: '4 Bedrooms', time: 2011, inner: 0, outer: 127.11309523809524, color: "rgb(255, 100, 0)"},
+    //         {label: '4 Bedrooms', time: 2012, inner: 151.86147619047617, outer: 151.86147619047617, color: "rgb(255, 100, 0)"},
+    //     ],
+    //     [
+    //         {label: '5 Bedrooms', time: 2007, inner: 0, outer: 190.47619047619048, color: "rgb(0, 0, 0)"},
+    //         {label: '5 Bedrooms', time: 2008, inner: 133.33333333333334, outer: 145.23809523809524, color: "rgb(0, 0, 0)"},
+    //         {label: '5 Bedrooms', time: 2009, inner: 145.23809523809524, outer: 178.57142857142858, color: "rgb(0, 0, 0)"},
+    //         {label: '5 Bedrooms', time: 2010, inner: 190.47619047619048, outer: 194.36507142857144, color: "rgb(0, 0, 0)"},
+    //         {label: '5 Bedrooms', time: 2011, inner: 0, outer: 133.33333333333334, color: "rgb(0, 0, 0)"},
+    //         {label: '5 Bedrooms', time: 2012, inner: 194.36507142857144, outer: 241.66666666666666, color: "rgb(0, 0, 0)"}
+    //     ],
+    // ]
+
+    return summary
 }
 
 // just a hard coded summary of some dummy data from sample_data.csv
@@ -87,8 +236,7 @@ var graphData =
     // color.domain(participants);
 
 var config = 
-{   
-    "rScale": 4200, // 4200 is just a hard coded scale for this dataset, will implement a function to automatically adjust it
+{  
     "dataSpacing": 2,
     "setData": function ()
     {   
@@ -101,7 +249,8 @@ var config =
         var year = d3.select("#ddlYear").node().value;
 
         var dataSet = 
-        {
+        {   
+            "labelList": [],
             "labels": [],
             "stats": [],
             "radius": []
@@ -116,18 +265,20 @@ var config =
             if (filtered.length > 0)
             {
                 if (filtered[0]["frequency"] > 0)
-                {
+                {   
+                    dataSet.labelList.push(graphData.cols[i].title);
                     dataSet.labels.push({title: graphData.cols[i].title, color: graphData.cols[i].color});
                     dataSet.stats.push({label: graphData.cols[i].title, value: filtered[0]["frequency"], radius: 0, color: graphData.cols[i].color});
-                    dataSet.radius.push({label: graphData.cols[i].title, value: filtered[0]["frequency"], radius: filtered[0]["price"]/this.rScale, color: graphData.cols[i].color}); 	
+                    dataSet.radius.push({label: graphData.cols[i].title, value: filtered[0]["frequency"], radius: filtered[0]["price"], color: graphData.cols[i].color}); 	
                 }
             }
 
-            var unfiltered = graphData.cols[i].stats.filter(function(x) { return x.year != year;})
+            var unfiltered = graphData.cols[i].stats
+            // .filter(function(x) { return x.year != year;})
             console.log(unfiltered);
             for (var j = 0; j < unfiltered.length; j++)
             {
-                filteredYear.push({label: graphData.cols[i].title, time: unfiltered[j]["year"], radius: unfiltered[j]["price"]/this.rScale});
+                filteredYear.push({label: graphData.cols[i].title, time: unfiltered[j]["year"], radius: unfiltered[j]["price"]});
             }
             
         }
@@ -138,15 +289,15 @@ var config =
         for (var i = 0; i < graphData.rows.length; i++)
         {   
             var currYear = graphData.rows[i];
-            if(currYear == year){
-                continue;
-            }
+            // if(currYear == year){
+            //     continue;
+            // }
             
             var currStats = {
                 time: currYear, 
                 data: []
             }
-            currStats.data = JSON.parse(JSON.stringify(dataSet.stats));
+            currStats.data = shallow_copy(dataSet.stats);
             //filter the set with year = currYear
             var currYearSet = []
 
@@ -170,9 +321,8 @@ var config =
         console.log(combinedStats);
         console.log(dataSet);
 
-        //cleanup the dataset combined Stats with radius of 0 ?
 
-        //is is nessary ?
+        
 
 
 
@@ -214,12 +364,24 @@ var config =
         var radius = dataSet.radius;
 
         console.log(radius);
+        var summary = summarize_data();
+        console.log(summary);
+        var sumA = 0;
+        for(var i=0; i<dataSet.radius.length; i++){
+            sumA += dataSet.radius[i].value;
+        }
+        var labels = dataSet.labelList;
+        var data = generate_current_data(radius, graphData.rows.length, labels, sumA, graphData.rows);
+        console.log(data);
+        var scale = reScale(data);
+        console.log(scale);
 
-        
         var arc = d3.svg.arc()
-        .innerRadius(0)
+        .innerRadius(function (d){
+            return d.data.inner/scale;
+        })
         .outerRadius(function (d) { 
-            return d.data.radius
+            return d.data.outer/scale;
         });
         
         
@@ -231,34 +393,21 @@ var config =
             
         var svg =  d3.select('.pieChartSvg').append('svg').attr('width',width).attr('height',height)
         
-        svg.selectAll('path')
-        .data(pie(radius))
-        .enter()
-        .append('path')
-        .attr('d',arc)
-        .attr('transform','translate(250,250)')
-        .attr("fill", function(d) {
-            return d.data.color;
-        })
-        .attr('stroke','white')
-        .style("opacity", 0.8)
-        .on("mouseover", function (d) {
-            d3.select("#tooltip")
-            .style("left", d3.event.pageX + "px")
-            .style("top", d3.event.pageY + "px")
-            .style("opacity", 1)
-            .select("#value")
-            .text(d.value);
-        })
-        .on("mouseout", function () {
-        // Hide the tooltip
-            d3.select("#tooltip")
-            .style("opacity", 0);;
-        });
+        // svg.selectAll('path')
+        // .data(pie(radius))
+        // .enter()
+        // .append('path')
+        // .attr('d',arc)
+        // .attr('transform','translate(250,250)')
+        // .attr("fill", function(d) {
+        //     return d.data.color;
+        // })
+        // .attr('stroke','white')
+        // .style("opacity", 0.8)
 
         for(var i=0; i<combinedStats.length; i++){
             svg.selectAll("arc")
-            .data(pie(combinedStats[i].data))
+            .data(pie(data[i]))
             .enter()
             .append('path')
             .attr('d',arc)
@@ -267,14 +416,22 @@ var config =
                 return d.data.color;
             })
             .attr('stroke','white')
-            .style("opacity", 0.4)
+            .style("opacity", 0.8)
             .on("mouseover", function (d) {
                 d3.select("#tooltip")
                 .style("left", d3.event.pageX + "px")
                 .style("top", d3.event.pageY + "px")
                 .style("opacity", 1)
                 .select("#value")
-                .text(d.value);
+                .text(function(){
+                    //tooltip should include 
+                    //percentage of catagory of the current year (number), 
+                    //curr year, 
+                    //value of that year (price)
+                    return "Percentage: " + (d.value/sumA).toFixed(2)*100 + "% (" + d.value + ")"
+                            + "Year: " + d.data.time
+                            + "Value: " + d.data.radius;
+                });
             })
             .on("mouseout", function () {
             // Hide the tooltip
@@ -282,20 +439,6 @@ var config =
                 .style("opacity", 0);;
             });
         }
-
-        // svg.selectAll('text')
-        // .data(pie(radius))
-        // .enter()
-        // .append('text')
-        // .attr("transform", function(d) { 
-        //     return "translate(" + arc.centroid(d) + ")"; 
-        // })
-        // .text(function(d){ 
-        //     console.log(d.data.value);
-        //     return d.data.value;
-        // })
-        // .style("text-anchor", "middle")
-        // .style("font-size", 17)
         
         legend
         .selectAll("rect")
@@ -352,6 +495,7 @@ ddlYear.selectAll("option")
 .property("selected", function(d, i) 
 {
     return i == 0;
+
 })
 .attr("value", function(d) 
 {

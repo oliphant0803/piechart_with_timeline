@@ -55,12 +55,11 @@ function get_curr_radius(labels, time, labelName){
 }
 
 // 
-function generate_current_data(radius, length, labels, sumA, timeList){
-
+function generate_current_data(radius, length, labels, sumA, timeList, currTime){
+    console.log(timeList);
     var data = [];
     for(var i=0; i<length; i++){
         var newRs = get_curr_radius(labels, i, "price");
-        console.log(newRs);
         var currData=[];
         for(var j=0; j<radius.length; j++){
             var index = labels.indexOf(radius[j]["label"]);
@@ -69,7 +68,13 @@ function generate_current_data(radius, length, labels, sumA, timeList){
                 if(i==0){
                     radius[index].inner = 0;
                     radius[index].outer = radius[index].radius;
-                    radius[index].time = timeList[i];
+                    radius[index].time = get_time(radius[j]["label"], radius[index].radius);
+                    console.log(radius[index].time);
+                    if(radius[index].time == currTime){
+                        radius[index].opacity = 1;
+                    }else{
+                        radius[index].opacity = 0.7;
+                    }
                     // delete radius[index].radius;
                     currData.push(shallow_copy(radius[index]));
                 }else{
@@ -80,8 +85,14 @@ function generate_current_data(radius, length, labels, sumA, timeList){
                     var newRadius = newRs[index];
                     radius[index].outer = computeRadius(newRadius, oldRadius, angle);
                     radius[index].radius = newRadius;
-                    radius[index].time = timeList[i];
-                    // delete radius[index].radius;
+                    radius[index].time = get_time(radius[j]["label"], radius[index].radius);
+                    console.log(radius[index].time);
+                    if(radius[index].time == currTime){
+                        radius[index].opacity = 1;
+                    }else{
+                        radius[index].opacity = 0.7;
+                    }
+                    // delete radius[index].rdius;
                     currData.push(shallow_copy(radius[index]));
                 }
             }
@@ -102,6 +113,19 @@ function reScale(data){
         }
     }
     return max/200;
+}
+
+function get_time(label, radius){
+    for(var i=0; i<graphData.cols.length; i++){
+        if(graphData.cols[i]["title"] == label){
+            for(var j=0; j<graphData.cols[i].stats.length; j++){
+                if(graphData.cols[i].stats[j]["price"] == radius){
+                    return graphData.cols[i].stats[j]["year"];
+                }
+            }
+        }
+        
+    }
 }
 
 //summarize the data the return the below format
@@ -252,7 +276,7 @@ var config =
                     dataSet.labelList.push(graphData.cols[i].title);
                     dataSet.labels.push({title: graphData.cols[i].title, color: graphData.cols[i].color});
                     dataSet.stats.push({label: graphData.cols[i].title, value: filtered[0]["frequency"], radius: 0, color: graphData.cols[i].color});
-                    dataSet.radius.push({label: graphData.cols[i].title, value: filtered[0]["frequency"], radius: filtered[0]["price"], color: graphData.cols[i].color}); 	
+                    dataSet.radius.push({label: graphData.cols[i].title, value: filtered[0]["frequency"], radius: graphData.cols[i].stats[0]["price"], color: graphData.cols[i].color}); 	
                 }
             }
 
@@ -354,7 +378,7 @@ var config =
             sumA += dataSet.radius[i].value;
         }
         var labels = dataSet.labelList;
-        var data = generate_current_data(radius, graphData.rows.length, labels, sumA, graphData.rows);
+        var data = generate_current_data(radius, graphData.rows.length, labels, sumA, graphData.rows, year);
         console.log(data);
         var scale = reScale(data);
         console.log(scale);
@@ -375,18 +399,6 @@ var config =
         });
             
         var svg =  d3.select('.pieChartSvg').append('svg').attr('width',width).attr('height',height)
-        
-        // svg.selectAll('path')
-        // .data(pie(radius))
-        // .enter()
-        // .append('path')
-        // .attr('d',arc)
-        // .attr('transform','translate(250,250)')
-        // .attr("fill", function(d) {
-        //     return d.data.color;
-        // })
-        // .attr('stroke','white')
-        // .style("opacity", 0.8)
 
         for(var i=0; i<combinedStats.length; i++){
             svg.selectAll("arc")
@@ -399,7 +411,10 @@ var config =
                 return d.data.color;
             })
             .attr('stroke','white')
-            .style("opacity", 0.8)
+            .attr("stroke-width", 0.1)
+            .style("opacity", function(d) {
+                return d.data.opacity;
+            })
             .on("mouseover", function (d) {
                 d3.select("#tooltip")
                 .style("left", d3.event.pageX + "px")

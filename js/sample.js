@@ -40,11 +40,27 @@ function shallow_copy(item){
     return JSON.parse(JSON.stringify(item));
 }
 
+function get_curr_radius(labels, time, labelName){
+    var new_radius = []
+    for(var i=0; i<labels.length; i++){
+        for(var j=0; j<graphData.cols.length; j++){
+            if(graphData.cols[j].title == labels[i] && typeof graphData.cols[j].stats[time] != "undefined"){
+                new_radius.push(graphData.cols[j].stats[time][labelName]);
+            }else if(graphData.cols[j].title == labels[i] && typeof graphData.cols[j].stats[time] == "undefined"){
+                new_radius.push(0);
+            }
+        }
+    }
+    return new_radius;
+}
+
 // 
 function generate_current_data(radius, length, labels, sumA, timeList){
 
     var data = [];
     for(var i=0; i<length; i++){
+        var newRs = get_curr_radius(labels, i, "price");
+        console.log(newRs);
         var currData=[];
         for(var j=0; j<radius.length; j++){
             var index = labels.indexOf(radius[j]["label"]);
@@ -61,7 +77,9 @@ function generate_current_data(radius, length, labels, sumA, timeList){
                     //compute the radius]
                     var angle = radius[index].value/sumA;
                     radius[index].inner = oldRadius;
-                    radius[index].outer = computeRadius(radius[index].radius, oldRadius, angle);
+                    var newRadius = newRs[index];
+                    radius[index].outer = computeRadius(newRadius, oldRadius, angle);
+                    radius[index].radius = newRadius;
                     radius[index].time = timeList[i];
                     // delete radius[index].radius;
                     currData.push(shallow_copy(radius[index]));
@@ -91,74 +109,39 @@ function summarize_data(){
 
     var summary = [
         [
-            {label: '1 Bedroom', time: 2007, radius: 327000, color: "rgb(100, 50, 0)"},
-            {label: '1 Bedroom', time: 2008, radius: 380000, color: "rgb(100, 50, 0)"},
+            {label: '1 Bedroom', time: 2007, radius: 77.85714285714286, color: "rgb(100, 50, 0)"},
+            {label: '1 Bedroom', time: 2008, radius: 90.47619047619048, color: "rgb(100, 50, 0)"},
         ],
         [
-            {label: '2 Bedrooms', time: 2008, radius: 363250, color: "rgb(255, 0, 0)"},
-            {label: '2 Bedrooms', time: 2010, radius: 420000, color: "rgb(255, 0, 0)"},
-            {label: '2 Bedrooms', time: 2009, radius: 372500, color: "rgb(255, 0, 0)"}
+            {label: '2 Bedrooms', time: 2008, radius: 86.48809523809524, color: "rgb(255, 0, 0)"},
+            {label: '2 Bedrooms', time: 2010, radius: 88.69047619047619, color: "rgb(255, 0, 0)"},
+            {label: '2 Bedrooms', time: 2009, radius: 100, color: "rgb(255, 0, 0)"}
         ],
         [
-            {label: '3 Bedrooms', time: 2007, radius: 336888.9, color: "rgb(0, 50, 50)"},
-            {label: '3 Bedrooms', time: 2008, radius: 389900, color: "rgb(0, 50, 50)"},
-            {label: '3 Bedrooms', time: 2009, radius: 392450, color: "rgb(0, 50, 50)"},
-            {label: '3 Bedrooms', time: 2010, radius: 428262.5, color: "rgb(0, 50, 50)"},
-            {label: '3 Bedrooms', time: 2011, radius: 455396.4, color: "rgb(0, 50, 50)"},
-            {label: '3 Bedrooms', time: 2012, radius: 459958.8, color: "rgb(0, 50, 50)"}
+            {label: '3 Bedrooms', time: 2007, inner: 0, outer: 80.21164285714286, color: "rgb(0, 50, 50)"},
+            {label: '3 Bedrooms', time: 2008, inner: 80.21164285714286, outer: 92.83333333333333, color: "rgb(0, 50, 50)"},
+            {label: '3 Bedrooms', time: 2009, inner: 92.83333333333333, outer: 93.44047619047619, color: "rgb(0, 50, 50)"},
+            {label: '3 Bedrooms', time: 2010, inner: 93.44047619047619, outer: 101.9672619047619, color: "rgb(0, 50, 50)"},
+            {label: '3 Bedrooms', time: 2011, inner: 101.9672619047619, outer: 108.42771428571429, color: "rgb(0, 50, 50)"},
+            {label: '3 Bedrooms', time: 2012, inner: 108.42771428571429, outer: 109.514, color: "rgb(0, 50, 50)"}
         ],
         [               
-            {label: '4 Bedrooms', time: 2011, radius: 741500, color: "rgb(255, 100, 0)"},
-            {label: '4 Bedrooms', time: 2009, radius: 594730.8, color: "rgb(255, 100, 0)"},
-            {label: '4 Bedrooms', time: 2010, radius: 538118.8, color: "rgb(255, 100, 0)"},
-            {label: '4 Bedrooms', time: 2008, radius: 578062.5, color: "rgb(255, 100, 0)"},
-            {label: '4 Bedrooms', time: 2012, radius: 533875, color: "rgb(255, 100, 0)"},
-            {label: '4 Bedrooms', time: 2007, radius: 637818.2, color: "rgb(255, 100, 0)"}
+            {label: '4 Bedrooms', time: 2011, inner: 0, outer: 127.11309523809524, color: "rgb(255, 100, 0)"},
+            {label: '4 Bedrooms', time: 2009, inner: 127.11309523809524, outer: 128.12352380952382, color: "rgb(255, 100, 0)"},
+            {label: '4 Bedrooms', time: 2010, inner: 137.63392857142858, outer: 137.63392857142858, color: "rgb(255, 100, 0)"},
+            {label: '4 Bedrooms', time: 2008, inner: 141.60257142857145, outer: 141.60257142857145, color: "rgb(255, 100, 0)"},
+            {label: '4 Bedrooms', time: 2012, inner: 151.86147619047617, outer: 151.86147619047617, color: "rgb(255, 100, 0)"},
+            {label: '4 Bedrooms', time: 2007, inner: 176.54761904761904, outer: 176.54761904761904, color: "rgb(255, 100, 0)"}
         ],
         [
-            {label: '5 Bedrooms', time: 2011, radius: 800000, color: "rgb(0, 100, 0)"},
-            {label: '5 Bedrooms', time: 2008, radius: 610000, color: "rgb(0, 100, 0)"},
-            {label: '5 Bedrooms', time: 2009, radius: 750000, color: "rgb(0, 100, 0)"},
-            {label: '5 Bedrooms', time: 2007, radius: 816333.3, color: "rgb(0, 100, 0)"},
-            {label: '5 Bedrooms', time: 2010, radius: 560000, color: "rgb(0, 100, 0)"},
-            {label: '5 Bedrooms', time: 2012, radius: 1015000, color: "rgb(0, 100, 0)"}
+            {label: '5 Bedrooms', time: 2011, inner: 0, outer: 133.33333333333334, color: "rgb(0, 0, 0)"},
+            {label: '5 Bedrooms', time: 2008, inner: 133.33333333333334, outer: 145.23809523809524, color: "rgb(0, 0, 0)"},
+            {label: '5 Bedrooms', time: 2009, inner: 145.23809523809524, outer: 178.57142857142858, color: "rgb(0, 0, 0)"},
+            {label: '5 Bedrooms', time: 2007, inner: 178.57142857142858, outer: 190.47619047619048, color: "rgb(0, 0, 0)"},
+            {label: '5 Bedrooms', time: 2010, inner: 190.47619047619048, outer: 194.36507142857144, color: "rgb(0, 0, 0)"},
+            {label: '5 Bedrooms', time: 2012, inner: 194.36507142857144, outer: 241.66666666666666, color: "rgb(0, 0, 0)"}
         ],
     ]
-    // summary = [
-    //     [
-    //         {label: '1 Bedroom', time: 2007, inner: 0, outer: 77.85714285714286, color: "rgb(100, 50, 0)"},
-    //         {label: '1 Bedroom', time: 2008, inner: 77.85714285714286, outer: 90.47619047619048, color: "rgb(100, 50, 0)"},
-    //     ],
-    //     [
-    //         {label: '2 Bedrooms', time: 2008, inner: 0, outer: 86.48809523809524, color: "rgb(255, 0, 0)"},
-    //         {label: '2 Bedrooms', time: 2009, inner: 88.69047619047619, outer: 100, color: "rgb(255, 0, 0)"},
-    //         {label: '2 Bedrooms', time: 2010, inner: 86.48809523809524, outer: 88.69047619047619, color: "rgb(255, 0, 0)"}
-    //     ],
-    //     [
-    //         {label: '3 Bedrooms', time: 2007, inner: 0, outer: 80.21164285714286, color: "rgb(0, 50, 50)"},
-    //         {label: '3 Bedrooms', time: 2008, inner: 80.21164285714286, outer: 92.83333333333333, color: "rgb(0, 50, 50)"},
-    //         {label: '3 Bedrooms', time: 2009, inner: 92.83333333333333, outer: 93.44047619047619, color: "rgb(0, 50, 50)"},
-    //         {label: '3 Bedrooms', time: 2010, inner: 93.44047619047619, outer: 101.9672619047619, color: "rgb(0, 50, 50)"},
-    //         {label: '3 Bedrooms', time: 2011, inner: 101.9672619047619, outer: 108.42771428571429, color: "rgb(0, 50, 50)"},
-    //         {label: '3 Bedrooms', time: 2012, inner: 108.42771428571429, outer: 109.514, color: "rgb(0, 50, 50)"}
-    //     ],
-    //     [   
-    //         {label: '4 Bedrooms', time: 2007, inner: 0, outer: 176.54761904761904, color: "rgb(255, 100, 0)"}, 
-    //         {label: '4 Bedrooms', time: 2008, inner: 141.60257142857145, outer: 141.60257142857145, color: "rgb(255, 100, 0)"},    
-    //         {label: '4 Bedrooms', time: 2009, inner: 127.11309523809524, outer: 128.12352380952382, color: "rgb(255, 100, 0)"},
-    //         {label: '4 Bedrooms', time: 2010, inner: 137.63392857142858, outer: 137.63392857142858, color: "rgb(255, 100, 0)"},
-    //         {label: '4 Bedrooms', time: 2011, inner: 0, outer: 127.11309523809524, color: "rgb(255, 100, 0)"},
-    //         {label: '4 Bedrooms', time: 2012, inner: 151.86147619047617, outer: 151.86147619047617, color: "rgb(255, 100, 0)"},
-    //     ],
-    //     [
-    //         {label: '5 Bedrooms', time: 2007, inner: 0, outer: 190.47619047619048, color: "rgb(0, 0, 0)"},
-    //         {label: '5 Bedrooms', time: 2008, inner: 133.33333333333334, outer: 145.23809523809524, color: "rgb(0, 0, 0)"},
-    //         {label: '5 Bedrooms', time: 2009, inner: 145.23809523809524, outer: 178.57142857142858, color: "rgb(0, 0, 0)"},
-    //         {label: '5 Bedrooms', time: 2010, inner: 190.47619047619048, outer: 194.36507142857144, color: "rgb(0, 0, 0)"},
-    //         {label: '5 Bedrooms', time: 2011, inner: 0, outer: 133.33333333333334, color: "rgb(0, 0, 0)"},
-    //         {label: '5 Bedrooms', time: 2012, inner: 194.36507142857144, outer: 241.66666666666666, color: "rgb(0, 0, 0)"}
-    //     ],
-    // ]
 
     return summary
 }

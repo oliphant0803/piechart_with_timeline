@@ -17,9 +17,11 @@
 	<body>
         <div class="pieChartContainer">
             <div class="pieDashboard">
-                <select id="ddlYear">
-
-                </select>
+                <form id="myForm">
+                    <input type="file" id="csvFile" accept=".csv" />
+                    <br />
+                    <input type="submit" value="Submit" />
+                </form>
             </div>
 
             <div class="pieChart">
@@ -39,6 +41,7 @@
             </div>
         </div>
 
-        <script src="js/sample.js"></script>
+        <script type="text/javascript" src="./js/read_csv.js"></script> 
+        <script type="text/javascript" src="./js/sample.js"></script> 
 	</body>
 </html>

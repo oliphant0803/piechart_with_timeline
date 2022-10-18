@@ -7,169 +7,6 @@
 //4. if click on the wedge of a year, change to that year's chart
 
 
-function read_csv(){
-
-}
-
-// count the frequency of the catogorical variables
-function count_freq(){
-
-}
-
-// generate/randomize color and assign them to each of the catogorical variables
-function generate_color(){
-
-}
-
-//
-function computeRadius(val, oldRad, angle){
-    //val is new value need to be add in to 
-    //oldRad is the previous circle's radius
-
-    // then compute the area of the inner slice
-    var innerA = angle*Math.PI*oldRad^2;
-    var outerA = innerA + val;
-    //innerA/outerA = innerR^2/outerR^2;
-    //Math.SQRT(innerA/outerA) = innerR/outerR
-    //outerR=innerR/Math.SQRT(innerA/outerA)
-    var r = oldRad/Math.sqrt(innerA/outerA);
-    return r;
-}
-
-function shallow_copy(item){
-    return JSON.parse(JSON.stringify(item));
-}
-
-function get_curr_radius(labels, time, labelName){
-    var new_radius = []
-    for(var i=0; i<labels.length; i++){
-        for(var j=0; j<graphData.cols.length; j++){
-            if(graphData.cols[j].title == labels[i] && typeof graphData.cols[j].stats[time] != "undefined"){
-                new_radius.push(graphData.cols[j].stats[time][labelName]);
-            }else if(graphData.cols[j].title == labels[i] && typeof graphData.cols[j].stats[time] == "undefined"){
-                new_radius.push(0);
-            }
-        }
-    }
-    return new_radius;
-}
-
-// 
-function generate_current_data(radius, length, labels, sumA, timeList, currTime){
-    console.log(timeList);
-    var data = [];
-    for(var i=0; i<length; i++){
-        var newRs = get_curr_radius(labels, i, "price");
-        var currData=[];
-        for(var j=0; j<radius.length; j++){
-            var index = labels.indexOf(radius[j]["label"]);
-            if(index != -1){
-                //currData.push(radius[index]);
-                if(i==0){
-                    radius[index].inner = 0;
-                    radius[index].outer = radius[index].radius;
-                    radius[index].time = get_time(radius[j]["label"], radius[index].radius);
-                    console.log(radius[index].time);
-                    if(radius[index].time == currTime){
-                        radius[index].opacity = 1;
-                    }else{
-                        radius[index].opacity = 0.7;
-                    }
-                    // delete radius[index].radius;
-                    currData.push(shallow_copy(radius[index]));
-                }else{
-                    var oldRadius = shallow_copy(data[i-1][j].outer);
-                    //compute the radius]
-                    var angle = radius[index].value/sumA;
-                    radius[index].inner = oldRadius;
-                    var newRadius = newRs[index];
-                    radius[index].outer = computeRadius(newRadius, oldRadius, angle);
-                    radius[index].radius = newRadius;
-                    radius[index].time = get_time(radius[j]["label"], radius[index].radius);
-                    console.log(radius[index].time);
-                    if(radius[index].time == currTime){
-                        radius[index].opacity = 1;
-                    }else{
-                        radius[index].opacity = 0.7;
-                    }
-                    // delete radius[index].rdius;
-                    currData.push(shallow_copy(radius[index]));
-                }
-            }
-        }
-        console.log(currData);
-        data.push(currData);
-    }
-    return data;
-}
-
-function reScale(data){
-    //rescale the graph to max of 200 for d3 to visualize
-    //go to the last interval's index
-    var max = 0;
-    for(var i=0; i<data[data.length-1].length; i++){
-        if (max < data[data.length-1][i].outer){
-            max = data[data.length-1][i].outer;
-        }
-    }
-    return max/200;
-}
-
-function get_time(label, radius){
-    for(var i=0; i<graphData.cols.length; i++){
-        if(graphData.cols[i]["title"] == label){
-            for(var j=0; j<graphData.cols[i].stats.length; j++){
-                if(graphData.cols[i].stats[j]["price"] == radius){
-                    return graphData.cols[i].stats[j]["year"];
-                }
-            }
-        }
-        
-    }
-}
-
-//summarize the data the return the below format
-function summarize_data(){
-
-    var summary = [
-        [
-            {label: '1 Bedroom', time: 2007, radius: 77.85714285714286, color: "rgb(100, 50, 0)"},
-            {label: '1 Bedroom', time: 2008, radius: 90.47619047619048, color: "rgb(100, 50, 0)"},
-        ],
-        [
-            {label: '2 Bedrooms', time: 2008, radius: 86.48809523809524, color: "rgb(255, 0, 0)"},
-            {label: '2 Bedrooms', time: 2010, radius: 88.69047619047619, color: "rgb(255, 0, 0)"},
-            {label: '2 Bedrooms', time: 2009, radius: 100, color: "rgb(255, 0, 0)"}
-        ],
-        [
-            {label: '3 Bedrooms', time: 2007, inner: 0, outer: 80.21164285714286, color: "rgb(0, 50, 50)"},
-            {label: '3 Bedrooms', time: 2008, inner: 80.21164285714286, outer: 92.83333333333333, color: "rgb(0, 50, 50)"},
-            {label: '3 Bedrooms', time: 2009, inner: 92.83333333333333, outer: 93.44047619047619, color: "rgb(0, 50, 50)"},
-            {label: '3 Bedrooms', time: 2010, inner: 93.44047619047619, outer: 101.9672619047619, color: "rgb(0, 50, 50)"},
-            {label: '3 Bedrooms', time: 2011, inner: 101.9672619047619, outer: 108.42771428571429, color: "rgb(0, 50, 50)"},
-            {label: '3 Bedrooms', time: 2012, inner: 108.42771428571429, outer: 109.514, color: "rgb(0, 50, 50)"}
-        ],
-        [               
-            {label: '4 Bedrooms', time: 2011, inner: 0, outer: 127.11309523809524, color: "rgb(255, 100, 0)"},
-            {label: '4 Bedrooms', time: 2009, inner: 127.11309523809524, outer: 128.12352380952382, color: "rgb(255, 100, 0)"},
-            {label: '4 Bedrooms', time: 2010, inner: 137.63392857142858, outer: 137.63392857142858, color: "rgb(255, 100, 0)"},
-            {label: '4 Bedrooms', time: 2008, inner: 141.60257142857145, outer: 141.60257142857145, color: "rgb(255, 100, 0)"},
-            {label: '4 Bedrooms', time: 2012, inner: 151.86147619047617, outer: 151.86147619047617, color: "rgb(255, 100, 0)"},
-            {label: '4 Bedrooms', time: 2007, inner: 176.54761904761904, outer: 176.54761904761904, color: "rgb(255, 100, 0)"}
-        ],
-        [
-            {label: '5 Bedrooms', time: 2011, inner: 0, outer: 133.33333333333334, color: "rgb(0, 0, 0)"},
-            {label: '5 Bedrooms', time: 2008, inner: 133.33333333333334, outer: 145.23809523809524, color: "rgb(0, 0, 0)"},
-            {label: '5 Bedrooms', time: 2009, inner: 145.23809523809524, outer: 178.57142857142858, color: "rgb(0, 0, 0)"},
-            {label: '5 Bedrooms', time: 2007, inner: 178.57142857142858, outer: 190.47619047619048, color: "rgb(0, 0, 0)"},
-            {label: '5 Bedrooms', time: 2010, inner: 190.47619047619048, outer: 194.36507142857144, color: "rgb(0, 0, 0)"},
-            {label: '5 Bedrooms', time: 2012, inner: 194.36507142857144, outer: 241.66666666666666, color: "rgb(0, 0, 0)"}
-        ],
-    ]
-
-    return summary
-}
-
 // just a hard coded summary of some dummy data from sample_data.csv
 var graphData = 
 {
@@ -238,22 +75,137 @@ var graphData =
     "stats": ["price", "frequency"]
 }; 
 
+function read_data(data){
+    console.log(data);
+}
 
+// count the frequency of the catogorical variables
+function count_freq(){
+
+}
+
+// generate/randomize color and assign them to each of the catogorical variables
+function generate_color(){
     // var color = d3.scaleOrdinal(d3.schemeCategory20c);
     // color.domain(participants);
+}
+
+//
+function computeRadius(val, oldRad, angle){
+    //val is new value need to be add in to 
+    //oldRad is the previous circle's radius
+
+    // then compute the area of the inner slice
+    var innerA = angle*Math.PI*oldRad^2;
+    var outerA = innerA + val;
+    //innerA/outerA = innerR^2/outerR^2;
+    //Math.SQRT(innerA/outerA) = innerR/outerR
+    //outerR=innerR/Math.SQRT(innerA/outerA)
+    var r = oldRad/Math.sqrt(innerA/outerA);
+    return r;
+}
+
+function shallow_copy(item){
+    return JSON.parse(JSON.stringify(item));
+}
+
+function get_curr_radius(labels, time, labelName){
+    var new_radius = []
+    for(var i=0; i<labels.length; i++){
+        for(var j=0; j<graphData.cols.length; j++){
+            if(graphData.cols[j].title == labels[i] && typeof graphData.cols[j].stats[time] != "undefined"){
+                new_radius.push(graphData.cols[j].stats[time][labelName]);
+            }else if(graphData.cols[j].title == labels[i] && typeof graphData.cols[j].stats[time] == "undefined"){
+                new_radius.push(0);
+            }
+        }
+    }
+    return new_radius;
+}
+
+// 
+function generate_current_data(radius, length, labels, sumA, timeList, currTime){
+    var data = [];
+    for(var i=0; i<length; i++){
+        var newRs = get_curr_radius(labels, i, "price");
+        var currData=[];
+        for(var j=0; j<radius.length; j++){
+            var index = labels.indexOf(radius[j]["label"]);
+            if(index != -1){
+                //currData.push(radius[index]);
+                if(i==0){
+                    radius[index].inner = 0;
+                    radius[index].outer = radius[index].radius;
+                    radius[index].time = get_time(radius[j]["label"], radius[index].radius);
+                    // console.log(radius[index].time);
+                    if(radius[index].time == currTime){
+                        radius[index].opacity = 1;
+                    }else{
+                        radius[index].opacity = 0.7;
+                    }
+                    // delete radius[index].radius;
+                    currData.push(shallow_copy(radius[index]));
+                }else{
+                    var oldRadius = shallow_copy(data[i-1][j].outer);
+                    //compute the radius]
+                    var angle = radius[index].value/sumA;
+                    radius[index].inner = oldRadius;
+                    var newRadius = newRs[index];
+                    radius[index].outer = computeRadius(newRadius, oldRadius, angle);
+                    radius[index].radius = newRadius;
+                    radius[index].time = get_time(radius[j]["label"], radius[index].radius);
+                    // console.log(radius[index].time);
+                    if(radius[index].time == currTime){
+                        radius[index].opacity = 1;
+                    }else{
+                        radius[index].opacity = 0.7;
+                    }
+                    // delete radius[index].rdius;
+                    currData.push(shallow_copy(radius[index]));
+                }
+            }
+        }
+        // console.log(currData);
+        data.push(currData);
+    }
+    return data;
+}
+
+function reScale(data){
+    //rescale the graph to max of 200 for d3 to visualize
+    //go to the last interval's index
+    var max = 0;
+    for(var i=0; i<data[data.length-1].length; i++){
+        if (max < data[data.length-1][i].outer){
+            max = data[data.length-1][i].outer;
+        }
+    }
+    return max/200;
+}
+
+function get_time(label, radius){
+    for(var i=0; i<graphData.cols.length; i++){
+        if(graphData.cols[i]["title"] == label){
+            for(var j=0; j<graphData.cols[i].stats.length; j++){
+                if(graphData.cols[i].stats[j]["price"] == radius){
+                    return graphData.cols[i].stats[j]["year"];
+                }
+            }
+        }
+        
+    }
+}
 
 var config = 
 {  
     "dataSpacing": 2,
-    "setData": function ()
+    "setData": function (year)
     {   
         var width = d3.select('.pieChartSvg').node().getBoundingClientRect().width*2;
         var height = width;
         document.querySelectorAll('.pieChartSvg').forEach(pie => {
             pie.removeChild(pie.lastChild);
         });
-
-        var year = d3.select("#ddlYear").node().value;
 
         var dataSet = 
         {   
@@ -268,7 +220,7 @@ var config =
         for (var i = 0; i < graphData.cols.length; i++)
         {
             var filtered = graphData.cols[i].stats.filter(function(x) { return x.year == year;})
-            console.log(filtered);
+            // console.log(filtered);
             if (filtered.length > 0)
             {
                 if (filtered[0]["frequency"] > 0)
@@ -282,7 +234,7 @@ var config =
 
             var unfiltered = graphData.cols[i].stats
             // .filter(function(x) { return x.year != year;})
-            console.log(unfiltered);
+            // console.log(unfiltered);
             for (var j = 0; j < unfiltered.length; j++)
             {
                 filteredYear.push({label: graphData.cols[i].title, time: unfiltered[j]["year"], radius: unfiltered[j]["price"]});
@@ -290,7 +242,7 @@ var config =
             
         }
 
-        console.log(filteredYear);
+        // console.log(filteredYear);
 
         //generate list of data corresponding the different years
         for (var i = 0; i < graphData.rows.length; i++)
@@ -313,7 +265,7 @@ var config =
                     currYearSet.push(filteredYear[j]);
                 }
             }
-            console.log(currStats.data);
+            // console.log(currStats.data);
             for(var k = 0; k < currStats.data.length; k++){
                 for(var j = 0; j < currYearSet.length; j++){
                     if(currStats.data[k]["label"] == currYearSet[j]["label"]){
@@ -321,16 +273,12 @@ var config =
                     }
                 }
             }
-            console.log(currStats);
+            // console.log(currStats);
             combinedStats.push(currStats);
         }
 
-        console.log(combinedStats);
-        console.log(dataSet);
-
-
-        
-
+        // console.log(combinedStats);
+        // console.log(dataSet);
 
 
         //Plot the pie chart
@@ -371,8 +319,7 @@ var config =
         var radius = dataSet.radius;
 
         console.log(radius);
-        var summary = summarize_data();
-        console.log(summary);
+
         var sumA = 0;
         for(var i=0; i<dataSet.radius.length; i++){
             sumA += dataSet.radius[i].value;
@@ -414,6 +361,10 @@ var config =
             .attr("stroke-width", 0.1)
             .style("opacity", function(d) {
                 return d.data.opacity;
+            })
+            .on("click", function(d) {
+                config.setData(d.data.time);
+                d3.event.stopPropagation();
             })
             .on("mouseover", function (d) {
                 d3.select("#tooltip")
@@ -484,27 +435,4 @@ var config =
     }
 };
 
-var ddlYear = d3.select("#ddlYear");
-
-ddlYear.selectAll("option")
-.data(graphData.rows)
-.enter()
-.append("option")
-.property("selected", function(d, i) 
-{
-    return i == 0;
-
-})
-.attr("value", function(d) 
-{
-    return d;
-})
-.text(function(d) 
-{
-    return d;
-});
-
-
-config.setData();
-
-d3.select("#ddlYear").on("change", function() { config.setData(); });
+config.setData(graphData.rows[0]);

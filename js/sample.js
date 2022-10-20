@@ -10,78 +10,89 @@
 // just a hard coded summary of some dummy data from sample_data.csv
 var graphData = 
 {
-    "cols":
-    [
-        {
-            "title": "1 Bedroom",
-            "color": "rgb(100, 50, 0)",
-            "stats": 
-            [
-                {"year": 2007, "price": 327000, "frequency": 1},
-                {"year": 2008, "price": 380000, "frequency": 1}
-            ]
-        },
-        {
-            "title": "2 Bedrooms",
-            "color": "rgb(255, 0, 0)",
-            "stats": 
-            [
-                {"year": 2008, "price": 363250, "frequency": 2},
-                {"year": 2009, "price": 420000, "frequency": 1},
-                {"year": 2010, "price": 372500, "frequency": 1}
-            ]
-        },
-        {
-            "title": "3 Bedrooms",
-            "color": "rgb(0, 50, 50)",
-            "stats": 
-            [
-                {"year": 2007, "price": 336888.9, "frequency": 9},
-                {"year": 2008, "price": 389900, "frequency": 10},
-                {"year": 2009, "price": 392450, "frequency": 10},
-                {"year": 2010, "price": 428262.5, "frequency": 8},
-                {"year": 2011, "price": 455396.4, "frequency": 14},
-                {"year": 2012, "price": 459958.8, "frequency": 17}
-            ]
-        },
-        {
-            "title": "4 Bedrooms",
-            "color": "rgb(255, 100, 0)",
-            "stats": 
-            [
-                {"year": 2007, "price": 741500, "frequency": 8},
-                {"year": 2008, "price": 594730.8, "frequency": 13},
-                {"year": 2009, "price": 538118.8, "frequency": 8},
-                {"year": 2010, "price": 578062.5, "frequency": 8},
-                {"year": 2011, "price": 533875, "frequency": 12},
-                {"year": 2012, "price": 637818.2, "frequency": 11}
-            ]
-        },
-        {
-            "title": "5 Bedrooms",
-            "color": "rgb(0, 0, 0)",
-            "stats": 
-            [
-                {"year": 2007, "price": 800000, "frequency": 1},
-                {"year": 2008, "price": 610000, "frequency": 1},
-                {"year": 2009, "price": 750000, "frequency": 1},
-                {"year": 2010, "price": 816333.3, "frequency": 3},
-                {"year": 2011, "price": 560000, "frequency": 1},
-                {"year": 2012, "price": 1015000, "frequency": 1}
-            ]
-        }
-    ],
-    "rows": [2007, 2008, 2009, 2010, 2011, 2012],
-    "stats": ["price", "frequency"]
+    "cols": []
+    // [
+    //     {
+    //         "title": "1 Bedroom",
+    //         "color": "rgb(100, 50, 0)",
+    //         "stats": 
+    //         [
+    //             {"year": 2007, "price": 327000, "frequency": 1},
+    //             {"year": 2008, "price": 380000, "frequency": 1}
+    //         ]
+    //     },
+    //     {
+    //         "title": "2 Bedrooms",
+    //         "color": "rgb(255, 0, 0)",
+    //         "stats": 
+    //         [
+    //             {"year": 2008, "price": 363250, "frequency": 2},
+    //             {"year": 2009, "price": 420000, "frequency": 1},
+    //             {"year": 2010, "price": 372500, "frequency": 1}
+    //         ]
+    //     },
+    //     {
+    //         "title": "3 Bedrooms",
+    //         "color": "rgb(0, 50, 50)",
+    //         "stats": 
+    //         [
+    //             {"year": 2007, "price": 336888.9, "frequency": 9},
+    //             {"year": 2008, "price": 389900, "frequency": 10},
+    //             {"year": 2009, "price": 392450, "frequency": 10},
+    //             {"year": 2010, "price": 428262.5, "frequency": 8},
+    //             {"year": 2011, "price": 455396.4, "frequency": 14},
+    //             {"year": 2012, "price": 459958.8, "frequency": 17}
+    //         ]
+    //     },
+    //     {
+    //         "title": "4 Bedrooms",
+    //         "color": "rgb(255, 100, 0)",
+    //         "stats": 
+    //         [
+    //             {"year": 2007, "price": 741500, "frequency": 8},
+    //             {"year": 2008, "price": 594730.8, "frequency": 13},
+    //             {"year": 2009, "price": 538118.8, "frequency": 8},
+    //             {"year": 2010, "price": 578062.5, "frequency": 8},
+    //             {"year": 2011, "price": 533875, "frequency": 12},
+    //             {"year": 2012, "price": 637818.2, "frequency": 11}
+    //         ]
+    //     },
+    //     {
+    //         "title": "5 Bedrooms",
+    //         "color": "rgb(0, 0, 0)",
+    //         "stats": 
+    //         [
+    //             {"year": 2007, "price": 800000, "frequency": 1},
+    //             {"year": 2008, "price": 610000, "frequency": 1},
+    //             {"year": 2009, "price": 750000, "frequency": 1},
+    //             {"year": 2010, "price": 816333.3, "frequency": 3},
+    //             {"year": 2011, "price": 560000, "frequency": 1},
+    //             {"year": 2012, "price": 1015000, "frequency": 1}
+    //         ]
+    //     }
+    // ]
 }; 
 
 function read_data(data){
-    console.log(data);
+    data = JSON.parse(data);
+    graphData.rows = get_rows(data);
+    graphData.stats = get_stats(data);
+    var catagories = get_titles(data);
+    catagories.forEach((cat) => {
+        count_freq(data, cat);
+    });
+    config.setData(graphData.rows[0]);
+}
+
+function calculate_avg(data, time, freq){
+
 }
 
 // count the frequency of the catogorical variables
-function count_freq(){
-
+function count_freq(data, title){
+    //return an array of years corresponding to the frequency of that year
+    var arr = [];
+    
 }
 
 // generate/randomize color and assign them to each of the catogorical variables
@@ -434,5 +445,3 @@ var config =
         });
     }
 };
-
-config.setData(graphData.rows[0]);

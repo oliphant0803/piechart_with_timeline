@@ -1,97 +1,116 @@
 // Note: for animation and fancy styling, https://www.amcharts.com/demos/variable-radius-pie-chart/ is an library to enhance the visualization for pie chart that I found, but not sure if I can use it
-
-
-//1. wedges are stacks sequancially in time
-//2. think about the math to implement the area of each slice (from outer to inner if overlap)
-//3. tooltip should include percentage of catagory of the current year (number), curr year, value of that year (price)
-//4. if click on the wedge of a year, change to that year's chart
-
-
-// just a hard coded summary of some dummy data from sample_data.csv
-var graphData = 
+var graphData = {}; 
+var testData = 
 {
-    "cols": []
-    // [
-    //     {
-    //         "title": "1 Bedroom",
-    //         "color": "rgb(100, 50, 0)",
-    //         "stats": 
-    //         [
-    //             {"year": 2007, "price": 327000, "frequency": 1},
-    //             {"year": 2008, "price": 380000, "frequency": 1}
-    //         ]
-    //     },
-    //     {
-    //         "title": "2 Bedrooms",
-    //         "color": "rgb(255, 0, 0)",
-    //         "stats": 
-    //         [
-    //             {"year": 2008, "price": 363250, "frequency": 2},
-    //             {"year": 2009, "price": 420000, "frequency": 1},
-    //             {"year": 2010, "price": 372500, "frequency": 1}
-    //         ]
-    //     },
-    //     {
-    //         "title": "3 Bedrooms",
-    //         "color": "rgb(0, 50, 50)",
-    //         "stats": 
-    //         [
-    //             {"year": 2007, "price": 336888.9, "frequency": 9},
-    //             {"year": 2008, "price": 389900, "frequency": 10},
-    //             {"year": 2009, "price": 392450, "frequency": 10},
-    //             {"year": 2010, "price": 428262.5, "frequency": 8},
-    //             {"year": 2011, "price": 455396.4, "frequency": 14},
-    //             {"year": 2012, "price": 459958.8, "frequency": 17}
-    //         ]
-    //     },
-    //     {
-    //         "title": "4 Bedrooms",
-    //         "color": "rgb(255, 100, 0)",
-    //         "stats": 
-    //         [
-    //             {"year": 2007, "price": 741500, "frequency": 8},
-    //             {"year": 2008, "price": 594730.8, "frequency": 13},
-    //             {"year": 2009, "price": 538118.8, "frequency": 8},
-    //             {"year": 2010, "price": 578062.5, "frequency": 8},
-    //             {"year": 2011, "price": 533875, "frequency": 12},
-    //             {"year": 2012, "price": 637818.2, "frequency": 11}
-    //         ]
-    //     },
-    //     {
-    //         "title": "5 Bedrooms",
-    //         "color": "rgb(0, 0, 0)",
-    //         "stats": 
-    //         [
-    //             {"year": 2007, "price": 800000, "frequency": 1},
-    //             {"year": 2008, "price": 610000, "frequency": 1},
-    //             {"year": 2009, "price": 750000, "frequency": 1},
-    //             {"year": 2010, "price": 816333.3, "frequency": 3},
-    //             {"year": 2011, "price": 560000, "frequency": 1},
-    //             {"year": 2012, "price": 1015000, "frequency": 1}
-    //         ]
-    //     }
-    // ]
+    "cols":
+    [
+        {
+            "title": "1 Bedroom",
+            "color": "rgb(100, 50, 0)",
+            "stats": 
+            [
+                {"time": 2007, "price": 327000, "frequency": 1},
+                {"time": 2008, "price": 380000, "frequency": 1}
+            ]
+        },
+        {
+            "title": "2 Bedrooms",
+            "color": "rgb(255, 0, 0)",
+            "stats": 
+            [
+                {"time": 2008, "price": 363250, "frequency": 2},
+                {"time": 2009, "price": 420000, "frequency": 1},
+                {"time": 2010, "price": 372500, "frequency": 1}
+            ]
+        },
+        {
+            "title": "3 Bedrooms",
+            "color": "rgb(0, 50, 50)",
+            "stats": 
+            [
+                {"time": 2007, "price": 336888.9, "frequency": 9},
+                {"time": 2008, "price": 389900, "frequency": 10},
+                {"time": 2009, "price": 392450, "frequency": 10},
+                {"time": 2010, "price": 428262.5, "frequency": 8},
+                {"time": 2011, "price": 455396.4, "frequency": 14},
+                {"time": 2012, "price": 459958.8, "frequency": 17}
+            ]
+        },
+        {
+            "title": "4 Bedrooms",
+            "color": "rgb(255, 100, 0)",
+            "stats": 
+            [
+                {"time": 2007, "price": 741500, "frequency": 8},
+                {"time": 2008, "price": 594730.8, "frequency": 13},
+                {"time": 2009, "price": 538118.8, "frequency": 8},
+                {"time": 2010, "price": 578062.5, "frequency": 8},
+                {"time": 2011, "price": 533875, "frequency": 12},
+                {"time": 2012, "price": 637818.2, "frequency": 11}
+            ]
+        },
+        {
+            "title": "5 Bedrooms",
+            "color": "rgb(0, 0, 0)",
+            "stats": 
+            [
+                {"time": 2007, "price": 800000, "frequency": 1},
+                {"time": 2008, "price": 610000, "frequency": 1},
+                {"time": 2009, "price": 750000, "frequency": 1},
+                {"time": 2010, "price": 816333.3, "frequency": 3},
+                {"time": 2011, "price": 560000, "frequency": 1},
+                {"time": 2012, "price": 1015000, "frequency": 1}
+            ]
+        }
+    ],
+    "rows": [2007, 2008, 2009, 2010, 2011, 2012],
+    "stats": ["price", "frequency"]
 }; 
-
+console.log(testData);
 function read_data(data){
     data = JSON.parse(data);
+    graphData.cols = [];
     graphData.rows = get_rows(data);
     graphData.stats = get_stats(data);
     var catagories = get_titles(data);
+    console.log(catagories);
     catagories.forEach((cat) => {
-        count_freq(data, cat);
+        graphData.cols.push({"title": cat});
     });
+    for(var i =0; i<catagories.length; i++){
+        count_freq(data, catagories[i], i)
+    }
+    console.log(graphData);
     config.setData(graphData.rows[0]);
 }
 
-function calculate_avg(data, time, freq){
-
+function calculate_sum(statsByTime, stat){
+    var total = 0;
+    for(var i=0; i<statsByTime.length; i++){
+        total += Number(statsByTime[i][stat]);
+    }
+    return total;
 }
 
 // count the frequency of the catogorical variables
-function count_freq(data, title){
-    //return an array of years corresponding to the frequency of that year
-    var arr = [];
+function count_freq(data, title, index){
+    var stats = get_stats(data);
+    graphData.cols[index].stats = [];
+    graphData.cols[index].color = "rgb(100, 50, 0)";
+    var filtered = data.filter(function(x) { return x[stats[2]] == title;})
+    if (filtered.length > 0){
+        graphData.rows.forEach((time) => {
+            var statsByTime = filtered.filter(function(x) { return x[stats[0]] == time});
+            if(statsByTime.length > 0){
+                var statsByTimeObject = {
+                    "time": Number(time),
+                    "average": Number((calculate_sum(statsByTime, stats[1])/statsByTime.length).toFixed(2)),
+                    "frequency": statsByTime.length,
+                };
+                graphData.cols[index].stats.push(statsByTimeObject);
+            }
+        });
+    }
     
 }
 
@@ -138,7 +157,7 @@ function get_curr_radius(labels, time, labelName){
 function generate_current_data(radius, length, labels, sumA, timeList, currTime){
     var data = [];
     for(var i=0; i<length; i++){
-        var newRs = get_curr_radius(labels, i, "price");
+        var newRs = get_curr_radius(labels, i, "average");
         var currData=[];
         for(var j=0; j<radius.length; j++){
             var index = labels.indexOf(radius[j]["label"]);
@@ -198,8 +217,8 @@ function get_time(label, radius){
     for(var i=0; i<graphData.cols.length; i++){
         if(graphData.cols[i]["title"] == label){
             for(var j=0; j<graphData.cols[i].stats.length; j++){
-                if(graphData.cols[i].stats[j]["price"] == radius){
-                    return graphData.cols[i].stats[j]["year"];
+                if(graphData.cols[i].stats[j].average == radius){
+                    return graphData.cols[i].stats[j]["time"];
                 }
             }
         }
@@ -210,7 +229,7 @@ function get_time(label, radius){
 var config = 
 {  
     "dataSpacing": 2,
-    "setData": function (year)
+    "setData": function (time)
     {   
         var width = d3.select('.pieChartSvg').node().getBoundingClientRect().width*2;
         var height = width;
@@ -225,62 +244,62 @@ var config =
             "stats": [],
             "radius": []
         };
-        var filteredYear = [];
+        var filteredtime = [];
         var combinedStats = [];
 
         for (var i = 0; i < graphData.cols.length; i++)
         {
-            var filtered = graphData.cols[i].stats.filter(function(x) { return x.year == year;})
+            var filtered = graphData.cols[i].stats.filter(function(x) { return x.time == time;})
             // console.log(filtered);
             if (filtered.length > 0)
             {
-                if (filtered[0]["frequency"] > 0)
+                if (filtered[0].frequency > 0)
                 {   
                     dataSet.labelList.push(graphData.cols[i].title);
                     dataSet.labels.push({title: graphData.cols[i].title, color: graphData.cols[i].color});
-                    dataSet.stats.push({label: graphData.cols[i].title, value: filtered[0]["frequency"], radius: 0, color: graphData.cols[i].color});
-                    dataSet.radius.push({label: graphData.cols[i].title, value: filtered[0]["frequency"], radius: graphData.cols[i].stats[0]["price"], color: graphData.cols[i].color}); 	
+                    dataSet.stats.push({label: graphData.cols[i].title, value: filtered[0].frequency, radius: 0, color: graphData.cols[i].color});
+                    dataSet.radius.push({label: graphData.cols[i].title, value: filtered[0].frequency, radius: graphData.cols[i].stats[0].average, color: graphData.cols[i].color}); 	
                 }
             }
 
             var unfiltered = graphData.cols[i].stats
-            // .filter(function(x) { return x.year != year;})
+            // .filter(function(x) { return x.time != time;})
             // console.log(unfiltered);
             for (var j = 0; j < unfiltered.length; j++)
             {
-                filteredYear.push({label: graphData.cols[i].title, time: unfiltered[j]["year"], radius: unfiltered[j]["price"]});
+                filteredtime.push({label: graphData.cols[i].title, time: unfiltered[j].time, radius: unfiltered[j].average});
             }
             
         }
 
-        // console.log(filteredYear);
+        // console.log(filteredtime);
 
-        //generate list of data corresponding the different years
+        //generate list of data corresponding the different times
         for (var i = 0; i < graphData.rows.length; i++)
         {   
-            var currYear = graphData.rows[i];
-            // if(currYear == year){
+            var currtime = graphData.rows[i];
+            // if(currtime == time){
             //     continue;
             // }
             
             var currStats = {
-                time: currYear, 
+                time: currtime, 
                 data: []
             }
             currStats.data = shallow_copy(dataSet.stats);
-            //filter the set with year = currYear
-            var currYearSet = []
+            //filter the set with time = currtime
+            var currtimeSet = []
 
-            for(var j = 0; j < filteredYear.length; j++){
-                if(filteredYear[j]["time"] == currYear){
-                    currYearSet.push(filteredYear[j]);
+            for(var j = 0; j < filteredtime.length; j++){
+                if(filteredtime[j]["time"] == currtime){
+                    currtimeSet.push(filteredtime[j]);
                 }
             }
             // console.log(currStats.data);
             for(var k = 0; k < currStats.data.length; k++){
-                for(var j = 0; j < currYearSet.length; j++){
-                    if(currStats.data[k]["label"] == currYearSet[j]["label"]){
-                        currStats.data[k]["radius"] = currYearSet[j]["radius"]
+                for(var j = 0; j < currtimeSet.length; j++){
+                    if(currStats.data[k]["label"] == currtimeSet[j]["label"]){
+                        currStats.data[k]["radius"] = currtimeSet[j]["radius"]
                     }
                 }
             }
@@ -336,7 +355,7 @@ var config =
             sumA += dataSet.radius[i].value;
         }
         var labels = dataSet.labelList;
-        var data = generate_current_data(radius, graphData.rows.length, labels, sumA, graphData.rows, year);
+        var data = generate_current_data(radius, graphData.rows.length, labels, sumA, graphData.rows, time);
         console.log(data);
         var scale = reScale(data);
         console.log(scale);
@@ -385,11 +404,11 @@ var config =
                 .select("#value")
                 .text(function(){
                     //tooltip should include 
-                    //percentage of catagory of the current year (number), 
-                    //curr year, 
-                    //value of that year (price)
+                    //percentage of catagory of the current time (number), 
+                    //curr time, 
+                    //value of that time (price)
                     return "Percentage: " + (d.value/sumA).toFixed(2)*100 + "% (" + d.value + ")"
-                            + "Year: " + d.data.time
+                            + "time: " + d.data.time
                             + "Value: " + d.data.radius;
                 });
             })

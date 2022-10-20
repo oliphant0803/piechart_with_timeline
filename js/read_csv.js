@@ -37,16 +37,22 @@ function csvToArray(str, delimiter = ",") {
 function get_rows(data){
     var key = Object.keys(data[0])[0];
     var rows = data.map( (value) => value[key]).filter( (value, index, _data) => _data.indexOf(value) == index);
+    rows = rows.filter(function( element ) {
+        return element !== undefined && element !== '';
+    });
     return rows;
 }
 
 function get_stats(data){
-    return [Object.keys(data[0])[1], Object.keys(data[0])[2]];
+    return [Object.keys(data[0])[0], Object.keys(data[0])[1], Object.keys(data[0])[2]];
 }
 
 function get_titles(data){
     var key = Object.keys(data[0])[2];
     var titles = data.map( (value) => value[key]).filter( (value, index, _data) => _data.indexOf(value) == index);
+    titles = titles.filter(function( element ) {
+        return element !== undefined && element !== '';
+    });
     return titles;
 }
 

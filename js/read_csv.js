@@ -34,6 +34,22 @@ function csvToArray(str, delimiter = ",") {
     return arr;
 }
 
+function get_rows(data){
+    var key = Object.keys(data[0])[0];
+    var rows = data.map( (value) => value[key]).filter( (value, index, _data) => _data.indexOf(value) == index);
+    return rows;
+}
+
+function get_stats(data){
+    return [Object.keys(data[0])[1], Object.keys(data[0])[2]];
+}
+
+function get_titles(data){
+    var key = Object.keys(data[0])[2];
+    var titles = data.map( (value) => value[key]).filter( (value, index, _data) => _data.indexOf(value) == index);
+    return titles;
+}
+
 myForm.addEventListener("submit", function (e) {
     e.preventDefault();
     const input = csvFile.files[0];

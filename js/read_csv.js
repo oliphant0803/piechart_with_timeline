@@ -1,18 +1,3 @@
-//example return value
-//[
-//     {"Year":"2007","price":"525000","bedrooms":"4"},
-//     {"Year":"2007","price":"290000","bedrooms":"3"},
-//     {"Year":"2007","price":"328000","bedrooms":"3"},
-//     {"Year":"2007","price":"380000","bedrooms":"4"},
-//     {"Year":"2007","price":"310000","bedrooms":"3"},
-//     {"Year":"2007","price":"465000","bedrooms":"4"},
-//     {"Year":"2007","price":"399000","bedrooms":"3"},
-//     {"Year":"2007","price":"1530000","bedrooms":"4"},
-//     {"Year":"2007","price":"359000","bedrooms":"3"},
-//     {"Year":"2007","price":"320000","bedrooms":"3"},
-//     {"Year":"2008","price":"1035000","bedrooms":"4"}
-// ]
-
 const myForm = document.getElementById("myForm");
 const csvFile = document.getElementById("csvFile");
 

@@ -1,72 +1,14 @@
 // Note: for animation and fancy styling, https://www.amcharts.com/demos/variable-radius-pie-chart/ is an library to enhance the visualization for pie chart that I found, but not sure if I can use it
 var graphData = {}; 
-var testData = 
-{
-    "cols":
-    [
-        {
-            "title": "1 Bedroom",
-            "color": "rgb(100, 50, 0)",
-            "stats": 
-            [
-                {"time": 2007, "price": 327000, "frequency": 1},
-                {"time": 2008, "price": 380000, "frequency": 1}
-            ]
-        },
-        {
-            "title": "2 Bedrooms",
-            "color": "rgb(255, 0, 0)",
-            "stats": 
-            [
-                {"time": 2008, "price": 363250, "frequency": 2},
-                {"time": 2009, "price": 420000, "frequency": 1},
-                {"time": 2010, "price": 372500, "frequency": 1}
-            ]
-        },
-        {
-            "title": "3 Bedrooms",
-            "color": "rgb(0, 50, 50)",
-            "stats": 
-            [
-                {"time": 2007, "price": 336888.9, "frequency": 9},
-                {"time": 2008, "price": 389900, "frequency": 10},
-                {"time": 2009, "price": 392450, "frequency": 10},
-                {"time": 2010, "price": 428262.5, "frequency": 8},
-                {"time": 2011, "price": 455396.4, "frequency": 14},
-                {"time": 2012, "price": 459958.8, "frequency": 17}
-            ]
-        },
-        {
-            "title": "4 Bedrooms",
-            "color": "rgb(255, 100, 0)",
-            "stats": 
-            [
-                {"time": 2007, "price": 741500, "frequency": 8},
-                {"time": 2008, "price": 594730.8, "frequency": 13},
-                {"time": 2009, "price": 538118.8, "frequency": 8},
-                {"time": 2010, "price": 578062.5, "frequency": 8},
-                {"time": 2011, "price": 533875, "frequency": 12},
-                {"time": 2012, "price": 637818.2, "frequency": 11}
-            ]
-        },
-        {
-            "title": "5 Bedrooms",
-            "color": "rgb(0, 0, 0)",
-            "stats": 
-            [
-                {"time": 2007, "price": 800000, "frequency": 1},
-                {"time": 2008, "price": 610000, "frequency": 1},
-                {"time": 2009, "price": 750000, "frequency": 1},
-                {"time": 2010, "price": 816333.3, "frequency": 3},
-                {"time": 2011, "price": 560000, "frequency": 1},
-                {"time": 2012, "price": 1015000, "frequency": 1}
-            ]
-        }
-    ],
-    "rows": [2007, 2008, 2009, 2010, 2011, 2012],
-    "stats": ["price", "frequency"]
-}; 
-console.log(testData);
+
+
+const colorRangeInfo = {
+    colorStart: 0,
+    colorEnd: 1,
+    useEndAsStart: false,
+  }; 
+
+
 function read_data(data){
     data = JSON.parse(data);
     graphData.cols = [];
@@ -74,11 +16,13 @@ function read_data(data){
     graphData.stats = get_stats(data);
     var catagories = get_titles(data);
     console.log(catagories);
+    var COLORS = interpolateColors(catagories.length, colorRangeInfo);
+    console.log(COLORS);
     catagories.forEach((cat) => {
         graphData.cols.push({"title": cat});
     });
     for(var i =0; i<catagories.length; i++){
-        count_freq(data, catagories[i], i)
+        count_freq(data, catagories[i], i, COLORS);
     }
     console.log(graphData);
     config.setData(graphData.rows[0]);
@@ -93,10 +37,10 @@ function calculate_sum(statsByTime, stat){
 }
 
 // count the frequency of the catogorical variables
-function count_freq(data, title, index){
+function count_freq(data, title, index, colors){
     var stats = get_stats(data);
     graphData.cols[index].stats = [];
-    graphData.cols[index].color = "rgb(100, 50, 0)";
+    graphData.cols[index].color = colors[index];
     var filtered = data.filter(function(x) { return x[stats[2]] == title;})
     if (filtered.length > 0){
         graphData.rows.forEach((time) => {
@@ -114,11 +58,33 @@ function count_freq(data, title, index){
     
 }
 
-// generate/randomize color and assign them to each of the catogorical variables
-function generate_color(){
-    // var color = d3.scaleOrdinal(d3.schemeCategory20c);
-    // color.domain(participants);
+function calculatePoint(i, intervalSize, colorRangeInfo) {
+    var { colorStart, colorEnd, useEndAsStart } = colorRangeInfo;
+    return (useEndAsStart
+      ? (colorEnd - (i * intervalSize))
+      : (colorStart + (i * intervalSize)));
 }
+
+/* Must use an interpolated color scale, which has a range of [0, 1] */
+function interpolateColors(dataLength, colorRangeInfo) {
+    var { colorStart, colorEnd } = colorRangeInfo;
+    var colorRange = colorEnd - colorStart;
+    var intervalSize = colorRange / dataLength;
+    var i, colorPoint;
+    var colorArray = [];
+  
+    for (i = 0; i < dataLength; i++) {
+      colorPoint = calculatePoint(i, intervalSize, colorRangeInfo);
+      colorArray.push(d3.interpolateInferno(colorPoint));
+    }
+  
+    return colorArray;
+}  
+
+function getRandomNumber(min, max) {
+    return Math.round(Math.random() * (max - min) + min);
+  }
+
 
 //
 function computeRadius(val, oldRad, angle){

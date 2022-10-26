@@ -50,6 +50,7 @@ myForm.addEventListener("submit", function (e) {
         const text = e.target.result;
         const data = csvToArray(text);
         //console.log(JSON.stringify(data));
+        create_table(JSON.stringify(data));
         read_data(JSON.stringify(data));
     };
     

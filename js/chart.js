@@ -1,6 +1,13 @@
 // Note: for animation and fancy styling, https://www.amcharts.com/demos/variable-radius-pie-chart/ is an library to enhance the visualization for pie chart that I found, but not sure if I can use it
 var graphData = {}; 
 
+// windows add event listener when click on enlarge #enlarge
+// config.setDataLarge(graphData.rows[0]);
+
+
+//https://www.d3indepth.com/enterexit/
+//use the latest d3 version
+// update exit enter
 
 const colorRangeInfo = {
     colorStart: 0,
@@ -199,12 +206,246 @@ var config =
     {   
         var width = d3.select('.pieChart').node().getBoundingClientRect().width;
         var height = width;
-        document.querySelectorAll('.pieChartSvg').forEach(pie => {
+        // document.querySelectorAll('.pieChartSvg').forEach(pie => {
+        //     pie.remove();
+        // });
+        // var eElement = document.getElementById('1');
+        // var newSvg = document.createElement("svg");
+        // newSvg.setAttribute("class","pieChartSvg");  
+        // eElement.insertBefore(newSvg, eElement.firstChild);
+
+        var dataSet = 
+        {   
+            "labelList": [],
+            "labels": [],
+            "stats": [],
+            "radius": []
+        };
+        var filteredtime = [];
+        var combinedStats = [];
+
+        for (var i = 0; i < graphData.cols.length; i++)
+        {
+            var filtered = graphData.cols[i].stats.filter(function(x) { return x.time == time;})
+            // console.log(filtered);
+            if (filtered.length > 0)
+            {
+                if (filtered[0].frequency > 0)
+                {   
+                    dataSet.labelList.push(graphData.cols[i].title);
+                    dataSet.labels.push({title: graphData.cols[i].title, color: graphData.cols[i].color});
+                    dataSet.stats.push({label: graphData.cols[i].title, value: filtered[0].frequency, radius: 0, color: graphData.cols[i].color});
+                    dataSet.radius.push({label: graphData.cols[i].title, value: filtered[0].frequency, radius: graphData.cols[i].stats[0].average, color: graphData.cols[i].color}); 	
+                }
+            }
+
+            var unfiltered = graphData.cols[i].stats
+            // .filter(function(x) { return x.time != time;})
+            // console.log(unfiltered);
+            for (var j = 0; j < unfiltered.length; j++)
+            {
+                filteredtime.push({label: graphData.cols[i].title, time: unfiltered[j].time, radius: unfiltered[j].average});
+            }
+            
+        }
+
+        // console.log(filteredtime);
+
+        //generate list of data corresponding the different times
+        for (var i = 0; i < graphData.rows.length; i++)
+        {   
+            var currtime = graphData.rows[i];
+            // if(currtime == time){
+            //     continue;
+            // }
+            
+            var currStats = {
+                time: currtime, 
+                data: []
+            }
+            currStats.data = shallow_copy(dataSet.stats);
+            //filter the set with time = currtime
+            var currtimeSet = []
+
+            for(var j = 0; j < filteredtime.length; j++){
+                if(filteredtime[j]["time"] == currtime){
+                    currtimeSet.push(filteredtime[j]);
+                }
+            }
+            // console.log(currStats.data);
+            for(var k = 0; k < currStats.data.length; k++){
+                for(var j = 0; j < currtimeSet.length; j++){
+                    if(currStats.data[k]["label"] == currtimeSet[j]["label"]){
+                        currStats.data[k]["radius"] = currtimeSet[j]["radius"]
+                    }
+                }
+            }
+            // console.log(currStats);
+            combinedStats.push(currStats);
+        }
+
+        // console.log(combinedStats);
+        // console.log(dataSet);
+
+
+        //Plot the pie chart
+        var svg =  d3.select('.pieChartSvg')
+        .attr('width',width)
+        .attr('height',height)
+        var legend = d3.select(".pieLegendSvg");
+        
+
+        legend
+        .html("")
+        .style("height", function(d) {
+            return ((config.dataSpacing * dataSet.labels.length) + 2) + "em";
+        }); 
+
+        var pie = 
+        d3.pie()
+        .sort(null)
+        .value(function(d) 
+        {
+            return d.value; 
+        });
+
+        var radius = dataSet.radius;
+
+        console.log(radius);
+
+        var sumA = 0;
+        for(var i=0; i<dataSet.radius.length; i++){
+            sumA += dataSet.radius[i].value;
+        }
+        var labels = dataSet.labelList;
+        var data = generate_current_data(radius, graphData.rows.length, labels, sumA, graphData.rows, time);
+        console.log(data);
+        var scale = reScale(data, width);
+        console.log(scale);
+
+        var arc = d3.arc()
+        .innerRadius(function (d){
+            return d.data.inner/scale;
+        })
+        .outerRadius(function (d) { 
+            return d.data.outer/scale;
+        });
+        
+        
+        var pie = d3.pie()
+        .sort(null)
+        .value(function(d) { 
+            return d.value; 
+        });
+
+        for(var i=0; i<combinedStats.length; i++){
+
+            svg.selectAll('chartArc')
+            .data(pie(data[i]))
+            .join(
+                function(enter) {
+                    return enter.append('path')
+                    .attr('class', 'chartArc')
+                    .attr('stroke','white')
+                    .attr("stroke-width", 0.1);
+                },
+                function(update) {
+                    return update.attr('d',arc)
+                    .attr('transform', 'translate(' + width/2 +  ',' + height/2 +')')
+                    .attr("fill", function(d) {
+                        return d.data.color;
+                    })
+                    .style("opacity", function(d) {
+                        return d.data.opacity;
+                    })
+                    .on("click", function(event, d) {
+                        console.log(d.data);
+                        config.setData(d.data.time);
+                        event.stopPropagation();
+                    })
+                    .on("mouseover", function (event, d) {
+                        d3.select("#tooltip")
+                        .style("left", event.pageX-width/4 + "px")
+                        .style("top", event.pageY-width/4 + "px")
+                        .style("opacity", 1)
+                        .select("#value")
+                        .text(function(){
+                            //tooltip should include 
+                            //percentage of catagory of the current time (number), 
+                            //curr time, 
+                            //value of that time (price)
+                            return "Percentage: " + (d.value/sumA).toFixed(2)*100 + "% (" + d.value + ")"
+                                    + "time: " + d.data.time
+                                    + "Value: " + d.data.radius;
+                        });
+                    })
+                    .on("mouseout", function () {
+                    // Hide the tooltip
+                        d3.select("#tooltip")
+                        .style("opacity", 0);
+                    });
+                }
+            )
+
+            
+        }
+        
+        legend
+        .selectAll("rect")
+        .data(dataSet.labels)
+        .enter()
+        .append("rect")
+        .attr("x", function(d) 
+        {
+            return config.dataSpacing + "em";
+        })
+        .attr("y", function(d, i) 
+        {
+            return ((config.dataSpacing * i) + 1)  + "em";
+        })
+        .attr("fill", function(d) 
+        {
+            return d.color;
+        })
+        .attr("width", function(d) 
+        {
+            return (config.dataSpacing / 2) + "em";
+        })
+        .attr("height", function(d) 
+        {
+            return (config.dataSpacing / 2) + "em";
+        });
+
+        legend
+        .selectAll("text")
+        .data(dataSet.labels)
+        .enter()
+        .append("text")
+        .attr("x", function(d) 
+        {
+            return (config.dataSpacing * 2) + "em";
+        })
+        .attr("y", function(d, i) 
+        {
+            return ((config.dataSpacing * i) + 2)  + "em";
+        })
+        .text(function(d) 
+        {
+            return d.title;
+        });
+    },
+
+
+    "setDataLarge": function (time)
+    {   
+        var width = d3.select('.pieChartLarge').node().getBoundingClientRect().width;
+        var height = width;
+        document.querySelectorAll('.pieChartSvgLarge').forEach(pie => {
             pie.remove();
         });
-        var eElement = document.getElementById('1');
+        var eElement = document.getElementById('2');
         var newSvg = document.createElement("svg");
-        newSvg.setAttribute("class","pieChartSvg");  
+        newSvg.setAttribute("class","pieChartSvgLarge");  
         eElement.insertBefore(newSvg, eElement.firstChild);
 
         var dataSet = 
@@ -282,12 +523,12 @@ var config =
 
 
         //Plot the pie chart
-        var svg =  d3.select('.pieChart')
+        var svg =  d3.select('.pieChartLarge')
         .append('svg')
         .attr('width',width)
         .attr('height',height)
-        .attr('class', 'pieChartSvg')
-        var legend = d3.select(".pieLegendSvg");
+        .attr('class', 'pieChartSvgLarge')
+        var legend = d3.select(".pieLegendSvgLarge");
         
 
         legend
@@ -348,14 +589,14 @@ var config =
             .style("opacity", function(d) {
                 return d.data.opacity;
             })
-            .on("click", function(d) {
-                config.setData(d.data.time);
-                d3.event.stopPropagation();
+            .on("click", function(event, d) {
+                config.setDataLarge(d.data.time);
+                event.stopPropagation();
             })
-            .on("mouseover", function (d) {
+            .on("mouseover", function (event, d) {
                 d3.select("#tooltip")
-                .style("left", d3.event.pageX-width/4 + "px")
-                .style("top", d3.event.pageY-width/4 + "px")
+                .style("left", event.pageX-width/4 + "px")
+                .style("top", event.pageY-width/4 + "px")
                 .style("opacity", 1)
                 .select("#value")
                 .text(function(){

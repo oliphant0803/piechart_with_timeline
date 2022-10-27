@@ -1,10 +1,3 @@
-window.addEventListener('DOMContentLoaded', event => {
-    const datatablesSimple = document.getElementById('datatables');
-    if (datatablesSimple) {
-        new simpleDatatables.DataTable(datatablesSimple);
-    }
-});
-
 function create_table(data){
     data = JSON.parse(data);
     var keys = Object.keys(data[0]);
@@ -47,6 +40,7 @@ function create_table(data){
             var th = document.createElement('th');
             
             //get the value
+            th.innerHTML = data[i][key];
 
             row.appendChild(th);
         });
@@ -55,4 +49,5 @@ function create_table(data){
     }
 
     table.appendChild(body);
+
 }

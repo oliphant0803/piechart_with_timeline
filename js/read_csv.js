@@ -50,8 +50,19 @@ myForm.addEventListener("submit", function (e) {
         const text = e.target.result;
         const data = csvToArray(text);
         //console.log(JSON.stringify(data));
+        
+        //cleanup dom
+        document.getElementById('dataBlock').innerHTML = '';
+        var table = document.createElement('table');
+        table.setAttribute("id", "datatables");
+        document.getElementById('dataBlock').appendChild(table);
+
         create_table(JSON.stringify(data));
         read_data(JSON.stringify(data));
+        const datatablesSimple = document.getElementById('datatables');
+        if (datatablesSimple) {
+            new simpleDatatables.DataTable(datatablesSimple);
+        }
     };
     
     reader.readAsText(input);

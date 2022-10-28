@@ -316,14 +316,6 @@ var config =
             return ((config.dataSpacing * dataSet.labels.length) + 2) + "em";
         }); 
 
-        var pie = 
-        d3.pie()
-        .sort(null)
-        .value(function(d) 
-        {
-            return d.value; 
-        });
-
         var radius = dataSet.radius;
 
         console.log(radius);
@@ -348,9 +340,12 @@ var config =
         
         
         var pie = d3.pie()
-        .sort(null)
         .value(function(d) { 
             return d.value; 
+        })
+        .sort(function(a, b) {
+            console.log(a.value, b.value);
+            return a.value - b.value;
         });
 
         for(var i=0; i<combinedStats.length; i++){

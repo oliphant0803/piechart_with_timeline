@@ -208,15 +208,6 @@ var config =
         var scale = reScale(data, width);
         console.log(scale);
 
-        var pie = 
-        d3.pie()
-        .sort(null)
-        .value(function(d) 
-        {
-            return d.value; 
-        });
-
-
         var svg =  d3.select('.pieChartSvg')
         .attr('width',width)
         .attr('height',height)

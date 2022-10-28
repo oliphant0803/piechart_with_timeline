@@ -1,10 +1,13 @@
 // Note: for animation and fancy styling, https://www.amcharts.com/demos/variable-radius-pie-chart/ is an library to enhance the visualization for pie chart that I found, but not sure if I can use it
 var graphData = {}; 
-var combinedStats = [];
-var data = [];
-var sumA = 0;
+
 // windows add event listener when click on enlarge #enlarge
 // config.setDataLarge(graphData.rows[0]);
+
+
+//https://www.d3indepth.com/enterexit/
+//use the latest d3 version
+// update exit enter
 
 const colorRangeInfo = {
     colorStart: 0,
@@ -30,7 +33,6 @@ function read_data(data){
     }
     console.log(graphData);
     config.setData(graphData.rows[0]);
-    config.plotPie();
 }
 
 function calculate_sum(statsByTime, stat){
@@ -91,19 +93,32 @@ function getRandomNumber(min, max) {
   }
 
 
-//
+// area ratio
+// function computeRadius(val, oldRad, angle){
+//     //val is new value need to be add in to 
+//     //oldRad is the previous circle's radius
+
+//     // then compute the area of the inner slice
+//     var innerA = angle*Math.PI*oldRad^2;
+//     var outerA = innerA + val;
+//     //innerA/outerA = innerR^2/outerR^2;
+//     //Math.SQRT(innerA/outerA) = innerR/outerR
+//     //outerR=innerR/Math.SQRT(innerA/outerA)
+//     var r = oldRad/Math.sqrt(innerA/outerA);
+//     return r;
+// }
+
+//radius ratio
 function computeRadius(val, oldRad, angle){
-    //val is new value need to be add in to 
-    //oldRad is the previous circle's radius
 
     // then compute the area of the inner slice
-    var innerA = angle*Math.PI*oldRad^2;
-    var outerA = innerA + val;
-    //innerA/outerA = innerR^2/outerR^2;
-    //Math.SQRT(innerA/outerA) = innerR/outerR
-    //outerR=innerR/Math.SQRT(innerA/outerA)
-    var r = oldRad/Math.sqrt(innerA/outerA);
-    return r;
+    // var innerA = angle*Math.PI*oldRad^2;
+    // var outerA = innerA + val;
+    // //innerA/outerA = innerR^2/outerR^2;
+    // //Math.SQRT(innerA/outerA) = innerR/outerR
+    // //outerR=innerR/Math.SQRT(innerA/outerA)
+    // var r = oldRad/Math.sqrt(innerA/outerA);
+    return val + oldRad;
 }
 
 function shallow_copy(item){
@@ -126,7 +141,7 @@ function get_curr_radius(labels, time, labelName){
 
 // 
 function generate_current_data(radius, length, labels, sumA, timeList, currTime){
-    data = [];
+    var data = [];
     for(var i=0; i<length; i++){
         var newRs = get_curr_radius(labels, i, "average");
         var currData=[];
@@ -200,115 +215,18 @@ function get_time(label, radius){
 var config = 
 {  
     "dataSpacing": 2,
-    "plotPie": function ()
+    "setData": function (time)
     {   
         var width = d3.select('.pieChart').node().getBoundingClientRect().width;
         var height = width;
-        //Plot the pie chart
-        var scale = reScale(data, width);
-        console.log(scale);
-
-        var pie = 
-        d3.pie()
-        .sort(null)
-        .value(function(d) 
-        {
-            return d.value; 
+        document.querySelectorAll('.pieChartSvg').forEach(pie => {
+            pie.remove();
         });
+        var eElement = document.getElementById('1');
+        var newSvg = document.createElement("svg");
+        newSvg.setAttribute("class","pieChartSvg");  
+        eElement.insertBefore(newSvg, eElement.firstChild);
 
-
-        var svg =  d3.select('.pieChartSvg')
-        .attr('width',width)
-        .attr('height',height)
-
-        var arc = d3.arc()
-        .innerRadius(function (d){
-            return d.data.inner/scale;
-        })
-        .outerRadius(function (d) { 
-            return d.data.outer/scale;
-        });
-        
-        
-        var pie = d3.pie()
-        .sort(null)
-        .value(function(d) { 
-            return d.value; 
-        });
-
-        function update(i) {
-            console.log(data[i]);
-            svg
-              .selectAll('.chartArc')
-              .data(pie(data[i]))
-              .join(
-                function(enter) {
-                  return enter.append('path')
-                    .attr('class', 'chartArc')
-                    .attr('stroke','white')
-                    .attr("stroke-width", 0.1);
-                },
-                function(update) {
-                  return update;
-                },
-                function(exit) {
-                    return exit
-                        .transition()
-                        .duration(200)
-                        .attr('d',arc)
-                        .style('opacity', 0)
-                        .attr("stroke-width", 0)
-                        .on('end', function() {
-                            d3.select(this).remove();
-                        });
-                }
-              )
-              .on("click", function(event, d) {
-                console.log(d.data);
-                config.setData(d.data.time);
-                event.stopPropagation();
-                config.plotPie();
-              })
-              .on("mouseover", function (event, d) {
-                d3.select("#tooltip")
-                .style("left", event.pageX-width/4 + "px")
-                .style("top", event.pageY-width/4 + "px")
-                .style("opacity", 1)
-                .select("#value")
-                .text(function(){
-                    //tooltip should include 
-                    //percentage of catagory of the current time (number), 
-                    //curr time, 
-                    //value of that time (price)
-                    return "Percentage: " + (d.value/sumA).toFixed(2)*100 + "% (" + d.value + ")"
-                            + "time: " + d.data.time
-                            + "Value: " + d.data.radius;
-                });
-            })
-            .on("mouseout", function () {
-            // Hide the tooltip
-                d3.select("#tooltip")
-                .style("opacity", 0);;
-            })
-            //   .transition()
-            //   .duration(1000)
-              .attr('d',arc)
-              .attr('transform', 'translate(' + width/2 +  ',' + height/2 +')')
-              .attr("fill", function(d) {
-                  return d.data.color;
-              })
-              .style("opacity", function(d) {
-                  return d.data.opacity;
-              })
-          }
-        
-        for(var i=0; i<combinedStats.length; i++){
-            //console.log(data[i]);
-            update(i);
-        }
-    },
-    "setData": function (time)
-    {   
         var dataSet = 
         {   
             "labelList": [],
@@ -317,6 +235,7 @@ var config =
             "radius": []
         };
         var filteredtime = [];
+        var combinedStats = [];
 
         for (var i = 0; i < graphData.cols.length; i++)
         {
@@ -380,7 +299,14 @@ var config =
 
         // console.log(combinedStats);
         // console.log(dataSet);
-        
+
+
+        //Plot the pie chart
+        var svg =  d3.select('.pieChart')
+        .append('svg')
+        .attr('class','pieChartSvg')
+        .attr('width',width)
+        .attr('height',height)
         var legend = d3.select(".pieLegendSvg");
         
 
@@ -390,17 +316,88 @@ var config =
             return ((config.dataSpacing * dataSet.labels.length) + 2) + "em";
         }); 
 
+        var pie = 
+        d3.pie()
+        .sort(null)
+        .value(function(d) 
+        {
+            return d.value; 
+        });
+
         var radius = dataSet.radius;
 
         console.log(radius);
 
-        sumA = 0;
+        var sumA = 0;
         for(var i=0; i<dataSet.radius.length; i++){
             sumA += dataSet.radius[i].value;
         }
         var labels = dataSet.labelList;
-        data = generate_current_data(radius, graphData.rows.length, labels, sumA, graphData.rows, time);
+        var data = generate_current_data(radius, graphData.rows.length, labels, sumA, graphData.rows, time);
         console.log(data);
+        var scale = reScale(data, width);
+        console.log(scale);
+
+        var arc = d3.arc()
+        .innerRadius(function (d){
+            return d.data.inner/scale;
+        })
+        .outerRadius(function (d) { 
+            return d.data.outer/scale;
+        });
+        
+        
+        var pie = d3.pie()
+        .sort(null)
+        .value(function(d) { 
+            return d.value; 
+        });
+
+        for(var i=0; i<combinedStats.length; i++){
+
+            svg.selectAll('arc')
+            .data(pie(data[i]))
+            .enter()
+            .append('path')
+            .attr('stroke','white')
+            .attr("stroke-width", 0.1)
+            .attr('d',arc)
+            .attr('transform', 'translate(' + width/2 +  ',' + height/2 +')')
+            .attr("fill", function(d) {
+                return d.data.color;
+            })
+            .style("opacity", function(d) {
+                return d.data.opacity;
+            })
+            .on("click", function(event, d) {
+                console.log(d.data);
+                config.setData(d.data.time);
+                event.stopPropagation();
+            })
+            .on("mouseover", function (event, d) {
+                d3.select("#tooltip")
+                .style("left", event.pageX-width/4 + "px")
+                .style("top", event.pageY-width/4 + "px")
+                .style("opacity", 1)
+                .select("#value")
+                .text(function(){
+                    //tooltip should include 
+                    //percentage of catagory of the current time (number), 
+                    //curr time, 
+                    //value of that time (price)
+                    return "Percentage: " + (d.value/sumA).toFixed(2)*100 + "% (" + d.value + ")"
+                            + "time: " + d.data.time
+                            + "Value: " + d.data.radius;
+                });
+            })
+            .on("mouseout", function () {
+            // Hide the tooltip
+                d3.select("#tooltip")
+                .style("opacity", 0);
+            });
+
+            
+        }
         
         legend
         .selectAll("rect")
@@ -445,6 +442,5 @@ var config =
         {
             return d.title;
         });
-
     }
 };

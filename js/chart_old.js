@@ -54,7 +54,7 @@ function count_freq(data, title, index, colors){
             var statsByTime = filtered.filter(function(x) { return x[stats[0]] == time});
             if(statsByTime.length > 0){
                 var statsByTimeObject = {
-                    "time": Number(time),
+                    "time": time,
                     "average": Number((calculate_sum(statsByTime, stats[1])/statsByTime.length).toFixed(2)),
                     "frequency": statsByTime.length,
                 };
@@ -139,8 +139,55 @@ function get_curr_radius(labels, time, labelName){
     return new_radius;
 }
 
+function update_graphData(radius, prevTime){
+    for(var i=0; i<graphData.cols.length; i++){
+        prevTime.forEach((time) => {
+            const unique = Array.from(new Set(graphData.cols[i].stats.map(item => item.time)));
+            if(unique.indexOf(time) == -1){
+                //insert new data of the year
+                var dummy = {};
+                dummy.time = time;
+                //sort the values of radius
+                var dummyData = shallow_copy(radius)
+                dummyData.sort((a,b)=> {
+                    if (a.value == b.value){
+                        return a.radius > b.radius ? -1 : 1
+                      } else {
+                        return a.value > b.value ? 1 : -1
+                    }
+                });
+                console.log(dummyData);
+                //find the title 
+                var currTitle = graphData.cols[i].title;
+                var index = dummyData.findIndex(function(o) {
+                    return o.label == currTitle;
+                });
+                if(index == 0){
+                    //the next one
+                    dummyData[index+1].radius;
+                }else if(index != -1){
+                    console.log(dummyData, index);
+                    dummy.average = dummyData[index-1].radius;
+                }
+                dummy.frequency = 0;
+                graphData.cols[i].stats.unshift(dummy);
+            }
+        });
+    }
+}
+
 // 
 function generate_current_data(radius, length, labels, sumA, timeList, currTime){
+    //insert values in graphData for previous years
+    //timeList will be sorted in giving order by the user
+    if(currTime != timeList[0]){
+        prevTime = timeList.slice(0, timeList.indexOf(currTime));
+        prevTime = prevTime.sort();
+    
+        update_graphData(radius, prevTime);
+        console.log(graphData);
+    }
+
     var data = [];
     for(var i=0; i<length; i++){
         var newRs = get_curr_radius(labels, i, "average");
@@ -179,9 +226,10 @@ function generate_current_data(radius, length, labels, sumA, timeList, currTime)
                     // delete radius[index].rdius;
                     currData.push(shallow_copy(radius[index]));
                 }
+
             }
         }
-        // console.log(currData);
+        //console.log(currData);
         data.push(currData);
     }
     return data;
@@ -344,7 +392,6 @@ var config =
             return d.value; 
         })
         .sort(function(a, b) {
-            console.log(a.value, b.value);
             return a.value - b.value;
         });
 

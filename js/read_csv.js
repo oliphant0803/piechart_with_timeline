@@ -23,7 +23,7 @@ function get_rows(data){
     var key = Object.keys(data[0])[0];
     var rows = data.map( (value) => value[key]).filter( (value, index, _data) => _data.indexOf(value) == index);
     rows = rows.filter(function( element ) {
-        return element !== undefined && element !== '';
+        return element !== undefined && element !== '' &&  element !== '';
     });
     return rows;
 }

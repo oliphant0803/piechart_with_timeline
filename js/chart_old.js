@@ -32,7 +32,12 @@ function read_data(data){
         count_freq(data, catagories[i], i, COLORS);
     }
     console.log(graphData);
+    graphData.rows.forEach(row => {
+        config.setData(row);
+    })
     config.setData(graphData.rows[0]);
+    // config.setData(graphData.rows[1]);
+    // config.setData(graphData.rows[0]);
 }
 
 function calculate_sum(statsByTime, stat){
@@ -122,7 +127,9 @@ function computeRadius(val, oldRad, angle){
 }
 
 function shallow_copy(item){
-    return JSON.parse(JSON.stringify(item));
+    if(item != undefined){
+        return JSON.parse(JSON.stringify(item));
+    }
 }
 
 function get_curr_radius(labels, time, labelName){
@@ -199,7 +206,13 @@ function generate_current_data(radius, length, labels, sumA, timeList, currTime)
                 if(i==0){
                     radius[index].inner = 0;
                     radius[index].outer = radius[index].radius;
-                    radius[index].time = get_time(radius[j]["label"], radius[index].radius);
+                    var time = get_time(radius[j]["label"], radius[index].radius)
+                    radius[index].time = time;
+                    if(check_dummy(radius[j]["label"], time)){
+                        radius[index].dummy = true;
+                    }else{
+                        radius[index].dummy = false;
+                    }
                     // console.log(radius[index].time);
                     if(radius[index].time == currTime){
                         radius[index].opacity = 1;
@@ -216,7 +229,13 @@ function generate_current_data(radius, length, labels, sumA, timeList, currTime)
                     var newRadius = newRs[index];
                     radius[index].outer = computeRadius(newRadius, oldRadius, angle);
                     radius[index].radius = newRadius;
-                    radius[index].time = get_time(radius[j]["label"], radius[index].radius);
+                    var time = get_time(radius[j]["label"], radius[index].radius)
+                    radius[index].time = time;
+                    if(check_dummy(radius[j]["label"], time)){
+                        radius[index].dummy = true;
+                    }else{
+                        radius[index].dummy = false;
+                    }
                     // console.log(radius[index].time);
                     if(radius[index].time == currTime){
                         radius[index].opacity = 1;
@@ -229,10 +248,33 @@ function generate_current_data(radius, length, labels, sumA, timeList, currTime)
 
             }
         }
-        //console.log(currData);
+        // console.log(currData);
         data.push(currData);
     }
     return data;
+}
+
+function check_dummy(label, time){
+    var dummies = [];
+    var isDum = false;
+    for(var i=0; i<graphData.cols.length; i++){
+        graphData.cols[i].stats.forEach(stat => {
+            if(stat != undefined && stat.frequency == 0){
+                dummies.push({
+                    'stat':stat, 
+                    'label':graphData.cols[i].title
+                });
+            }
+        })
+    }
+    //console.log(dummies);
+    dummies.forEach(dummy => {
+        if(dummy.stat.time == time && dummy.label == label){
+            isDum = true;
+            return;
+        }
+    });
+    return isDum;
 }
 
 function reScale(data, width){
@@ -396,7 +438,6 @@ var config =
         });
 
         for(var i=0; i<combinedStats.length; i++){
-
             svg.selectAll('arc')
             .data(pie(data[i]))
             .enter()
@@ -406,7 +447,12 @@ var config =
             .attr('d',arc)
             .attr('transform', 'translate(' + width/2 +  ',' + height/2 +')')
             .attr("fill", function(d) {
-                return d.data.color;
+                if(!d.data.dummy){
+                    return d.data.color;
+                }else{
+                    console.log(d.data);
+                    return 'url(#diagonal-stripe-3)';
+                }
             })
             .style("opacity", function(d) {
                 return d.data.opacity;

@@ -35,6 +35,8 @@ function read_data(data){
     graphData.rows.forEach(row => {
         config.setData(row);
     })
+    //sort graphData by time
+    sortData();
     config.setData(graphData.rows[0]);
     // config.setData(graphData.rows[1]);
     // config.setData(graphData.rows[0]);
@@ -146,7 +148,27 @@ function get_curr_radius(labels, time, labelName){
     return new_radius;
 }
 
-function update_graphData(radius, prevTime){
+function sortData(){
+    for(var i=0; i<graphData.cols.length; i++){
+        graphData.cols[i].stats.sort((a, b) => (a.time > b.time) ? 1 : -1)
+    }
+}
+
+// function getAvg(i){
+//     var sum = 0;
+//     var count = 0;
+//     graphData.cols[i].stats.forEach((stat)=>{
+//         if(stat.average != undefined){
+//             count += 1;
+//         }
+//         sum = sum + stat.average;
+//     })
+//     return sum/count;
+// }
+
+function update_graphData(radius, timeList, currTime){
+    prevTime = timeList.slice(0, timeList.indexOf(currTime));
+    prevTime = prevTime.sort();
     for(var i=0; i<graphData.cols.length; i++){
         prevTime.forEach((time) => {
             const unique = Array.from(new Set(graphData.cols[i].stats.map(item => item.time)));
@@ -154,32 +176,47 @@ function update_graphData(radius, prevTime){
                 //insert new data of the year
                 var dummy = {};
                 dummy.time = time;
-                //sort the values of radius
-                var dummyData = shallow_copy(radius)
-                dummyData.sort((a,b)=> {
-                    if (a.value == b.value){
-                        return a.radius > b.radius ? -1 : 1
-                      } else {
-                        return a.value > b.value ? 1 : -1
-                    }
-                });
-                console.log(dummyData);
-                //find the title 
-                var currTitle = graphData.cols[i].title;
-                var index = dummyData.findIndex(function(o) {
-                    return o.label == currTitle;
-                });
-                if(index == 0){
-                    //the next one
-                    dummyData[index+1].radius;
-                }else if(index != -1){
-                    console.log(dummyData, index);
-                    dummy.average = dummyData[index-1].radius;
-                }
+                
                 dummy.frequency = 0;
                 graphData.cols[i].stats.unshift(dummy);
             }
         });
+    }
+    //update the average if the frequency is 0
+    //sort the values of radius
+    for(var i=0; i<graphData.cols.length; i++){
+        var filtered = graphData.cols[i].stats.filter(function(x) { return x.frequency == 0;})
+        filtered.forEach((dummy) => {
+            var dummyData = shallow_copy(radius)
+            dummyData.sort((a,b)=> {
+                if (a.value == b.value){
+                    return a.radius > b.radius ? -1 : 1
+                } else {
+                    return a.value > b.value ? 1 : -1
+                }
+            });
+            console.log(dummyData);
+            //find the title 
+            var currTitle = graphData.cols[i].title;
+            var index = dummyData.findIndex(function(o) {
+                return o.label == currTitle;
+            });
+            if(dummy.time > currTime){
+                //console.log(getAvg(i));
+                dummy.average = 400000; 
+            }else
+            if(index == 0){
+                //the next one
+                dummy.average = dummyData[index+1].radius;
+            }else if(index != -1){
+                console.log(dummyData, index);
+                dummy.average = dummyData[index-1].radius;
+            }else{
+                dummy.average = 1;
+            }
+        });
+            
+        
     }
 }
 
@@ -187,13 +224,11 @@ function update_graphData(radius, prevTime){
 function generate_current_data(radius, length, labels, sumA, timeList, currTime){
     //insert values in graphData for previous years
     //timeList will be sorted in giving order by the user
-    if(currTime != timeList[0]){
-        prevTime = timeList.slice(0, timeList.indexOf(currTime));
-        prevTime = prevTime.sort();
+    //if(currTime != timeList[0]){
     
-        update_graphData(radius, prevTime);
+        update_graphData(radius, timeList, currTime)
         console.log(graphData);
-    }
+    //}
 
     var data = [];
     for(var i=0; i<length; i++){
@@ -442,16 +477,29 @@ var config =
             .data(pie(data[i]))
             .enter()
             .append('path')
-            .attr('stroke','white')
-            .attr("stroke-width", 0.1)
+            .attr('stroke',function(d){
+                if(d.data.dummy){
+                    return 'black'
+                }else{
+                    return 'white'
+                }
+            })
+            .attr("stroke-width", 0.5)
+            .style("stroke-dasharray", function(d){
+                if(d.data.dummy){
+                    return ("1,3")
+                }
+            })
             .attr('d',arc)
             .attr('transform', 'translate(' + width/2 +  ',' + height/2 +')')
-            .attr("fill", function(d) {
-                if(!d.data.dummy){
-                    return d.data.color;
-                }else{
-                    console.log(d.data);
+            // .attr('fill', function(d){
+            //     return d.data.color
+            // })
+            .style('fill', function(d) {
+                if(d.data.dummy){
                     return 'url(#diagonal-stripe-3)';
+                }else{
+                    return d.data.color;
                 }
             })
             .style("opacity", function(d) {
@@ -459,6 +507,7 @@ var config =
             })
             .on("click", function(event, d) {
                 console.log(d.data);
+                config.setData(d.data.time);
                 config.setData(d.data.time);
                 event.stopPropagation();
             })

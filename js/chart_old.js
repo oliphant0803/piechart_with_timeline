@@ -24,7 +24,7 @@ function read_data(data){
     var catagories = get_titles(data);
     console.log(catagories);
     var COLORS = interpolateColors(catagories.length, colorRangeInfo);
-    console.log(COLORS);
+    //console.log(COLORS);
     catagories.forEach((cat) => {
         graphData.cols.push({"title": cat});
     });
@@ -477,34 +477,7 @@ var config =
             .data(pie(data[i]))
             .enter()
             .append('path')
-            .attr('stroke',function(d){
-                if(d.data.dummy){
-                    return 'black'
-                }else{
-                    return 'white'
-                }
-            })
-            .attr("stroke-width", 0.5)
-            .style("stroke-dasharray", function(d){
-                if(d.data.dummy){
-                    return ("1,3")
-                }
-            })
-            .attr('d',arc)
             .attr('transform', 'translate(' + width/2 +  ',' + height/2 +')')
-            // .attr('fill', function(d){
-            //     return d.data.color
-            // })
-            .style('fill', function(d) {
-                if(d.data.dummy){
-                    return 'url(#diagonal-stripe-3)';
-                }else{
-                    return d.data.color;
-                }
-            })
-            .style("opacity", function(d) {
-                return d.data.opacity;
-            })
             .on("click", function(event, d) {
                 console.log(d.data);
                 config.setData(d.data.time);
@@ -512,6 +485,9 @@ var config =
                 event.stopPropagation();
             })
             .on("mouseover", function (event, d) {
+                d3.select(this)
+                .style("stroke", "black")
+                .attr("stroke-width", 4)
                 d3.select("#tooltip")
                 .style("left", event.pageX-width/4 + "px")
                 .style("top", event.pageY-width/4 + "px")
@@ -529,8 +505,38 @@ var config =
             })
             .on("mouseout", function () {
             // Hide the tooltip
+                d3.select(this)
+                .style("stroke", "white")
+                .attr("stroke-width", 0.5)
                 d3.select("#tooltip")
                 .style("opacity", 0);
+            })
+            .transition()
+            .duration(500)
+            // animation part need to refer to https://codepen.io/newamsterdamn/pen/VqwZJK
+            .attr('stroke',function(d){
+                if(d.data.dummy){
+                    return 'black'
+                }else{
+                    return 'white'
+                }
+            })
+            .attr("stroke-width", 0.5)
+            .style("stroke-dasharray", function(d){
+                if(d.data.dummy){
+                    return ("1,3")
+                }
+            })
+            .attr('d',arc)
+            .style('fill', function(d) {
+                if(d.data.dummy){
+                    return 'url(#diagonal-stripe-3)'; //why not working
+                }else{
+                    return d.data.color;
+                }
+            })
+            .style("opacity", function(d) {
+                return d.data.opacity;
             });
 
             
@@ -576,7 +582,10 @@ var config =
             return ((config.dataSpacing * i) + 2)  + "em";
         })
         .text(function(d) 
-        {
+        {   
+            if(!isNaN(d.title)){
+                return d.title + " " + cat_title;
+            }
             return d.title;
         });
     }

@@ -13,7 +13,7 @@ const colorRangeInfo = {
     colorStart: 0,
     colorEnd: 1,
     useEndAsStart: false,
-  }; 
+}; 
 
 
 function read_data(data){
@@ -513,7 +513,6 @@ var config =
             })
             .transition()
             .duration(500)
-            // animation part need to refer to https://codepen.io/newamsterdamn/pen/VqwZJK
             .attr('stroke',function(d){
                 if(d.data.dummy){
                     return 'black'

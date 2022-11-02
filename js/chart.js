@@ -453,7 +453,7 @@ var config =
 
 
         function updateChart() {
-
+            //https://stackoverflow.com/questions/59356095/error-when-transitioning-an-arc-path-attribute-d-expected-arc-flag-0-or
             console.log('pie data is ', piedata)
 
             var local = d3.local();
@@ -476,10 +476,10 @@ var config =
                 update=>{ console.log(' update selection' , update.size()); return update},
 
                 exit=>exit
-                    // .transition()
-                    // .duration(100)
+                    .transition()
+                    .duration(100)
                     .attr('d',emptyArc)
-                    // .style("opacity", 0)
+                    .style("opacity", 0)
                     .on('end', function() {
                         d3.select(this).remove();
                     })
@@ -488,16 +488,17 @@ var config =
             arcs.style("opacity", function(d) {
                 return d.data.opacity;
             })
+            .attr('d',arc) //disable the animation for drawing arc for now
             .transition()
             .duration(1000)
+            // .attr('d',arc)
             .attrTween('d', function(d) {
-            var i = d3.interpolate(local.get(this), d);
-            local.set(this, i(0));
-            return function(t) {
-                return arc(i(t));
-            };
+                var i = d3.interpolate(local.get(this), d);
+                local.set(this, i(0));
+                return function(t) {
+                    return arc(i(t));
+                };
             })
-            .attr('d',arc)
             .attr('stroke',function(d){
                 if(d.data.dummy){
                     return 'black'
@@ -505,12 +506,12 @@ var config =
                     return 'white'
                 }
                 })
-                .attr("stroke-width", 0.5)
-                .style("stroke-dasharray", function(d){
-                    if(d.data.dummy){
-                        return ("1,3")
-                    }
-                })
+            .attr("stroke-width", 0.5)
+            .style("stroke-dasharray", function(d){
+                if(d.data.dummy){
+                    return ("1,3")
+                }
+            })
             
             .style('fill', function(d) {
                 if(d.data.dummy){
@@ -525,8 +526,8 @@ var config =
                 config.setData(d.data.time);
                 config.setData(d.data.time);
                 config.plotPie();
-                event.stopPropagation();
-                updateChart();
+                //event.stopPropagation();
+                //updateChart();
             })
             .on("mouseover", function (event, d) {
                 d3.select(this)
@@ -537,15 +538,9 @@ var config =
                 .style("top", event.pageY-width/4 + "px")
                 .style("opacity", 1)
                 .select("#value")
-                .text(function(){
-                    //tooltip should include 
-                    //percentage of catagory of the current time (number), 
-                    //curr time, 
-                    //value of that time (price)
-                    return "Title: " + (d.data.label) + "          Percentage: " + (d.value/sumA).toFixed(2)*100 + "% (" + d.value + ")"
-                            + "time: " + d.data.time
-                            + "Value: " + d.data.radius;
-                });
+                d3.select("#tooltip").html("Title: " + (d.data.label) + "<br/>" + "Percentage: " + (d.value/sumA).toFixed(2)*100 + "% (" + d.value + ")"
+                            + "<br/>" + "time: " + d.data.time
+                            + "<br/>" + "Value: " + d.data.radius)
             })
             .on("mouseout", function () {
             // Hide the tooltip
@@ -555,8 +550,6 @@ var config =
                 d3.select("#tooltip")
                 .style("opacity", 0);
             })
-            // .transition()
-            // .duration(1000)
             
           }
           

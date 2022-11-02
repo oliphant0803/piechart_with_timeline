@@ -306,13 +306,13 @@ var config =
     "setData": function (time)
     {   
 
-        document.querySelectorAll('.pieChartSvg').forEach(pie => {
-            pie.remove();
-        });
-        var eElement = document.getElementById('1');
-        var newSvg = document.createElement("svg");
-        newSvg.setAttribute("class","pieChartSvg");  
-        eElement.insertBefore(newSvg, eElement.firstChild);
+        // document.querySelectorAll('.pieChartSvg').forEach(pie => {
+        //     pie.remove();
+        // });
+        // var eElement = document.getElementById('1');
+        // var newSvg = document.createElement("svg");
+        // newSvg.setAttribute("class","pieChartSvg");  
+        // eElement.insertBefore(newSvg, eElement.firstChild);
 
         dataSet = 
         {   
@@ -411,8 +411,8 @@ var config =
         console.log(scale);
 
         //Plot the pie chart
-        var svg =  d3.select('.pieChart')
-        .append('svg')
+        var svg =  d3.select('.pieChartSvg')
+        // .append('svg')
         .attr('class','pieChartSvg')
         .attr('width',width)
         .attr('height',height)
@@ -453,30 +453,74 @@ var config =
 
 
         function updateChart() {
-            svg.selectAll('arc')
-              .data(piedata)
-              .join(
-                function(enter) {
-                  return enter
+
+            console.log('pie data is ', piedata)
+
+            var local = d3.local();
+            console.log(' pieData', piedata)
+
+
+            let arcs = svg.selectAll('.arcWedge')
+            .data(piedata,d=>d.data.time + '_' + d.data.label )
+            .join(enter=>  {
+                console.log(' enter selection' , enter.size());
+                    return enter
                     .append('path')
+                    .classed('arcWedge',true)
+                    .each(function(d) {
+                        local.set(this, d)
+                    })
                     .attr('transform', 'translate(' + width/2 +  ',' + height/2 +')')
-                    .style('opacity', 0);
-                },
-                function(update) {
-                  return update;
-                },
-                function(exit) {
-                  return exit
-                    .transition()
-                    .duration(100)
+                    .style('opacity', 1)},
+
+                update=>{ console.log(' update selection' , update.size()); return update},
+
+                exit=>exit
+                    // .transition()
+                    // .duration(100)
                     .attr('d',emptyArc)
-                    .style("opacity", 0)
+                    // .style("opacity", 0)
                     .on('end', function() {
-                      d3.select(this).remove();
-                    });
+                        d3.select(this).remove();
+                    })
+                );
+
+            arcs.style("opacity", function(d) {
+                return d.data.opacity;
+            })
+            .transition()
+            .duration(1000)
+            .attrTween('d', function(d) {
+            var i = d3.interpolate(local.get(this), d);
+            local.set(this, i(0));
+            return function(t) {
+                return arc(i(t));
+            };
+            })
+            .attr('d',arc)
+            .attr('stroke',function(d){
+                if(d.data.dummy){
+                    return 'black'
+                }else{
+                    return 'white'
                 }
-              )
-              .on("click", function(event, d) {
+                })
+                .attr("stroke-width", 0.5)
+                .style("stroke-dasharray", function(d){
+                    if(d.data.dummy){
+                        return ("1,3")
+                    }
+                })
+            
+            .style('fill', function(d) {
+                if(d.data.dummy){
+                    return 'url(#diagonal-stripe-3)'; //why not working
+                }else{
+                    return d.data.color;
+                }
+            })
+            
+            arcs.on("click", function(event, d) {
                 console.log(d.data);
                 config.setData(d.data.time);
                 config.setData(d.data.time);
@@ -511,32 +555,9 @@ var config =
                 d3.select("#tooltip")
                 .style("opacity", 0);
             })
-            .transition()
-            .duration(1000)
-            .attr('stroke',function(d){
-            if(d.data.dummy){
-                return 'black'
-            }else{
-                return 'white'
-            }
-            })
-            .attr("stroke-width", 0.5)
-            .style("stroke-dasharray", function(d){
-                if(d.data.dummy){
-                    return ("1,3")
-                }
-            })
-            .attr('d',arc)
-            .style('fill', function(d) {
-                if(d.data.dummy){
-                    return 'url(#diagonal-stripe-3)'; //why not working
-                }else{
-                    return d.data.color;
-                }
-            })
-            .style("opacity", function(d) {
-                return d.data.opacity;
-            });
+            // .transition()
+            // .duration(1000)
+            
           }
           
           updateChart();

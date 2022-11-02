@@ -39,8 +39,7 @@ function read_data(data){
     //sort graphData by time
     sortData();
     config.setData(graphData.rows[0]);
-    // config.setData(graphData.rows[1]);
-    // config.setData(graphData.rows[0]);
+    config.plotPie();
 }
 
 function calculate_sum(statsByTime, stat){
@@ -396,7 +395,6 @@ var config =
         data = generate_current_data(radius, graphData.rows.length, labels, graphData.rows, time);
         console.log(data);
 
-        this.plotPie();
 
     },
     "plotPie": function ()
@@ -454,7 +452,7 @@ var config =
         flat_data(target);
 
 
-        function update() {
+        function updateChart() {
             svg.selectAll('arc')
               .data(piedata)
               .join(
@@ -482,8 +480,9 @@ var config =
                 console.log(d.data);
                 config.setData(d.data.time);
                 config.setData(d.data.time);
+                config.plotPie();
                 event.stopPropagation();
-                update();
+                updateChart();
             })
             .on("mouseover", function (event, d) {
                 d3.select(this)
@@ -540,7 +539,7 @@ var config =
             });
           }
           
-          update();
+          updateChart();
 
           legend
         .selectAll("rect")

@@ -36,9 +36,11 @@ function read_data(data){
     graphData.rows.forEach(row => {
         config.setData(row);
     })
+
     //sort graphData by time
     sortData();
     config.setData(graphData.rows[0]);
+    config.plotPie();
     // config.setData(graphData.rows[1]);
     // config.setData(graphData.rows[0]);
 }
@@ -307,13 +309,6 @@ var config =
     "setData": function (time)
     {   
 
-        document.querySelectorAll('.pieChartSvg').forEach(pie => {
-            pie.remove();
-        });
-        var eElement = document.getElementById('1');
-        var newSvg = document.createElement("svg");
-        newSvg.setAttribute("class","pieChartSvg");  
-        eElement.insertBefore(newSvg, eElement.firstChild);
 
         dataSet = 
         {   
@@ -396,11 +391,21 @@ var config =
         data = generate_current_data(radius, graphData.rows.length, labels, graphData.rows, time);
         // console.log(data);
 
-        this.plotPie();
+        // this.plotPie();
 
     },
     "plotPie": function ()
     {   
+
+        // document.querySelectorAll('.pieChartSvg').forEach(pie => {
+        //     pie.remove();
+        // });
+        // var eElement = document.getElementById('1');
+        // var newSvg = document.createElement("svg");
+        // newSvg.setAttribute("class","pieChartSvg");  
+        // eElement.insertBefore(newSvg, eElement.firstChild);
+
+
         var width = d3.select('.pieChart').node().getBoundingClientRect().width;
         var height = width;
 
@@ -458,6 +463,8 @@ var config =
         function updateChart() {
             // console.trace(' calling updatechart')
 
+            console.log('pie data is ', piedata)
+
             var local = d3.local();
             console.log(' pieData', piedata)
       
@@ -490,15 +497,16 @@ var config =
                 .style("opacity", function(d) {
                     return d.data.opacity;
                 })
-                .transition()
-                .duration(1000)
-                .attrTween('d', function(d) {
-                var i = d3.interpolate(local.get(this), d);
-                local.set(this, i(0));
-                return function(t) {
-                    return arc(i(t));
-                };
-                })
+                // .transition()
+                // .duration(1000)
+                // .attrTween('d', function(d) {
+                // var i = d3.interpolate(local.get(this), d);
+                // local.set(this, i(0));
+                // return function(t) {
+                //     return arc(i(t));
+                // };
+                // })
+                .attr('d',arc)
                 .attr('stroke',function(d){
                     if(d.data.dummy){
                         return 'black'

@@ -39,7 +39,7 @@ function read_data(data){
     //sort graphData by time
     sortData();
     config.setData(graphData.rows[0]);
-    config.plotPie();
+    config.plotPie(graphData.rows[0]);
 }
 
 function calculate_sum(statsByTime, stat){
@@ -397,7 +397,7 @@ var config =
 
 
     },
-    "plotPie": function ()
+    "plotPie": function (time)
     {   
         var width = d3.select('.pieChart').node().getBoundingClientRect().width;
         var height = width;
@@ -437,14 +437,22 @@ var config =
         .innerRadius(0)
         .outerRadius(0);
         
-        
         var pie = d3.pie()
         .value(function(d) { 
             return d.value; 
         })
-        .sort(function(a, b) {
-            return a.value - b.value;
-        });
+
+        if(graphData.rows[0] == time){
+            pie.sort(function(a, b) {
+                    return a.value - b.value;
+                });
+        }else{
+            pie.sort(null);
+        }
+
+        // .sort(function(a, b) {
+        //     return a.value - b.value;
+        // });
 
         var target = pie(data[0]);
         data = [].concat(...data);
@@ -488,17 +496,16 @@ var config =
             arcs.style("opacity", function(d) {
                 return d.data.opacity;
             })
-            .attr('d',arc) //disable the animation for drawing arc for now
             .transition()
             .duration(1000)
-            // .attr('d',arc)
             .attrTween('d', function(d) {
-                var i = d3.interpolate(local.get(this), d);
+                var i = d3.interpolate(this._current, d);
                 local.set(this, i(0));
                 return function(t) {
                     return arc(i(t));
                 };
             })
+            //.attr('d',arc)
             .attr('stroke',function(d){
                 if(d.data.dummy){
                     return 'black'
@@ -525,7 +532,7 @@ var config =
                 console.log(d.data);
                 config.setData(d.data.time);
                 config.setData(d.data.time);
-                config.plotPie();
+                config.plotPie(d.data.time);
                 //event.stopPropagation();
                 //updateChart();
             })

@@ -9,6 +9,7 @@ var dataSet =
     "radius": []
 };
 var piedata = [];
+var firstTimeOrder = [];
 
 const colorRangeInfo = {
     colorStart: 0,
@@ -205,7 +206,7 @@ function generate_current_data(radius, length, labels, timeList, currTime){
                     if(radius[index].time == currTime){
                         radius[index].opacity = 1;
                     }else{
-                        radius[index].opacity = 0.7;
+                        radius[index].opacity = 0.5;
                     }
                     // delete radius[index].radius;
                     currData.push(shallow_copy(radius[index]));
@@ -227,7 +228,7 @@ function generate_current_data(radius, length, labels, timeList, currTime){
                     if(radius[index].time == currTime){
                         radius[index].opacity = 1;
                     }else{
-                        radius[index].opacity = 0.7;
+                        radius[index].opacity = 0.5;
                     }
                     // delete radius[index].rdius;
                     currData.push(shallow_copy(radius[index]));
@@ -388,14 +389,40 @@ var config =
         // console.log(dataSet);
 
         var radius = dataSet.radius;
-
-        console.log(radius);
+        if(time == graphData.rows[0]){
+            radius.sort((a, b) => (a.value > b.value) ? 1 : -1)
+            dataSet.labelList.sort((a, b) => (a.value > b.value) ? 1 : -1)
+            firstTimeOrder = dataSet.labelList;
+        }else{
+            console.log(firstTimeOrder);
+            radius.sort(function(a, b){  
+                return firstTimeOrder.indexOf(a.label) - firstTimeOrder.indexOf(b.label);
+            });
+            dataSet.labelList.sort(function(a, b){  
+                return firstTimeOrder.indexOf(a) - firstTimeOrder.indexOf(b);
+            });
+        }
 
         var labels = dataSet.labelList;
+
+        console.log(radius, labels);
         data = generate_current_data(radius, graphData.rows.length, labels, graphData.rows, time);
         console.log(data);
 
 
+    },
+    "updateData": function ()
+    {   
+        var pie = d3.pie()
+        .value(function(d) { 
+            return d.value; 
+        })
+        .sort(null);
+        
+        var target = pie(data[0]);
+        data = [].concat(...data);
+        piedata = pie(data);
+        flat_data(target);
     },
     "plotPie": function ()
     {   
@@ -436,20 +463,8 @@ var config =
         var emptyArc = d3.arc()
         .innerRadius(0)
         .outerRadius(0);
-        
-        
-        var pie = d3.pie()
-        .value(function(d) { 
-            return d.value; 
-        })
-        .sort(function(a, b) {
-            return a.value - b.value;
-        });
 
-        var target = pie(data[0]);
-        data = [].concat(...data);
-        piedata = pie(data);
-        flat_data(target);
+        config.updateData();
 
 
         function updateChart() {
@@ -488,10 +503,9 @@ var config =
             arcs.style("opacity", function(d) {
                 return d.data.opacity;
             })
-            .attr('d',arc) //disable the animation for drawing arc for now
+            //.attr('d',arc) //disable the animation for drawing arc for now
             .transition()
             .duration(1000)
-            // .attr('d',arc)
             .attrTween('d', function(d) {
                 var i = d3.interpolate(local.get(this), d);
                 local.set(this, i(0));
@@ -499,6 +513,9 @@ var config =
                     return arc(i(t));
                 };
             })
+            // .attr('d', function(d) {
+            //     return arc(d);
+            //   })
             .attr('stroke',function(d){
                 if(d.data.dummy){
                     return 'black'
@@ -525,9 +542,10 @@ var config =
                 console.log(d.data);
                 config.setData(d.data.time);
                 config.setData(d.data.time);
-                config.plotPie();
-                //event.stopPropagation();
-                //updateChart();
+                config.updateData();
+                // config.plotPie();
+                updateChart();
+                event.stopPropagation();
             })
             .on("mouseover", function (event, d) {
                 d3.select(this)

@@ -40,7 +40,7 @@ function read_data(data){
     //sort graphData by time
     sortData();
     config.setData(graphData.rows[0]);
-    config.plotPie();
+    config.plotPie(graphData.rows[0]);
 }
 
 function calculate_sum(statsByTime, stat){
@@ -307,14 +307,6 @@ var config =
     "setData": function (time)
     {   
 
-        // document.querySelectorAll('.pieChartSvg').forEach(pie => {
-        //     pie.remove();
-        // });
-        // var eElement = document.getElementById('1');
-        // var newSvg = document.createElement("svg");
-        // newSvg.setAttribute("class","pieChartSvg");  
-        // eElement.insertBefore(newSvg, eElement.firstChild);
-
         dataSet = 
         {   
             "labelList": [],
@@ -424,7 +416,7 @@ var config =
         piedata = pie(data);
         flat_data(target);
     },
-    "plotPie": function ()
+    "plotPie": function (time)
     {   
         var width = d3.select('.pieChart').node().getBoundingClientRect().width;
         var height = width;
@@ -463,8 +455,18 @@ var config =
         var emptyArc = d3.arc()
         .innerRadius(0)
         .outerRadius(0);
+        
+        
+        var pie = d3.pie()
+        .value(function(d) { 
+            return d.value; 
+        })
+        .sort(null);
 
-        config.updateData();
+        var target = pie(data[0]);
+        data = [].concat(...data);
+        piedata = pie(data);
+        flat_data(target);
 
 
         function updateChart() {
@@ -503,19 +505,15 @@ var config =
             arcs.style("opacity", function(d) {
                 return d.data.opacity;
             })
-            //.attr('d',arc) //disable the animation for drawing arc for now
             .transition()
             .duration(1000)
             .attrTween('d', function(d) {
-                var i = d3.interpolate(local.get(this), d);
+                var i = d3.interpolate(this._current, d);
                 local.set(this, i(0));
                 return function(t) {
                     return arc(i(t));
                 };
             })
-            // .attr('d', function(d) {
-            //     return arc(d);
-            //   })
             .attr('stroke',function(d){
                 if(d.data.dummy){
                     return 'black'
@@ -542,10 +540,9 @@ var config =
                 console.log(d.data);
                 config.setData(d.data.time);
                 config.setData(d.data.time);
-                config.updateData();
-                // config.plotPie();
-                updateChart();
-                event.stopPropagation();
+                config.plotPie();
+                //event.stopPropagation();
+                //updateChart();
             })
             .on("mouseover", function (event, d) {
                 d3.select(this)

@@ -478,7 +478,7 @@ var config =
 
 
             let arcs = svg.selectAll('.arcWedge')
-            .data(piedata,d=>d.data.time + '_' + d.data.label )
+            .data(piedata,d=>d.data.label + '_' + d.data.time)
             .join(enter=>  {
                 console.log(' enter selection' , enter.size());
                     return enter
@@ -508,12 +508,14 @@ var config =
             .transition()
             .duration(1000)
             .attrTween('d', function(d) {
-                var i = d3.interpolate(this._current, d);
-                local.set(this, i(0));
+                var interpolate = d3.interpolate(this._current, d);
+                var _this = this;
                 return function(t) {
-                    return arc(i(t));
+                    _this._current = interpolate(t);
+                    return arc(_this._current);
                 };
             })
+            // .attr('d',arc)
             .attr('stroke',function(d){
                 if(d.data.dummy){
                     return 'black'

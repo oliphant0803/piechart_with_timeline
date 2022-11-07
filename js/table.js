@@ -1,7 +1,6 @@
 var cat_title;
 
 function create_table(data){
-    data = JSON.parse(data);
     var keys = Object.keys(data[0]);
     console.log(keys);
     cat_title = keys[2];

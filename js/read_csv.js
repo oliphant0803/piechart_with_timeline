@@ -24,7 +24,7 @@ function get_rows(data){
     var key = Object.keys(data[0])[0];
     var rows = data.map( (value) => value[key]).filter( (value, index, _data) => _data.indexOf(value) == index);
     rows = rows.filter(function( element ) {
-        return element !== undefined && element !== '' &&  element !== '';
+        return element !== undefined && element !== '' &&  element !== ' ';
     });
     return rows;
 }
@@ -39,7 +39,50 @@ function get_titles(data){
     titles = titles.filter(function( element ) {
         return element !== undefined && element !== '';
     });
+    for(var i=0; i<titles.length; i++){
+        titles[i] = titles[i].replace(/["]+/g, '')
+    }
     return titles;
+}
+
+function clean_data(data, filterBy){
+    var keys = Object.keys(data[0]);
+    for(var i=0; i<data.length; i++){
+        if(data[i][keys[0]] == undefined || data[i][keys[1]] == undefined || data[i][keys[2]] == undefined){
+            data.splice(i, 1);
+            continue;
+        }
+        data[i][keys[0]] = data[i][keys[0]].replace(/["]+/g, '')
+        data[i][keys[1]] = data[i][keys[1]].replace(/["]+/g, '')
+        data[i][keys[2]] = data[i][keys[2]].replace(/["]+/g, '')
+        switch(filterBy){
+            case "year":
+                
+                let date = new Date(data[i][keys[0]]);
+                const timestamp = date.getTime();
+                date = new Date(timestamp);
+                data[i][keys[0]] = date.getFullYear();
+                    
+            
+                break;
+    
+            case "month":
+                break;
+            case "day":
+                break;
+            case "hour":
+                break;
+            case "minute":
+                break;
+            case "second":
+                break;
+        }
+        if(data[i][keys[0]] == ' ' || data[i][keys[1]] == ' ' || data[i][keys[2]] == ' ' ||
+        data[i][keys[0]] == '' || data[i][keys[1]] == '' || data[i][keys[2]] == ''){
+            data.splice(i, 1);
+        }
+    }
+    return data;
 }
 
 myForm.addEventListener("submit", function (e) {
@@ -49,7 +92,7 @@ myForm.addEventListener("submit", function (e) {
 
     reader.onload = function (e) {
         const text = e.target.result;
-        const data = csvToArray(text);
+        var data = csvToArray(text);
         //console.log(JSON.stringify(data));
         
         //cleanup dom
@@ -57,9 +100,11 @@ myForm.addEventListener("submit", function (e) {
         var table = document.createElement('table');
         table.setAttribute("id", "datatables");
         document.getElementById('dataBlock').appendChild(table);
-
-        create_table(JSON.stringify(data));
-        read_data(JSON.stringify(data));
+        
+        data = JSON.parse(JSON.stringify(data))
+        data = clean_data(data, "year");
+        create_table(data);
+        read_data(data);
         const datatablesSimple = document.getElementById('datatables');
         if (datatablesSimple) {
             new simpleDatatables.DataTable(datatablesSimple);

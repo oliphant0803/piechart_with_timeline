@@ -19,7 +19,6 @@ const colorRangeInfo = {
 
 
 function read_data(data){
-    data = JSON.parse(data);
     graphData.cols = [];
     graphData.rows = get_rows(data);
     graphData.stats = get_stats(data);
@@ -40,7 +39,7 @@ function read_data(data){
     //sort graphData by time
     sortData();
     config.setData(graphData.rows[0]);
-    config.plotPie(graphData.rows[0]);
+    config.plotPie();
 }
 
 function calculate_sum(statsByTime, stat){
@@ -56,7 +55,9 @@ function count_freq(data, title, index, colors){
     var stats = get_stats(data);
     graphData.cols[index].stats = [];
     graphData.cols[index].color = colors[index];
-    var filtered = data.filter(function(x) { return x[stats[2]] == title;})
+    var filtered = data.filter(function(x) { 
+        return x[stats[2]] == title;
+    })
     if (filtered.length > 0){
         graphData.rows.forEach((time) => {
             var statsByTime = filtered.filter(function(x) { return x[stats[0]] == time});
@@ -325,7 +326,7 @@ var config =
             {
                 if (filtered[0].frequency > 0)
                 {   
-                    dataSet.labelList.push(graphData.cols[i].title);
+                    dataSet.labelList.push({label: graphData.cols[i].title, value: filtered[0].frequency});
                     dataSet.labels.push({title: graphData.cols[i].title, color: graphData.cols[i].color});
                     dataSet.stats.push({label: graphData.cols[i].title, value: filtered[0].frequency, radius: 0, color: graphData.cols[i].color});
                     dataSet.radius.push({label: graphData.cols[i].title, value: filtered[0].frequency, radius: graphData.cols[i].stats[0].average, color: graphData.cols[i].color}); 	
@@ -384,18 +385,18 @@ var config =
         if(time == graphData.rows[0]){
             radius.sort((a, b) => (a.value > b.value) ? 1 : -1)
             dataSet.labelList.sort((a, b) => (a.value > b.value) ? 1 : -1)
-            firstTimeOrder = dataSet.labelList;
+            firstTimeOrder = dataSet.labelList.map(function(d) { return d["label"]; });
         }else{
             console.log(firstTimeOrder);
             radius.sort(function(a, b){  
                 return firstTimeOrder.indexOf(a.label) - firstTimeOrder.indexOf(b.label);
             });
             dataSet.labelList.sort(function(a, b){  
-                return firstTimeOrder.indexOf(a) - firstTimeOrder.indexOf(b);
+                return firstTimeOrder.indexOf(a.label) - firstTimeOrder.indexOf(b.label);
             });
         }
 
-        var labels = dataSet.labelList;
+        var labels = dataSet.labelList.map(function(d) { return d["label"]; });
 
         console.log(radius, labels);
         data = generate_current_data(radius, graphData.rows.length, labels, graphData.rows, time);
@@ -416,7 +417,7 @@ var config =
         piedata = pie(data);
         flat_data(target);
     },
-    "plotPie": function (time)
+    "plotPie": function ()
     {   
         var width = d3.select('.pieChart').node().getBoundingClientRect().width;
         var height = width;

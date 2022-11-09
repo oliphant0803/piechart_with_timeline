@@ -417,6 +417,10 @@ var config =
         piedata = pie(data);
         flat_data(target);
     },
+    "compare": function (time)
+    {
+        console.log(time);
+    },
     "plotPie": function ()
     {   
         var width = d3.select('.pieChart').node().getBoundingClientRect().width;
@@ -432,8 +436,6 @@ var config =
 
         //Plot the pie chart
         var svg =  d3.select('.pieChartSvg')
-        // .append('svg')
-        .attr('class','pieChartSvg')
         .attr('width',width)
         .attr('height',height)
 
@@ -567,15 +569,22 @@ var config =
                 .attr("stroke-width", 0.5)
                 d3.select("#tooltip")
                 .style("opacity", 0);
-                d3.select('.custom-menu')
-                .style("opacity", 0);
             })
             .on("contextmenu", function (event, d) {
                 event.preventDefault();
                 d3.select('.custom-menu')
-                .style("left", event.pageX-width/4 + "px")
-                .style("top", event.pageY-width/4 + "px")
+                .style("left", event.pageX + "px")
+                .style("top", event.pageY + "px")
                 .style("opacity", 1);
+                //check if compare is clicked
+                d3.select('#compare')
+                .on("click", function(){
+                    d3.select('.custom-menu')
+                    .style("opacity", 0);
+                    d3.select("#tooltip")
+                    .style("opacity", 0);
+                    config.compare(d.data.time);
+                })
                 d3.select("#tooltip")
                 .style("opacity", 0);
             })
@@ -583,6 +592,12 @@ var config =
           }
           
           updateChart();
+
+          d3.select('.pieChart')
+          .on("click", function (event, d){
+            d3.select('.custom-menu')
+            .style("opacity", 0);
+          });
 
           legend
         .selectAll("rect")

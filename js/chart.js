@@ -567,6 +567,17 @@ var config =
                 .attr("stroke-width", 0.5)
                 d3.select("#tooltip")
                 .style("opacity", 0);
+                d3.select('.custom-menu')
+                .style("opacity", 0);
+            })
+            .on("contextmenu", function (event, d) {
+                event.preventDefault();
+                d3.select('.custom-menu')
+                .style("left", event.pageX-width/4 + "px")
+                .style("top", event.pageY-width/4 + "px")
+                .style("opacity", 1);
+                d3.select("#tooltip")
+                .style("opacity", 0);
             })
             
           }

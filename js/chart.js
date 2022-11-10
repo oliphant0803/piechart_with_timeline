@@ -419,7 +419,116 @@ var config =
     },
     "compare": function (time)
     {
-        console.log(time);
+        console.log("compare " + time);
+        //find the data of the given time
+        var compareSet = {
+            "labels": [],
+            "stats": []
+        }
+        for (var i = 0; i < graphData.cols.length; i++)
+        {
+            var filtered = graphData.cols[i].stats.filter(function(x) { return x.time == time;})
+            // console.log(filtered);
+            if (filtered.length > 0)
+            {
+                if (filtered[0].frequency > 0)
+                {   
+                    compareSet.labels.push({title: graphData.cols[i].title, color: graphData.cols[i].color});
+                    compareSet.stats.push({label: graphData.cols[i].title, value: filtered[0].frequency, color: graphData.cols[i].color});
+                }
+            } 
+        }
+
+        var width = 600;
+        var height = width;
+
+        var chart = d3.select(".pieChartSvgCompare");
+        var legend = d3.select(".pieLegendSvgCompare");
+
+        chart = d3.select(".pieChartSvgCompare")
+        .attr('width',width)
+        .attr('height',height)
+
+        legend
+        .html("")
+        .style("height", function(d) {
+            return ((config.dataSpacing * dataSet.labels.length) + 2) + "em";
+        }); 
+
+        var pie = 
+        d3.pie()
+        .sort(null)
+        .value(function(d) 
+        {
+            return d.value; 
+        });
+
+
+        var arc = d3.arc()
+        .innerRadius(0)
+        .outerRadius(Math.min(width, height) / 2);
+
+        console.log(compareSet.stats);
+
+        
+        chart.selectAll('.arcCompare')
+        .data(pie(compareSet.stats))
+        .enter()
+        .append('path')
+        .classed('arcCompare',true)
+        .attr('transform', 'translate(' + width/2 +  ',' + height/2 +')')
+        .attr('d',arc)
+        .style('fill', function(d) {
+            return d.data.color;
+        })
+
+        
+
+
+        legend
+        .selectAll("rect")
+        .data(compareSet.labels)
+        .enter()
+        .append("rect")
+        .attr("x", function(d) 
+        {
+            return config.dataSpacing + "em";
+        })
+        .attr("y", function(d, i) 
+        {
+            return ((config.dataSpacing * i) + 1)  + "em";
+        })
+        .attr("fill", function(d) 
+        {
+            return d.color;
+        })
+        .attr("width", function(d) 
+        {
+            return (config.dataSpacing / 2) + "em";
+        })
+        .attr("height", function(d) 
+        {
+            return (config.dataSpacing / 2) + "em";
+        });
+
+        legend
+        .selectAll("text")
+        .data(compareSet.labels)
+        .enter()
+        .append("text")
+        .attr("x", function(d) 
+        {
+            return (config.dataSpacing * 2) + "em";
+        })
+        .attr("y", function(d, i) 
+        {
+            return ((config.dataSpacing * i) + 2)  + "em";
+        })
+        .text(function(d) 
+        {
+            return d.title;
+        });
+
     },
     "plotPie": function ()
     {   

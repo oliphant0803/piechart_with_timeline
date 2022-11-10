@@ -57,32 +57,7 @@
                                     <div class="card-header">
                                         <i class="fas fa-chart-pie me-1"></i>
                                         Pie Chart
-                                        <button type="button" id="enlarge" class="btn btn-secondary float-end" data-bs-toggle="modal" data-bs-target="#myModal">
-                                            Enlarge Graph
-                                        </button>
-                                        <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog modal-fullscreen">
-                                              <div class="modal-content">
-                                                <div class="modal-header">
-                                                  <h5 class="modal-title" id="myModalLabel">Chart title</h5>
-                                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <!-- <div class="pieChartLarge" id="2">
-                                                        <svg class="pieChartSvgLarge">
-                                
-                                                        </svg>
-                                                        <svg class="pieLegendSvgLarge">
-                                
-                                                        </svg>
-                                                    </div> -->
-                                                </div>
-                                                <div class="modal-footer">
-                                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                </div>
-                                              </div>
-                                            </div>
-                                        </div>
+                                        
                                     </div>
                                     <div class="card-body pieChart" id="1">
                                         <svg class="pieChartSvg">
@@ -133,8 +108,36 @@
         </div>
 
         <ul class='custom-menu'>
-            <li data-action = "compare" id="compare">Compare</li>
+            <li data-action = "compare">
+                <button type="button" id="compare" class="btn btn-secondary float-end" data-bs-toggle="modal" data-bs-target="#myModal">
+                    Compare
+                </button>
+            </li>
         </ul>
+
+        <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-fullscreen">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="myModalLabel">Chart title</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pieChartCompare">
+                        <svg class="pieChartSvgCompare">
+
+                        </svg>
+                        <svg class="pieLegendSvgCompare">
+
+                        </svg>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+        </div>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>

@@ -56,3 +56,13 @@ svg.pieChartSvg{
     border-radius: 5px;
     list-style-type:none;
 }
+
+.selected {
+    opacity: 1 !important;
+    filter: saturate(1) !important;
+}
+
+.arcWedge {
+    opacity: 0.5;
+    filter: saturate(0);
+}

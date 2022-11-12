@@ -164,7 +164,7 @@ function update_graphData(radius, timeList, currTime){
             });
             if(dummy.time > currTime){
                 //console.log(getAvg(i));
-                dummy.average = 400000; 
+                dummy.average = find_inner(radius); 
             }else
             if(index == 0){
                 //the next one
@@ -181,6 +181,14 @@ function update_graphData(radius, timeList, currTime){
     }
 }
 
+function find_inner(radius){
+    var sumR = 0;
+    radius.forEach(r => {
+        sumR += r.radius;
+    });
+    return sumR/radius.length;
+}
+
 // 
 function generate_current_data(radius, length, labels, timeList, currTime){ 
     update_graphData(radius, timeList, currTime)
@@ -192,10 +200,10 @@ function generate_current_data(radius, length, labels, timeList, currTime){
         for(var j=0; j<radius.length; j++){
             var index = labels.indexOf(radius[j]["label"]);
             if(index != -1){
-                //currData.push(radius[index]);
                 if(i==0){
-                    radius[index].inner = 0;
-                    radius[index].outer = radius[index].radius;
+                    //compute the default inner circle
+                    radius[index].inner = find_inner(radius);
+                    radius[index].outer = radius[index].inner + radius[index].radius;
                     var time = get_time(radius[j]["label"], radius[index].radius)
                     radius[index].time = time;
                     if(check_dummy(radius[j]["label"], time)){
@@ -205,9 +213,9 @@ function generate_current_data(radius, length, labels, timeList, currTime){
                     }
                     // console.log(radius[index].time);
                     if(radius[index].time == currTime){
-                        radius[index].opacity = 1;
+                        radius[index].selected = true;
                     }else{
-                        radius[index].opacity = 0.5;
+                        radius[index].selected = false;
                     }
                     // delete radius[index].radius;
                     currData.push(shallow_copy(radius[index]));
@@ -227,9 +235,9 @@ function generate_current_data(radius, length, labels, timeList, currTime){
                     }
                     // console.log(radius[index].time);
                     if(radius[index].time == currTime){
-                        radius[index].opacity = 1;
+                        radius[index].selected = true;
                     }else{
-                        radius[index].opacity = 0.5;
+                        radius[index].selected = false;
                     }
                     // delete radius[index].rdius;
                     currData.push(shallow_copy(radius[index]));
@@ -530,6 +538,34 @@ var config =
         });
 
     },
+    "align": function (piedata, time)
+    {
+        //adjust the inner and outer radius for all the pie data
+
+        //find the largest value to align
+        var filteredData = piedata.filter(d => {
+            return d.data.time == time;
+          });
+        var max = Math.max(...filteredData.map(d => d.data.inner))
+        var diffArr = [];
+        piedata.forEach(d => {
+            if(d.data.time == time){
+                diffArr.push({"title": d.data.label, "diff": max-d.data.inner});
+            }
+        });
+
+        //update other data correspondingly
+        piedata.forEach(d => {
+            diffArr.forEach(a => {
+                if(a.title == d.data.label){
+                    d.data.inner += a.diff;
+                    d.data.outer += a.diff;
+                }
+            });
+        });
+        return piedata;
+
+    },
     "plotPie": function ()
     {   
         var width = d3.select('.pieChart').node().getBoundingClientRect().width;
@@ -599,8 +635,7 @@ var config =
                     .each(function(d) {
                         local.set(this, d)
                     })
-                    .attr('transform', 'translate(' + width/2 +  ',' + height/2 +')')
-                    .style('opacity', 1)},
+                    .attr('transform', 'translate(' + width/2 +  ',' + height/2 +')')},
 
                 update=>{ console.log(' update selection' , update.size()); return update},
 
@@ -608,14 +643,17 @@ var config =
                     .transition()
                     .duration(100)
                     .attr('d',emptyArc)
-                    .style("opacity", 0)
                     .on('end', function() {
                         d3.select(this).remove();
                     })
                 );
 
-            arcs.style("opacity", function(d) {
-                return d.data.opacity;
+            arcs.each(function(d, i) {
+                if(d.data.selected){
+                    d3.select(this).classed('selected',true)
+                }else{
+                    d3.select(this).classed('selected',false)
+                }
             })
             .transition()
             .duration(1000)
@@ -693,6 +731,16 @@ var config =
                     d3.select("#tooltip")
                     .style("opacity", 0);
                     config.compare(d.data.time);
+                })
+                d3.select('#align')
+                .on("click", function(){
+                    d3.select('.custom-menu')
+                    .style("opacity", 0);
+                    d3.select("#tooltip")
+                    .style("opacity", 0);
+                    config.align(piedata, d.data.time);
+                    updateChart();
+
                 })
                 d3.select("#tooltip")
                 .style("opacity", 0);

@@ -10,6 +10,7 @@ var dataSet =
 };
 var piedata = [];
 var firstTimeOrder = [];
+var alignMode = false;
 
 const colorRangeInfo = {
     colorStart: 0,
@@ -545,7 +546,7 @@ var config =
         //find the largest value to align
         var filteredData = piedata.filter(d => {
             return d.data.time == time;
-          });
+        });
         var max = Math.max(...filteredData.map(d => d.data.inner))
         var diffArr = [];
         piedata.forEach(d => {
@@ -738,8 +739,17 @@ var config =
                     .style("opacity", 0);
                     d3.select("#tooltip")
                     .style("opacity", 0);
-                    config.align(piedata, d.data.time);
-                    updateChart();
+                    alignMode = !alignMode;
+                    if(!alignMode){
+                        d3.select('#align').html("back");
+                        config.align(piedata, d.data.time);
+                        updateChart();
+                    }else{
+                        d3.select('#align').html("align");
+                        config.setData(d.data.time);
+                        config.setData(d.data.time);
+                        config.plotPie();
+                    }
 
                 })
                 d3.select("#tooltip")

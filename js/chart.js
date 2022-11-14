@@ -690,6 +690,7 @@ var config =
             })
             
             arcs.on("click", function(event, d) {
+                alignMode = false;
                 console.log(d.data);
                 config.setData(d.data.time);
                 config.setData(d.data.time);
@@ -720,10 +721,12 @@ var config =
             })
             .on("contextmenu", function (event, d) {
                 event.preventDefault();
-                d3.select('.custom-menu')
-                .style("left", event.pageX + "px")
-                .style("top", event.pageY + "px")
-                .style("opacity", 1);
+                if(d.data.selected){
+                    d3.select('.custom-menu')
+                    .style("left", event.pageX + "px")
+                    .style("top", event.pageY + "px")
+                    .style("opacity", 1);
+                }
                 //check if compare is clicked
                 d3.select('#compare')
                 .on("click", function(){
@@ -740,7 +743,7 @@ var config =
                     d3.select("#tooltip")
                     .style("opacity", 0);
                     alignMode = !alignMode;
-                    if(!alignMode){
+                    if(alignMode == true){
                         d3.select('#align').html("back");
                         config.align(piedata, d.data.time);
                         updateChart();

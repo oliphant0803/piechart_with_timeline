@@ -758,6 +758,38 @@ var config =
                 d3.select("#tooltip")
                 .style("opacity", 0);
             })
+
+            var paras = document.getElementsByClassName('arcLabelWedge');
+
+            while(paras[0]) {
+                paras[0].parentNode.removeChild(paras[0]);
+            }
+            
+            let catLabelArcs = svg.selectAll('.arcLabelWedge')
+            .data(piedata.slice(-dataSet.radius.length))
+            .enter()
+            .append('g')
+            .classed('arcLabelWedge',true)
+            .attr('transform', 'translate(' + width/2 +  ',' + height/2 +')')
+
+            catLabelArcs.append('path')
+            .attr('d', arc)
+            .attr('fill', 'none')
+
+            catLabelArcs.append('text')
+            .attr("transform", function(d){
+                d.innerRadius = d.data.inner;
+                d.outerRadius = d.data.outer;
+                return "translate(" + arc.centroid(d) + ")";
+            })
+            .attr("text-anchor", "middle")
+            .text( function(d) {
+                console.log(d);
+                if(!isNaN(d.data.label)){
+                    return d.data.label + " " + cat_title;
+                }
+                return d.label;     
+            });
             
           }
           
@@ -768,6 +800,8 @@ var config =
             d3.select('.custom-menu')
             .style("opacity", 0);
           });
+
+
 
           legend
         .selectAll("rect")

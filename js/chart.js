@@ -601,6 +601,22 @@ var config =
             return d.data.outer/scale;
         });
 
+        var labelArc = d3.arc()
+        .innerRadius(function (d){
+            return d.data.outer/scale + 20;
+        })
+        .outerRadius(function (d) { 
+            return d.data.outer/scale + 25;
+        });
+
+        var timeArc = d3.arc()
+        .innerRadius(function (d){
+            return d.data.outer/scale - 1; 
+        })
+        .outerRadius(function (d) { 
+            return d.data.outer/scale + 1;
+        });
+
         var emptyArc = d3.arc()
         .innerRadius(0)
         .outerRadius(0);
@@ -666,7 +682,6 @@ var config =
                     return arc(_this._current);
                 };
             })
-            // .attr('d',arc)
             .attr('stroke',function(d){
                 if(d.data.dummy){
                     return 'black'
@@ -764,7 +779,8 @@ var config =
             while(paras[0]) {
                 paras[0].parentNode.removeChild(paras[0]);
             }
-            
+
+            //outer cat label
             let catLabelArcs = svg.selectAll('.arcLabelWedge')
             .data(piedata.slice(-dataSet.radius.length))
             .enter()
@@ -776,20 +792,69 @@ var config =
             .attr('d', arc)
             .attr('fill', 'none')
 
-            catLabelArcs.append('text')
-            .attr("transform", function(d){
-                d.innerRadius = d.data.inner;
-                d.outerRadius = d.data.outer;
-                return "translate(" + arc.centroid(d) + ")";
+            catLabelArcs
+            .append("g:text")
+            .attr("transform", function(d) {
+                return "translate(" + labelArc.centroid(d) + ")rotate(" + angle(d) + ")";
             })
             .attr("text-anchor", "middle")
             .text( function(d) {
-                console.log(d);
                 if(!isNaN(d.data.label)){
                     return d.data.label + " " + cat_title;
                 }
                 return d.label;     
             });
+
+
+            // Computes the angle of an arc, converting from radians to degrees.
+            function angle(d) {
+                var a = (d.startAngle + d.endAngle) * 90 / Math.PI;
+                return a > 90 ? a - 180 : a;
+            }
+
+            //inner time label
+
+            paras = document.getElementsByClassName('arcTimeWedge');
+
+            while(paras[0]) {
+                paras[0].parentNode.removeChild(paras[0]);
+            }
+
+            let selected_data = piedata.filter(function(d) {
+                return d.data.selected == true
+            });
+            
+            let timeLabelArcs = svg.selectAll('.arcTimeWedge')
+            .data(selected_data)
+            .enter()
+            .append('g')
+            .classed('arcTimeWedge',true)
+            .attr('transform', 'translate(' + width/2 +  ',' + height/2 +')')
+
+            timeLabelArcs.append('path')
+            .attr('d', arc)
+            .attr('fill', 'none')
+
+            timeLabelArcs
+            .append("g:text")
+            .attr("transform", function(d) {
+                return "translate(" + labelArc.centroid(d) + ")rotate(" + angle(d) + ")";
+            })
+            .attr("text-anchor", "middle")
+            .text( function(d) {
+                return d.data.time;    
+            });
+
+            // timeLabelArcs
+            // .append("g:text")
+            // .attr("transform", function(d) {
+            //     return "translate(" + timeArc.centroid(d) + ")rotate(" + angle(d) + ")";
+            // })
+            // .attr("text-anchor", "end")
+            // .text( function(d) {
+            //     return d.data.radius;    
+            // });
+            
             
           }
           

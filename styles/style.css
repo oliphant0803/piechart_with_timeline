@@ -66,3 +66,17 @@ svg.pieChartSvg{
     opacity: 0.5;
     filter: saturate(0);
 }
+
+.timeLabelText {
+    font-size:8px;
+    padding-left: 1px;
+    padding-right: 1px;
+}
+
+.flipText {
+    /* -moz-transform: scale(-1, 1);
+    -webkit-transform: scale(-1, 1);
+    -o-transform: scale(-1, 1);
+    -ms-transform: scale(-1, 1);
+    transform: scale(-1, 1); */
+}

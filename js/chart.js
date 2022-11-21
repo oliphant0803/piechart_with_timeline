@@ -609,13 +609,29 @@ var config =
             return d.data.outer/scale + 25;
         });
 
-        var timeArc = d3.arc()
+        var timeOppArc = d3.arc()
         .innerRadius(function (d){
-            return d.data.outer/scale - 1; 
+            return d.data.inner/scale - 2; 
         })
         .outerRadius(function (d) { 
-            return d.data.outer/scale + 1;
+            return d.data.inner/scale - 2;
         });
+
+        var timeFronArc = d3.arc()
+        .innerRadius(function (d){
+            return d.data.inner/scale - 17; 
+        })
+        .outerRadius(function (d) { 
+            return d.data.inner/scale - 2;
+        });
+
+        // var valueFronArc = d3.arc()
+        // .innerRadius(function (d){
+        //     return d.data.outer/scale - 17; 
+        // })
+        // .outerRadius(function (d) { 
+        //     return d.data.outer/scale - 2;
+        // });
 
         var emptyArc = d3.arc()
         .innerRadius(0)
@@ -803,7 +819,12 @@ var config =
                     return d.data.label + " " + cat_title;
                 }
                 return d.label;     
-            });
+            })
+            .filter(function(d) { 
+                return d.startAngle >= 3*Math.PI/2 || d.endAngle >= 3*Math.PI/2; 
+            })
+            .classed("flipText", true)
+
 
 
             // Computes the angle of an arc, converting from radians to degrees.
@@ -836,9 +857,27 @@ var config =
             .attr('fill', 'none')
 
             timeLabelArcs
+            .filter(function(d) { 
+                return d.endAngle >= Math.PI/2; 
+            })
             .append("g:text")
+            .classed('timeLabelText', true)
             .attr("transform", function(d) {
-                return "translate(" + labelArc.centroid(d) + ")rotate(" + angle(d) + ")";
+                return "translate(" + timeOppArc.centroid(d) + ")rotate(" + angle(d) + ")";
+            })
+            .attr("text-anchor", "middle")
+            .text( function(d) {
+                return d.data.time;    
+            });
+
+            timeLabelArcs
+            .filter(function(d) { 
+                return d.endAngle <= Math.PI/2 && d.startAngle <= Math.PI/2; 
+            })
+            .append("g:text")
+            .classed('timeLabelText', true)
+            .attr("transform", function(d) {
+                return "translate(" + timeFronArc.centroid(d) + ")rotate(" + angle(d) + ")";
             })
             .attr("text-anchor", "middle")
             .text( function(d) {
@@ -848,9 +887,9 @@ var config =
             // timeLabelArcs
             // .append("g:text")
             // .attr("transform", function(d) {
-            //     return "translate(" + timeArc.centroid(d) + ")rotate(" + angle(d) + ")";
+            //     return "translate(" + valueFronArc.centroid(d) + ")rotate(" + angle(d) + ")";
             // })
-            // .attr("text-anchor", "end")
+            // .attr("text-anchor", "front")
             // .text( function(d) {
             //     return d.data.radius;    
             // });

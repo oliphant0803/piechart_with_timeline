@@ -611,18 +611,18 @@ var config =
 
         var timeOppArc = d3.arc()
         .innerRadius(function (d){
-            return d.data.inner/scale - 2; 
+            return d.data.outer/scale + 17; 
         })
         .outerRadius(function (d) { 
-            return d.data.inner/scale - 2;
+            return d.data.outer/scale + 2;
         });
 
         var timeFronArc = d3.arc()
         .innerRadius(function (d){
-            return d.data.inner/scale - 17; 
+            return d.data.outer/scale + 2; 
         })
         .outerRadius(function (d) { 
-            return d.data.inner/scale - 2;
+            return d.data.outer/scale + 2;
         });
 
         // var valueFronArc = d3.arc()
@@ -857,6 +857,9 @@ var config =
             .attr('fill', 'none')
 
             timeLabelArcs
+            .filter(function(d) {
+                return d.endAngle - d.startAngle >= Math.PI/6; 
+            })
             .filter(function(d) { 
                 return d.endAngle >= Math.PI/2; 
             })
@@ -867,10 +870,13 @@ var config =
             })
             .attr("text-anchor", "middle")
             .text( function(d) {
-                return d.data.time;    
+                return d.data.radius;    
             });
 
             timeLabelArcs
+            .filter(function(d) {
+                return d.endAngle - d.startAngle >= Math.PI/6; 
+            })
             .filter(function(d) { 
                 return d.endAngle <= Math.PI/2 && d.startAngle <= Math.PI/2; 
             })
@@ -881,7 +887,7 @@ var config =
             })
             .attr("text-anchor", "middle")
             .text( function(d) {
-                return d.data.time;    
+                return d.data.radius;    
             });
 
             // timeLabelArcs

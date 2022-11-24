@@ -611,27 +611,20 @@ var config =
 
         var timeOppArc = d3.arc()
         .innerRadius(function (d){
-            return d.data.inner/scale - 2; 
+            return d.data.outer/scale + 17; 
         })
         .outerRadius(function (d) { 
-            return d.data.inner/scale - 2;
+            return d.data.outer/scale + 2;
         });
 
         var timeFronArc = d3.arc()
         .innerRadius(function (d){
-            return d.data.inner/scale - 17; 
+            return d.data.outer/scale + 2; 
         })
         .outerRadius(function (d) { 
-            return d.data.inner/scale - 2;
+            return d.data.outer/scale + 2;
         });
 
-        // var valueFronArc = d3.arc()
-        // .innerRadius(function (d){
-        //     return d.data.outer/scale - 17; 
-        // })
-        // .outerRadius(function (d) { 
-        //     return d.data.outer/scale - 2;
-        // });
 
         var emptyArc = d3.arc()
         .innerRadius(0)
@@ -858,7 +851,7 @@ var config =
 
             timeLabelArcs
             .filter(function(d) { 
-                return d.endAngle >= Math.PI/2; 
+                return d.endAngle >= Math.PI/2 && d.endAngle - d.startAngle >= Math.PI/6; 
             })
             .append("g:text")
             .classed('timeLabelText', true)
@@ -867,12 +860,12 @@ var config =
             })
             .attr("text-anchor", "middle")
             .text( function(d) {
-                return d.data.time;    
+                return d.data.radius;    
             });
 
             timeLabelArcs
             .filter(function(d) { 
-                return d.endAngle <= Math.PI/2 && d.startAngle <= Math.PI/2; 
+                return d.endAngle <= Math.PI/2 && d.startAngle <= Math.PI/2 && d.endAngle - d.startAngle >= Math.PI/6; 
             })
             .append("g:text")
             .classed('timeLabelText', true)
@@ -881,18 +874,72 @@ var config =
             })
             .attr("text-anchor", "middle")
             .text( function(d) {
-                return d.data.time;    
+                return d.data.radius;    
             });
 
-            // timeLabelArcs
-            // .append("g:text")
-            // .attr("transform", function(d) {
-            //     return "translate(" + valueFronArc.centroid(d) + ")rotate(" + angle(d) + ")";
-            // })
-            // .attr("text-anchor", "front")
-            // .text( function(d) {
-            //     return d.data.radius;    
-            // });
+            timeLabelArcs
+            .filter(function(d) { 
+                return d.endAngle - d.startAngle < Math.PI/6; 
+            })
+            .append("g:text")
+            .attr("text-anchor", "middle")
+            .attr("x", function(d) {
+                var a = d.startAngle + (d.endAngle - d.startAngle)/2 - Math.PI/2;
+                d.cx = Math.cos(a) * (radius - 75);
+                return d.x = Math.cos(a) * (radius - 20);
+            })
+            .attr("y", function(d) {
+                var a = d.startAngle + (d.endAngle - d.startAngle)/2 - Math.PI/2;
+                d.cy = Math.sin(a) * (radius - 75);
+                return d.y = Math.sin(a) * (radius - 20);
+            })
+            .text(function(d) { 
+                return d.data.radius; 
+            })
+            .each(function(d) {
+                var bbox = this.getBBox();
+                d.sx = d.x - bbox.width/2 - 2;
+                d.ox = d.x + bbox.width/2 + 2;
+                d.sy = d.oy = d.y + 5;
+            });
+
+            timeLabelArcs
+            .append("defs")
+            .append("marker")
+            .attr("id", "circ")
+            .attr("markerWidth", 6)
+            .attr("markerHeight", 6)
+            .attr("refX", 3)
+            .attr("refY", 3)
+            .append("circle")
+            .attr("cx", 3)
+            .attr("cy", 3)
+            .attr("r", 3);
+
+            timeLabelArcs
+            .selectAll("path.pointer")
+            .filter(function(d) { 
+                return d.endAngle - d.startAngle < Math.PI/6; 
+            })
+            .append("path")
+            .attr("class", "pointer")
+            .style("fill", "none")
+            .style("stroke", "black")
+            .attr("marker-end", "url(#circ)")
+            .attr("d", function(d) {
+                if(d.cx > d.ox) {
+                    return "M" + d.sx + "," + d.sy + "L" + d.ox + "," + d.oy + " " + d.cx + "," + d.cy;
+                } else {
+                    return "M" + d.ox + "," + d.oy + "L" + d.sx + "," + d.sy + " " + d.cx + "," + d.cy;
+                }
+            });
+
+            timeLabelArcs
+            .append("g:text")
+            .attr("text-anchor", "middle")
+            .text( function(d) {
+                return d.data.time;    
+            });
             
             
           }

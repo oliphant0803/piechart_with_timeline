@@ -54,6 +54,7 @@ function zoomChart() {
             count += 1;
         }
       });
+    //   console.log(count);
       area.select(".brush").call(brush.move, null) // This remove the grey brush area as soon as the selection has been done
       if(count == 0){
         return
@@ -77,7 +78,17 @@ function zoomChart() {
     config.setData(currTime);
     config.setData(currTime);
     piedata = piedata.slice(0, zoomIndex+1);
+    console.log(piedata);
     config.prepareChart();
+    //change scale
+    var max = 0;
+    piedata.forEach(d => {
+        if(d.data.outer > max){
+            max = d.data.outer;
+        }
+    });
+    scale = max/width*2;
     config.plotPie();
   }
+
 

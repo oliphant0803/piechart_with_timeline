@@ -11,12 +11,26 @@ var dataSet =
 var piedata = [];
 var firstTimeOrder = [];
 var alignMode = false;
+var width = d3.select('.pieChart').node().getBoundingClientRect().width;
+var height = width;
 
 const colorRangeInfo = {
     colorStart: 0,
     colorEnd: 1,
     useEndAsStart: false,
 }; 
+
+var currTime;
+var sumA;
+var scale;
+var svg;
+var legend;
+var arc;
+var labelArc;
+var timeOppArc;
+var timeFronArc;
+var emptyArc;
+var pie;
 
 
 function read_data(data){
@@ -39,7 +53,10 @@ function read_data(data){
     })
     //sort graphData by time
     sortData();
+    currTime = graphData.rows[0];
     config.setData(graphData.rows[0]);
+    config.prepareChart();
+    config.prepareData();
     config.plotPie();
 }
 
@@ -567,25 +584,21 @@ var config =
         return piedata;
 
     },
-    "plotPie": function ()
-    {   
-        var width = d3.select('.pieChart').node().getBoundingClientRect().width;
-        var height = width;
-
-        var sumA = 0;
+    "prepareChart": function ()
+    {
+        sumA = 0;
         for(var i=0; i<dataSet.radius.length; i++){
             sumA += dataSet.radius[i].value;
         }
 
-        var scale = reScale(width);
-        console.log(scale);
+        scale = reScale(width);
 
         //Plot the pie chart
-        var svg =  d3.select('.pieChartSvg')
+        svg =  d3.select('.pieChartSvg')
         .attr('width',width)
         .attr('height',height)
 
-        var legend = d3.select(".pieLegendSvg");
+        legend = d3.select(".pieLegendSvg");
         
         legend
         .html("")
@@ -593,7 +606,7 @@ var config =
             return ((config.dataSpacing * dataSet.labels.length) + 2) + "em";
         }); 
 
-        var arc = d3.arc()
+        arc = d3.arc()
         .innerRadius(function (d){
             return d.data.inner/scale;
         })
@@ -601,7 +614,7 @@ var config =
             return d.data.outer/scale;
         });
 
-        var labelArc = d3.arc()
+        labelArc = d3.arc()
         .innerRadius(function (d){
             return d.data.outer/scale + 20;
         })
@@ -609,7 +622,7 @@ var config =
             return d.data.outer/scale + 25;
         });
 
-        var timeOppArc = d3.arc()
+        timeOppArc = d3.arc()
         .innerRadius(function (d){
             return d.data.outer/scale + 17; 
         })
@@ -617,7 +630,7 @@ var config =
             return d.data.outer/scale + 2;
         });
 
-        var timeFronArc = d3.arc()
+        timeFronArc = d3.arc()
         .innerRadius(function (d){
             return d.data.outer/scale + 2; 
         })
@@ -626,27 +639,29 @@ var config =
         });
 
 
-        var emptyArc = d3.arc()
+        emptyArc = d3.arc()
         .innerRadius(0)
         .outerRadius(0);
         
         
-        var pie = d3.pie()
+        pie = d3.pie()
         .value(function(d) { 
             return d.value; 
         })
         .sort(null);
 
+    },
+    "prepareData": function ()
+    {
         var target = pie(data[0]);
         data = [].concat(...data);
         piedata = pie(data);
         flat_data(target);
-
+    },
+    "plotPie": function ()
+    {   
 
         function updateChart() {
-            //https://stackoverflow.com/questions/59356095/error-when-transitioning-an-arc-path-attribute-d-expected-arc-flag-0-or
-            console.log('pie data is ', piedata)
-
             var local = d3.local();
             console.log(' pieData', piedata)
 
@@ -717,8 +732,11 @@ var config =
                 d3.select('#align').html("align");
                 alignMode = false;
                 console.log(d.data);
+                currTime = d.data.time;
                 config.setData(d.data.time);
                 config.setData(d.data.time);
+                config.prepareChart();
+                config.prepareData();
                 config.plotPie();
                 //event.stopPropagation();
                 //updateChart();
@@ -761,8 +779,11 @@ var config =
                         updateChart();
                     }else{
                         d3.select('#align').html("align");
+                        currTime = d.data.time;
                         config.setData(d.data.time);
                         config.setData(d.data.time);
+                        config.prepareChart();
+                        config.prepareData();
                         config.plotPie();
                     }
 
@@ -871,33 +892,6 @@ var config =
                 return d.data.radius;    
             });
 
-            // timeLabelArcs
-            // .filter(function(d) { 
-            //     return d.endAngle - d.startAngle < Math.PI/6; 
-            // })
-            // .append("g:text")
-            // .classed('timeLabelText', true)
-            // .attr("text-anchor", "middle")
-            // .attr("x", function(d) {
-            //     var a = d.startAngle + (d.endAngle - d.startAngle)/2 - Math.PI/2;
-            //     d.cx = Math.cos(a) * (d.data.outer/scale + 75);
-            //     return d.x = Math.cos(a) * (d.data.outer/scale + 20);
-            // })
-            // .attr("y", function(d) {
-            //     var a = d.startAngle + (d.endAngle - d.startAngle)/2 - Math.PI/2;
-            //     d.cy = Math.sin(a) * (d.data.outer/scale + 75);
-            //     return d.y = Math.sin(a) * (d.data.outer/scale + 20);
-            // })
-            // .text(function(d) { 
-            //     return d.data.radius; 
-            // })
-            // .each(function(d) {
-            //     var bbox = this.getBBox();
-            //     d.sx = d.x - bbox.width/2 - 2;
-            //     d.ox = d.x + bbox.width/2 + 2;
-            //     d.sy = d.oy = d.y + 5;
-            // });
-
             arcs
             .filter(function(d) { 
                 return d.endAngle - d.startAngle < Math.PI/6 && d.data.selected; 
@@ -916,24 +910,6 @@ var config =
                             + "<br/>" + "time: " + d.data.time
                             + "<br/>" + "Value: " + d.data.radius)
             })
-
-            // timeLabelArcs
-            // .selectAll(".pointer")
-            // .filter(function(d) { 
-            //     return d.endAngle - d.startAngle < Math.PI/6; 
-            // })
-            // .append("path")
-            // .attr("class", "pointer")
-            // .style("fill", "none")
-            // .style("stroke", "black")
-            // .attr("marker-end", "url(#circ)")
-            // .attr("d", function(d) {
-            //     if(d.cx > d.ox) {
-            //         return "M" + d.sx + "," + d.sy + "L" + d.ox + "," + d.oy + " " + d.cx + "," + d.cy;
-            //     } else {
-            //         return "M" + d.ox + "," + d.oy + "L" + d.sx + "," + d.sy + " " + d.cx + "," + d.cy;
-            //     }
-            // });
 
             timeLabelArcs
             .append("g:text")

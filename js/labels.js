@@ -66,7 +66,8 @@ function labelChart() {
 
     timeLabelArcs
     .filter(function(d) { 
-        return d.endAngle >= Math.PI/2; 
+        var middle_angle = (d.startAngle + d.endAngle)/2
+        return middle_angle >= 5*Math.PI/4 && middle_angle <= 7 * Math.PI/4; 
     })
     .append("g:text")
     .attr("transform", function(d) {
@@ -80,7 +81,8 @@ function labelChart() {
 
     timeLabelArcs
     .filter(function(d) { 
-        return d.endAngle <= Math.PI/2 && d.startAngle <= Math.PI/2;
+        var middle_angle = (d.startAngle + d.endAngle)/2
+        return middle_angle < 5*Math.PI/4 || middle_angle > 7 * Math.PI/4; 
     })
     .append("g:text")
     .attr("transform", function(d) {
@@ -91,9 +93,51 @@ function labelChart() {
     .text( function(d) {
         return d.data.radius;    
     });
+
+    timeLabelArcs
+    .filter(function(d) { 
+        var middle_angle = (d.startAngle + d.endAngle)/2
+        return middle_angle >= 5*Math.PI/4 && middle_angle <= 7 * Math.PI/4; 
+    })
+    .append("g:text")
+    .attr("transform", function(d) {
+        return "translate(" + [timeOppArc.centroid(d)[0]-measureSegment(d), timeOppArc.centroid(d)[1]] + ")rotate(" + angle(d) + ")";
+    })
+    .attr("text-anchor", "right")
+    .classed('timeLabelText', true)
+    .text( function(d) {
+        return d.data.radius;    
+    });
+
+    timeLabelArcs
+    .filter(function(d) { 
+        var middle_angle = (d.startAngle + d.endAngle)/2
+        return middle_angle < 5*Math.PI/4 || middle_angle > 7 * Math.PI/4; 
+    })
+    .append("g:text")
+    .attr("transform", function(d) {
+        return "translate(" + [timeFronArc.centroid(d)[0]-measureSegment(d), timeFronArc.centroid(d)[1]] + ")rotate(" + angle(d) + ")";
+    })
+    .attr("text-anchor", "right")
+    .classed('timeLabelText', true)
+    .text( function(d) {
+        return d.data.time;    
+    });
+
 }
 
 function angle(d) {
     var a = (d.startAngle + d.endAngle) * 90 / Math.PI;
     return a > 90 ? a - 180 : a;
+}
+
+function measureSegment(d) {
+    //c2 = a2 + b2 − 2ab cosC
+    //given b = d.data.outer = a
+    //A = arc.startAngle()(d) - arc.endAngle()(d);
+    var a = d.data.outer
+    var b = d.data.outer
+    var C = d.endAngle - d.startAngle;
+
+    return (Math.sqrt((a*a + b*b) - 2*a*b*Math.cos(C)))/2/scale;
 }

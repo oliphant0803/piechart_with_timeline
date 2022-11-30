@@ -632,10 +632,10 @@ var config =
 
         timeFronArc = d3.arc()
         .innerRadius(function (d){
-            return d.data.outer/scale - 22; 
+            return d.data.outer/scale - 16; 
         })
         .outerRadius(function (d) { 
-            return d.data.outer/scale - 6;
+            return d.data.outer/scale - 16;
         });
 
 

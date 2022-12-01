@@ -624,10 +624,18 @@ var config =
 
         timeOppArc = d3.arc()
         .innerRadius(function (d){
-            return d.data.outer/scale - 4; 
+            return d.data.outer/scale - 14; 
         })
         .outerRadius(function (d) { 
-            return d.data.outer/scale - 4;
+            return d.data.outer/scale - 14;
+        });
+
+        timeFirstArc = d3.arc()
+        .innerRadius(function (d){
+            return d.data.outer/scale - 26; 
+        })
+        .outerRadius(function (d) { 
+            return d.data.outer/scale - 26;
         });
 
         timeFronArc = d3.arc()
@@ -722,7 +730,7 @@ var config =
             
             .style('fill', function(d) {
                 if(d.data.dummy){
-                    return 'url(#diagonal-stripe-3)'; //why not working
+                    return 'url(#diagonal-stripe-3)'; 
                 }else{
                     return d.data.color;
                 }
@@ -742,7 +750,8 @@ var config =
                 .style("opacity", 1)
                 .select("#value")
                 d3.select("#tooltip").html(
-                            "Percentage: " + (d.value/sumA).toFixed(2)*100 + "% (" + d.value + ")"
+                            "Title: " + (d.data.label) + " " + cat_title
+                            + "<br/>" + "Percentage: " + (d.value/sumA).toFixed(2)*100 + "% (" + d.value + ")"
                             + "<br/>" + "time: " + d.data.time
                             + "<br/>" + "Value: " + d.data.radius)
             })

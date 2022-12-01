@@ -50,11 +50,11 @@ function labelChart() {
     }
 
     //get the top 2 layers
-    let selected_data = piedata.slice(piedata.length - dataSet.radius.length*2);
-    selected_data = selected_data.filter(function(d){
-        return d.data.dummy == false;
+    //let selected_data = piedata.slice(piedata.length - dataSet.radius.length*2);
+    let selected_data = piedata.filter(function(d){
+        return d.data.dummy == false && d.endAngle - d.startAngle >= Math.PI/8 && !d.data.selected;
     })
-    
+
     //do label
     let timeLabelArcs = svg.selectAll('.arcTimeWedge')
     .data(selected_data)
@@ -65,15 +65,30 @@ function labelChart() {
 
     timeLabelArcs.append('path')
     .attr('d', arc)
+    .attr("id", function(d, i) { 
+        return i; 
+    })
     .attr('fill', 'none')
 
     timeLabelArcs
     .filter(function(d) { 
-        return d.endAngle - d.startAngle >= Math.PI/8; 
+        var middle_angle = (d.startAngle + d.endAngle)/2
+        return middle_angle <= Math.PI/4; 
     })
+    .append("g:text")
+    .attr("transform", function(d) {
+        return "translate(" + timeFirstArc.centroid(d) + ")rotate(" + angle(d) + ")";
+    })
+    .attr("text-anchor", "middle")
+    .classed('timeLabelText', true)
+    .text( function(d) {
+        return d.data.radius;    
+    });
+
+    timeLabelArcs
     .filter(function(d) { 
         var middle_angle = (d.startAngle + d.endAngle)/2
-        return middle_angle >= 5*Math.PI/4 && middle_angle <= 7 * Math.PI/4; 
+        return middle_angle >= 5*Math.PI/4 && middle_angle <= 7 * Math.PI/4 && middle_angle > Math.PI/4; 
     })
     .append("g:text")
     .attr("transform", function(d) {
@@ -87,11 +102,8 @@ function labelChart() {
 
     timeLabelArcs
     .filter(function(d) { 
-        return d.endAngle - d.startAngle >= Math.PI/8; 
-    })
-    .filter(function(d) { 
         var middle_angle = (d.startAngle + d.endAngle)/2
-        return middle_angle < 5*Math.PI/4 || middle_angle > 7 * Math.PI/4; 
+        return (middle_angle < 5*Math.PI/4 || middle_angle > 7 * Math.PI/4) && middle_angle > Math.PI/4; 
     })
     .append("g:text")
     .attr("transform", function(d) {
@@ -103,50 +115,36 @@ function labelChart() {
         return d.data.radius;    
     });
 
-    // timeLabelArcs
-    // .filter(function(d) { 
-    //     var middle_angle = (d.startAngle + d.endAngle)/2
-    //     return middle_angle >= 5*Math.PI/4 && middle_angle <= 7 * Math.PI/4; 
-    // })
-    // .append("g:text")
-    // .attr("transform", function(d) {
-    //     return "translate(" + [timeOppArc.centroid(d)[0]+measureSegment(d), timeOppArc.centroid(d)[1]] + ")rotate(" + angle(d) + ")";
-    // })
-    // .attr("text-anchor", "right")
-    // .classed('timeLabelText', true)
-    // .text( function(d) {
-    //     return d.data.radius;    
-    // });
-
-    // timeLabelArcs
-    // .filter(function(d) { 
-    //     var middle_angle = (d.startAngle + d.endAngle)/2
-    //     return middle_angle < 5*Math.PI/4 || middle_angle > 7 * Math.PI/4; 
-    // })
-    // .append("g:text")
-    // .attr("transform", function(d) {
-    //     return "translate(" + [timeFronArc.centroid(d)[0]-measureSegment(d), timeFronArc.centroid(d)[1]] + ")rotate(" + angle(d) + ")";
-    // })
-    // .attr("text-anchor", "right")
-    // .classed('timeLabelText', true)
-    // .text( function(d) {
-    //     return d.data.time;    
-    // });
-
+    timeLabelArcs
+    .append("g:text")
+    .append("textPath")
+    .attr("href", function(d, i){
+        return '#'+i;
+    })
+    .attr("alignment-baseline", "hanging")
+    .attr("text-anchor", "start")
+    //transition angle if d.startangle is larger than Math.PI and smaller than 3*Math.PI/2
+    .text( function(d) {
+        return d.data.time;    
+    });
+    //textPath doesnt support transform
 }
+
+// function timeAngle(d) {
+//     if (d.startAngle <= 3*Math.PI/2 && d.startAngle >= Math.PI){
+//         return 180;
+//     }else{
+//         return 0;
+//     }
+// }
 
 function angle(d) {
     var a = (d.startAngle + d.endAngle) * 90 / Math.PI;
     return a > 90 ? a - 180 : a;
 }
 
-function measureSegment(d) {
-    //c2 = a2 + b2 − 2ab cosC
-    //given b = d.data.outer = a
-    //A = arc.startAngle()(d) - arc.endAngle()(d);
-    var a = d.data.outer
-    var b = d.data.outer
-    var C = d.endAngle - d.startAngle;
+// alignemtn on baseline
+// text on path
 
-    return (Math.sqrt((a*a + b*b) - 2*a*b*Math.cos(C)))/2/scale;
-}
+// task: change label
+// start survey questions

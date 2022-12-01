@@ -63,19 +63,20 @@ svg.pieChartSvg{
 }
 
 .arcWedge {
-    opacity: 0.5;
-    filter: saturate(0);
+    opacity: 0.4;
+    filter: saturate(0.50);
 }
 
 .timeLabelText {
     /* background-color: whitesmoke; */
     /* color: whitesm oke; */
+    /* font-size: x-large; */
 }
 
-.flipText {
-    /* -moz-transform: scale(-1, 1);
+.flipTime {
+    -moz-transform: scale(-1, 1);
     -webkit-transform: scale(-1, 1);
     -o-transform: scale(-1, 1);
     -ms-transform: scale(-1, 1);
-    transform: scale(-1, 1); */
+    transform: scale(-1, 1);
 }

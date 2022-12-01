@@ -727,6 +727,25 @@ var config =
                     return d.data.color;
                 }
             })
+
+            arcs
+            .filter(function(d) { 
+                return d.endAngle - d.startAngle < Math.PI/8; 
+            })
+            .on("mouseover", function (event, d) {
+                d3.select(this)
+                .style("stroke", "black")
+                .attr("stroke-width", 4)
+                d3.select("#tooltip")
+                .style("left", event.pageX-width/4 + "px")
+                .style("top", event.pageY-width/4 + "px")
+                .style("opacity", 1)
+                .select("#value")
+                d3.select("#tooltip").html(
+                            "Percentage: " + (d.value/sumA).toFixed(2)*100 + "% (" + d.value + ")"
+                            + "<br/>" + "time: " + d.data.time
+                            + "<br/>" + "Value: " + d.data.radius)
+            })
             
             arcs.on("click", function(event, d) {
                 d3.select('#align').html("align");

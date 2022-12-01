@@ -19,6 +19,9 @@ function labelCatChart() {
     .attr('fill', 'none')
 
     catLabelArcs
+    .filter(function(d) { 
+        return d.endAngle - d.startAngle >= Math.PI/8; 
+    })
     .append("g:text")
     .attr("transform", function(d) {
         return "translate(" + labelArc.centroid(d) + ")rotate(" + angle(d) + ")";
@@ -66,6 +69,9 @@ function labelChart() {
 
     timeLabelArcs
     .filter(function(d) { 
+        return d.endAngle - d.startAngle >= Math.PI/8; 
+    })
+    .filter(function(d) { 
         var middle_angle = (d.startAngle + d.endAngle)/2
         return middle_angle >= 5*Math.PI/4 && middle_angle <= 7 * Math.PI/4; 
     })
@@ -81,6 +87,9 @@ function labelChart() {
 
     timeLabelArcs
     .filter(function(d) { 
+        return d.endAngle - d.startAngle >= Math.PI/8; 
+    })
+    .filter(function(d) { 
         var middle_angle = (d.startAngle + d.endAngle)/2
         return middle_angle < 5*Math.PI/4 || middle_angle > 7 * Math.PI/4; 
     })
@@ -94,35 +103,35 @@ function labelChart() {
         return d.data.radius;    
     });
 
-    timeLabelArcs
-    .filter(function(d) { 
-        var middle_angle = (d.startAngle + d.endAngle)/2
-        return middle_angle >= 5*Math.PI/4 && middle_angle <= 7 * Math.PI/4; 
-    })
-    .append("g:text")
-    .attr("transform", function(d) {
-        return "translate(" + [timeOppArc.centroid(d)[0]-measureSegment(d), timeOppArc.centroid(d)[1]] + ")rotate(" + angle(d) + ")";
-    })
-    .attr("text-anchor", "right")
-    .classed('timeLabelText', true)
-    .text( function(d) {
-        return d.data.radius;    
-    });
+    // timeLabelArcs
+    // .filter(function(d) { 
+    //     var middle_angle = (d.startAngle + d.endAngle)/2
+    //     return middle_angle >= 5*Math.PI/4 && middle_angle <= 7 * Math.PI/4; 
+    // })
+    // .append("g:text")
+    // .attr("transform", function(d) {
+    //     return "translate(" + [timeOppArc.centroid(d)[0]+measureSegment(d), timeOppArc.centroid(d)[1]] + ")rotate(" + angle(d) + ")";
+    // })
+    // .attr("text-anchor", "right")
+    // .classed('timeLabelText', true)
+    // .text( function(d) {
+    //     return d.data.radius;    
+    // });
 
-    timeLabelArcs
-    .filter(function(d) { 
-        var middle_angle = (d.startAngle + d.endAngle)/2
-        return middle_angle < 5*Math.PI/4 || middle_angle > 7 * Math.PI/4; 
-    })
-    .append("g:text")
-    .attr("transform", function(d) {
-        return "translate(" + [timeFronArc.centroid(d)[0]-measureSegment(d), timeFronArc.centroid(d)[1]] + ")rotate(" + angle(d) + ")";
-    })
-    .attr("text-anchor", "right")
-    .classed('timeLabelText', true)
-    .text( function(d) {
-        return d.data.time;    
-    });
+    // timeLabelArcs
+    // .filter(function(d) { 
+    //     var middle_angle = (d.startAngle + d.endAngle)/2
+    //     return middle_angle < 5*Math.PI/4 || middle_angle > 7 * Math.PI/4; 
+    // })
+    // .append("g:text")
+    // .attr("transform", function(d) {
+    //     return "translate(" + [timeFronArc.centroid(d)[0]-measureSegment(d), timeFronArc.centroid(d)[1]] + ")rotate(" + angle(d) + ")";
+    // })
+    // .attr("text-anchor", "right")
+    // .classed('timeLabelText', true)
+    // .text( function(d) {
+    //     return d.data.time;    
+    // });
 
 }
 

@@ -80,3 +80,10 @@ svg.pieChartSvg{
     -ms-transform: scale(-1, 1);
     transform: scale(-1, 1);
 }
+
+.currTimeLabel {
+    fill: black;
+    font-weight: bold;
+    font-size: 20px;
+    font-family: sans-serif;
+}

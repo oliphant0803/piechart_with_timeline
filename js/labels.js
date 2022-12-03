@@ -40,7 +40,6 @@ function labelCatChart() {
 }
 
 function labelChart() {
-    //rule: only label the first 2 layers given the piedata
 
     //clean up
     paras = document.getElementsByClassName('arcTimeWedge');
@@ -49,10 +48,17 @@ function labelChart() {
         paras[0].parentNode.removeChild(paras[0]);
     }
 
-    //get the top 2 layers
-    //let selected_data = piedata.slice(piedata.length - dataSet.radius.length*2);
+    svg
+    .append("g")
+    .classed('arcTimeWedge',true)
+    .attr("transform","translate("+width/2 +","+(height+10)/2+")")
+    .append("text")
+    .classed("currTimeLabel", true)
+   .attr("text-anchor", "middle")
+   .text(currTime);
+
     let selected_data = piedata.filter(function(d){
-        return d.data.dummy == false && d.endAngle - d.startAngle >= Math.PI/8 && !d.data.selected;
+        return !d.data.dummy && d.data.radius != 0 && d.endAngle - d.startAngle >= Math.PI/8 && !d.data.selected;
     })
 
     //do label
@@ -82,7 +88,7 @@ function labelChart() {
     .attr("text-anchor", "middle")
     .classed('timeLabelText', true)
     .text( function(d) {
-        return d.data.radius;    
+        return abbreviateNumber(d.data.radius);    
     });
 
     timeLabelArcs
@@ -97,7 +103,7 @@ function labelChart() {
     .attr("text-anchor", "middle")
     .classed('timeLabelText', true)
     .text( function(d) {
-        return d.data.radius;    
+        return abbreviateNumber(d.data.radius);    
     });
 
     timeLabelArcs
@@ -112,7 +118,7 @@ function labelChart() {
     .attr("text-anchor", "middle")
     .classed('timeLabelText', true)
     .text( function(d) {
-        return d.data.radius;    
+        return  abbreviateNumber(d.data.radius);    
     });
 
     timeLabelArcs
@@ -138,6 +144,25 @@ function labelChart() {
 //     }
 // }
 
+function abbreviateNumber(num) {
+    const lookup = [
+      { value: 1, symbol: "" },
+      { value: 1e3, symbol: "k" },
+      { value: 1e6, symbol: "M" },
+      { value: 1e9, symbol: "G" },
+      { value: 1e12, symbol: "T" },
+      { value: 1e15, symbol: "P" },
+      { value: 1e18, symbol: "E" }
+    ];
+    const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
+    var item = lookup.slice().reverse().find(function(item) {
+      return num >= item.value;
+    });
+    return item ? (num / item.value).toFixed(1).replace(rx, "$1") + item.symbol : "0";
+  }
+
+
+
 function angle(d) {
     var a = (d.startAngle + d.endAngle) * 90 / Math.PI;
     return a > 90 ? a - 180 : a;
@@ -148,3 +173,6 @@ function angle(d) {
 
 // task: change label
 // start survey questions
+//shorten the value
+//current year in center
+//tooltip anywhere

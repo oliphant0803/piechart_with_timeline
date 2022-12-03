@@ -737,8 +737,11 @@ var config =
             })
 
             arcs
+            // .filter(function(d) { 
+            //     return d.endAngle - d.startAngle < Math.PI/8; 
+            // })
             .filter(function(d) { 
-                return d.endAngle - d.startAngle < Math.PI/8; 
+                return !d.data.dummy; 
             })
             .on("mouseover", function (event, d) {
                 d3.select(this)

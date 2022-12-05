@@ -1,0 +1,41 @@
+The dataset is about house price of different number of bedrooms (1 bedroom housing to 5 bedroom housing) from years 2007 to 2012.
+
+You are given two set of charts
+1. The first set of chart are made of 6 donut charts, corresponding to each of the years
+2. The second chart is the timeseries donut chart
+
+Question 1:
+Was there any 1 bedroom housing sold in year 2008?
+Was there any 2 bedroom housing sold in year 2007?
+
+
+Question 2:
+How many 2bd room houses are sold in each year? 
+
+Question 3:
+What are the types of houses sold in 2008
+
+Question 4:
+Which type of housing is the most expensive in the year 2007?
+what about year 2009 and 2012?
+
+Question 5:
+Which type of housing sold the most (count) in the year 2007?
+what about year 2010?
+
+Question 6:
+Without computing the exact value of sells (# of house sold * average price), Which type of housing sold the most (count * price) in the year 2009?
+
+Question 7:
+In year 2011, list out all the percentages for each type of housing
+
+Question 8:
+Which type of house has the most expensive total sells (# of hosue sold * average price) over all years, what about the least expensive?
+
+Question 9:
+Rank the number of house sold for each type from year 2008 to 2011 from least to greatest
+
+Question 10:
+Find the total price sold of second most expensive total sells
+
+

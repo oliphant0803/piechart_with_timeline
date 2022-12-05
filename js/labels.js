@@ -123,6 +123,9 @@ function labelChart() {
 
     timeLabelArcs
     .append("g:text")
+    // .attr("transform", function(d) {
+    //     return "rotate(" + timeAngle(d) + ")translate(" + [-timeFronArc.centroid(d)[0],-timeFronArc.centroid(d)[1]]  + ")";
+    // })
     .append("textPath")
     .attr("href", function(d, i){
         return '#'+i;
@@ -136,13 +139,13 @@ function labelChart() {
     //textPath doesnt support transform
 }
 
-// function timeAngle(d) {
-//     if (d.startAngle <= 3*Math.PI/2 && d.startAngle >= Math.PI){
-//         return 180;
-//     }else{
-//         return 0;
-//     }
-// }
+function timeAngle(d) {
+    if (d.startAngle <= 3*Math.PI/2 && d.startAngle >= Math.PI){
+        return 180;
+    }else{
+        return 0;
+    }
+}
 
 function abbreviateNumber(num) {
     const lookup = [

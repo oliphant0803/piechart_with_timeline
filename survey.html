@@ -40,23 +40,12 @@
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid px-4">
-                        <h1 class="mt-4">Import CSV</h1>
-                        <div class="pieDashboard">
-                            <form id="myForm">
-                                <label for="csvFile" class="form-label">File restrictions</label>
-                                <button type="button" class="btn btn-primary-outline info" data-bs-toggle="tooltip" data-bs-placement="top" title="Imported data should have 3 columns, first column: time interval, second column: numerical value, third column: categorical value">
-                                    <i class="fa-solid fa-circle-info"></i>
-                                  </button>
-                                <input class="form-control form-control-lg" id="csvFile" accept=".csv" type="file">
-                                <button type="submit" class="btn btn-secondary btn-lg btn-block">Submit</button>
-                            </form>
-                        </div>
                         <div class="row">
                             <div class="col-xl-10">
                                 <div class="card mb-4">
                                     <div class="card-header">
                                         <i class="fas fa-chart-pie me-1"></i>
-                                        Pie Chart
+                                        Time Series Pie Chart
                                         
                                     </div>
                                     <div class="card-body pieChart" id="1">
@@ -84,16 +73,71 @@
                             </div>
                         </div>
 
-                        <div class="card mb-4">
-                            <div class="card-header">
-                                <i class="fas fa-table me-1"></i>
-                                Data Table
-                            </div>
-                            <div class="card-body" id="dataBlock">
-                                <table id="datatables">
+                        <div class="row">
+                            <div class="col-xl-12">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <i class="fas fa-chart-pie me-1"></i>
+                                        Set of Pie Charts
+                                        
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-sm">
+                                                <div class="pieChart2007">
+                                                    <svg class="pieChartSvg2007">
+                                            
+                                                    </svg>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm">
+                                                <div class="pieChart2008">
+                                                    <svg class="pieChartSvg2008">
+                                            
+                                                    </svg>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm">
+                                                <div class="pieChart2009">
+                                                    <svg class="pieChartSvg2009">
+                                            
+                                                    </svg>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm">
+                                                <div class="pieChart2010">
+                                                    <svg class="pieChartSvg2010">
+                                            
+                                                    </svg>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm">
+                                                <div class="pieChart2011">
+                                                    <svg class="pieChartSvg2011">
+                                            
+                                                    </svg>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm">
+                                                <div class="pieChart2012">
+                                                    <svg class="pieChartSvg2012">
+                                            
+                                                    </svg>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        
+                                    </div>
                                     
-                                </table>
+                                </div>
                             </div>
+                            
                         </div>
                     </div>
                 </main>
@@ -120,29 +164,7 @@
             </li>
         </ul>
 
-        <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-fullscreen">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="myModalLabel">Chart title</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="pieChartCompare">
-                        <svg class="pieChartSvgCompare">
-
-                        </svg>
-                        <svg class="pieLegendSvgCompare">
-
-                        </svg>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-              </div>
-            </div>
-        </div>
+        
 
         <svg height="10" width="10" xmlns="http://www.w3.org/2000/svg" version="1.1"> <defs> <pattern id="diagonal-stripe-3" patternUnits="userSpaceOnUse" width="10" height="10"> <image xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxMCcgaGVpZ2h0PScxMCc+CiAgPHJlY3Qgd2lkdGg9JzEwJyBoZWlnaHQ9JzEwJyBmaWxsPSd3aGl0ZScvPgogIDxwYXRoIGQ9J00tMSwxIGwyLC0yCiAgICAgICAgICAgTTAsMTAgbDEwLC0xMAogICAgICAgICAgIE05LDExIGwyLC0yJyBzdHJva2U9J2JsYWNrJyBzdHJva2Utd2lkdGg9JzMnLz4KPC9zdmc+" x="0" y="0" width="10" height="10"> </image> </pattern> </defs> </svg>
 
@@ -153,12 +175,10 @@
         <script src="https://d3js.org/d3-color.v1.min.js"></script>
         <script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
         <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
-        <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script> -->
-        <script type="text/javascript" src="js/table.js"></script>
         <script type="text/javascript" src="js/chart.js"></script>
-        <script type="text/javascript" src="js/read_csv.js"></script>
-        <script type="text/javascript" src="js/utils.js"></script>
-        <script type="text/javascript" src="js/zoom.js"></script>
         <script type="text/javascript" src="js/labels.js"></script>
+        <script type="text/javascript" src="js/survey.js"></script>
+        <script type="text/javascript" src="js/utils.js"></script>
+        <!-- <script type="text/javascript" src="js/zoom.js"></script> -->
     </body>
 </html>

@@ -123,9 +123,7 @@ function labelChart() {
 
     timeLabelArcs
     .append("g:text")
-    // .attr("transform", function(d) {
-    //     return "rotate(" + timeAngle(d) + ")translate(" + [-timeFronArc.centroid(d)[0],-timeFronArc.centroid(d)[1]]  + ")";
-    // })
+    .classed("try", true)
     .append("textPath")
     .attr("href", function(d, i){
         return '#'+i;
@@ -137,6 +135,15 @@ function labelChart() {
         return d.data.time;    
     });
     //textPath doesnt support transform
+
+    timeLabelArcs
+    .select('.try')
+    // .attr("transform", function(d) {
+    //     var box = d3.select(this).node().getBoundingClientRect();
+    //     console.log(box.x, width)
+    //     //console.log((box.x-width), (box.y-width));
+    //     return "rotate(" + timeAngle(d) + "," + (-20) + "," + (20) + ")";
+    // })
 }
 
 function timeAngle(d) {

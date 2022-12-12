@@ -67,10 +67,8 @@ svg.pieChartSvg{
     filter: saturate(0.50);
 }
 
-.timeLabelText {
-    /* background-color: whitesmoke; */
-    /* color: whitesm oke; */
-    /* font-size: x-large; */
+.innerText {
+    fill: whitesmoke
 }
 
 .flipTime {

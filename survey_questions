@@ -33,27 +33,22 @@ Question 8:
 Which type of house has the most expensive total sells (# of hosue sold * average price) over all years, what about the least expensive?
 
 Question 9:
-Rank the number of house sold for each type from year 2008 to 2011 from least to greatest (revisit)
-
-Question 10:
 Find the total price sold of second most expensive total sells
 
-Question 11:
+Question 10:
 Changes over the year for one cat
 
-Question 12:
+Question 11:
 in which years do no 1bd house sold
 
 # of unit sold
 revenue generated
 
 
-Task: change of legend, include all cat, make clickable, go to the first year that the cat
-Label the arcs for selected year, white
-FIx label rotation
-Add labels for donuts chart with same critirias
-position the legends better
-sort the bedrooms from 1 to 5
+Task: 
+
+Fix label rotation
+
 
 know where they hovering, where they clicking
 

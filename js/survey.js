@@ -795,22 +795,32 @@ function draw_pie_o(time){
 
     var arcO = d3.arc()
     .innerRadius(50)
-    .outerRadius(Math.min(widthO, heightO) / 2);
+    .outerRadius(Math.min(widthO, heightO) / 2 - 40 );
 
+    var arcLabelO = d3.arc()
+    .innerRadius(Math.min(widthO, heightO) / 2 - 35)
+    .outerRadius(Math.min(widthO, heightO) / 2 + 5);
 
-    var arcO = chartO.selectAll('.arc'+time)
+    var arcPriceO = d3.arc()
+    .innerRadius(Math.min(widthO, heightO) / 2 - 75)
+    .outerRadius(Math.min(widthO, heightO) / 2 - 55);
+
+    var arcChart = chartO.selectAll('.arc'+time)
     .data(pieO(compareSet.stats))
     .enter()
     .append("g")
-    .append('path')
-    .classed('arc'+time,true)
     .attr('transform', 'translate(' + widthO/2 +  ',' + heightO/2 +')')
+    .classed('arc'+time,true)
+    .append('path')
+    .attr("id", function(d, i) { 
+        return i+"time"+time; 
+    })
     .attr('d',arcO)
     .style('fill', function(d) {
         return d.data.color;
     })
 
-    arcO
+    arcChart
     .on("mouseover", function (event, d) {
         d3.select("#tooltip")
         .style("left", event.pageX-width/4 + "px")
@@ -836,4 +846,34 @@ function draw_pie_o(time){
     .classed("currTimeLabel", true)
     .attr("text-anchor", "middle")
     .text(time);
+
+    chartO.selectAll('.arc'+time)
+    .filter(function(d) { 
+        return d.endAngle - d.startAngle >= Math.PI/8; 
+    })
+    .append("text")
+    .classed("innerText", true)
+    .attr("transform", function(d) {
+        return "translate(" + arcPriceO.centroid(d) + ")rotate(" + angle(d) + ")";
+    })
+    .attr("text-anchor", "middle")
+    .text( function(d) {
+        return abbreviateNumber(d.data.price);    
+    });
+
+    chartO.selectAll('.arc'+time)
+    .filter(function(d) { 
+        return d.endAngle - d.startAngle >= Math.PI/8; 
+    })
+    .append("text")
+    .attr("transform", function(d) {
+        return "translate(" + arcLabelO.centroid(d) + ")rotate(" + angle(d) + ")";
+    })
+    .attr("text-anchor", "middle")
+    .text( function(d) {
+        if(!isNaN(d.data.label)){
+            return d.data.label + " " + cat_title;
+        }
+        return d.data.label;     
+    })
 }

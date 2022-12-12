@@ -58,7 +58,7 @@ function labelChart() {
    .text(currTime);
 
     let selected_data = piedata.filter(function(d){
-        return !d.data.dummy && d.data.radius != 0 && d.endAngle - d.startAngle >= Math.PI/8 && !d.data.selected;
+        return !d.data.dummy && d.data.radius != 0 && Math.abs(d.endAngle - d.startAngle) >= Math.PI/8;
     })
 
     //do label
@@ -82,6 +82,9 @@ function labelChart() {
         return middle_angle <= Math.PI/4; 
     })
     .append("g:text")
+    .classed("innerText", function(d) {
+        return d.data.selected;
+    })
     .attr("transform", function(d) {
         return "translate(" + timeFirstArc.centroid(d) + ")rotate(" + angle(d) + ")";
     })
@@ -97,6 +100,9 @@ function labelChart() {
         return middle_angle >= 5*Math.PI/4 && middle_angle <= 7 * Math.PI/4 && middle_angle > Math.PI/4; 
     })
     .append("g:text")
+    .classed("innerText", function(d) {
+        return d.data.selected;
+    })
     .attr("transform", function(d) {
         return "translate(" + timeOppArc.centroid(d) + ")rotate(" + angle(d) + ")";
     })
@@ -112,6 +118,9 @@ function labelChart() {
         return (middle_angle < 5*Math.PI/4 || middle_angle > 7 * Math.PI/4) && middle_angle > Math.PI/4; 
     })
     .append("g:text")
+    .classed("innerText", function(d) {
+        return d.data.selected;
+    })
     .attr("transform", function(d) {
         return "translate(" + timeFronArc.centroid(d) + ")rotate(" + angle(d) + ")";
     })
@@ -123,7 +132,9 @@ function labelChart() {
 
     timeLabelArcs
     .append("g:text")
-    .classed("try", true)
+    .classed("innerText", function(d) {
+        return d.data.selected;
+    })
     .append("textPath")
     .attr("href", function(d, i){
         return '#'+i;
@@ -133,11 +144,16 @@ function labelChart() {
     //transition angle if d.startangle is larger than Math.PI and smaller than 3*Math.PI/2
     .text( function(d) {
         return d.data.time;    
+    })
+    .attr('fill', function(d) {
+        if(d.data.selected){
+            return "none";
+        }
     });
     //textPath doesnt support transform
 
-    timeLabelArcs
-    .select('.try')
+    // timeLabelArcs
+    // .select('.try')
     // .attr("transform", function(d) {
     //     var box = d3.select(this).node().getBoundingClientRect();
     //     console.log(box.x, width)

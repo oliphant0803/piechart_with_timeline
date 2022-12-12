@@ -38,7 +38,7 @@ function read_data(data){
     graphData.rows = get_rows(data);
     graphData.stats = get_stats(data);
     var catagories = get_titles(data);
-    console.log(catagories);
+    //console.log(catagories);
     var COLORS = interpolateColors(catagories.length, colorRangeInfo);
     //console.log(COLORS);
     catagories.forEach((cat) => {
@@ -174,7 +174,7 @@ function update_graphData(radius, timeList, currTime){
                     return a.value > b.value ? 1 : -1
                 }
             });
-            console.log(dummyData);
+            //console.log(dummyData);
             //find the title 
             var currTitle = graphData.cols[i].title;
             var index = dummyData.findIndex(function(o) {
@@ -338,6 +338,7 @@ var config =
         {   
             "labelList": [],
             "labels": [],
+            "labelsCat": [],
             "stats": [],
             "radius": []
         };
@@ -345,7 +346,9 @@ var config =
         combinedStats = [];
 
         for (var i = 0; i < graphData.cols.length; i++)
-        {
+        {   
+
+            dataSet.labelsCat.push({title: graphData.cols[i].title, color: graphData.cols[i].color, firstTime: i});
             var filtered = graphData.cols[i].stats.filter(function(x) { return x.time == time;})
             // console.log(filtered);
             if (filtered.length > 0)
@@ -413,7 +416,7 @@ var config =
             dataSet.labelList.sort((a, b) => (a.value > b.value) ? 1 : -1)
             firstTimeOrder = dataSet.labelList.map(function(d) { return d["label"]; });
         }else{
-            console.log(firstTimeOrder);
+            //console.log(firstTimeOrder);
             radius.sort(function(a, b){  
                 return firstTimeOrder.indexOf(a.label) - firstTimeOrder.indexOf(b.label);
             });
@@ -424,9 +427,9 @@ var config =
 
         var labels = dataSet.labelList.map(function(d) { return d["label"]; });
 
-        console.log(radius, labels);
+        //console.log(radius, labels);
         data = generate_current_data(radius, graphData.rows.length, labels, graphData.rows, time);
-        console.log(data);
+        //console.log(data);
 
 
     },
@@ -445,7 +448,7 @@ var config =
     },
     "compare": function (time)
     {
-        console.log("compare " + time);
+        //console.log("compare " + time);
         //find the data of the given time
         var compareSet = {
             "labels": [],
@@ -478,7 +481,7 @@ var config =
         legend
         .html("")
         .style("height", function(d) {
-            return ((config.dataSpacing * dataSet.labels.length) + 2) + "em";
+            return ((config.dataSpacing * dataSet.labelsCat.length) + 2) + "em";
         }); 
 
         var pie = 
@@ -494,7 +497,7 @@ var config =
         .innerRadius(0)
         .outerRadius(Math.min(width, height) / 2);
 
-        console.log(compareSet.stats);
+        //console.log(compareSet.stats);
 
         
         chart.selectAll('.arcCompare')
@@ -603,7 +606,7 @@ var config =
         legend
         .html("")
         .style("height", function(d) {
-            return ((config.dataSpacing * dataSet.labels.length) + 2) + "em";
+            return ((config.dataSpacing * dataSet.labelsCat.length) + 2) + "em";
         }); 
 
         arc = d3.arc()
@@ -671,13 +674,13 @@ var config =
 
         function updateChart() {
             var local = d3.local();
-            console.log(' pieData', piedata)
+            //console.log(' pieData', piedata)
 
 
             let arcs = svg.selectAll('.arcWedge')
             .data(piedata,d=>d.data.label + '_' + d.data.time)
             .join(enter=>  {
-                console.log(' enter selection' , enter.size());
+                //console.log(' enter selection' , enter.size());
                     return enter
                     .append('path')
                     .classed('arcWedge',true)
@@ -686,7 +689,10 @@ var config =
                     })
                     .attr('transform', 'translate(' + width/2 +  ',' + height/2 +')')},
 
-                update=>{ console.log(' update selection' , update.size()); return update},
+                update=>{ 
+                    console.log(' update selection' , update.size()); 
+                    return update
+                },
 
                 exit=>exit
                     .transition()
@@ -762,7 +768,7 @@ var config =
             arcs.on("click", function(event, d) {
                 d3.select('#align').html("align");
                 alignMode = false;
-                console.log(d.data);
+                //console.log(d.data);
                 currTime = d.data.time;
                 config.setData(d.data.time);
                 config.setData(d.data.time);
@@ -836,11 +842,21 @@ var config =
             .style("opacity", 0);
           });
 
+        
 
+        dataSet.labelsCat.sort((a, b) => a.title.localeCompare(b.title))
+        dataSet.labelsCat.forEach(a => {
+            var i = a.firstTime
+            var j = 0;
+            while(graphData.cols[i].stats[j].frequency == 0){
+                j += 1;
+            }
+            a.firstTime = graphData.cols[i].stats[j].time;
+        })
 
           legend
         .selectAll("rect")
-        .data(dataSet.labels)
+        .data(dataSet.labelsCat)
         .enter()
         .append("rect")
         .attr("x", function(d) 
@@ -862,11 +878,18 @@ var config =
         .attr("height", function(d) 
         {
             return (config.dataSpacing / 2) + "em";
+        })
+        .on("click", function(event, d) {
+            config.setData(d.firstTime);
+            config.setData(d.firstTime);
+            config.prepareChart();
+            config.prepareData();
+            config.plotPie();
         });
 
         legend
         .selectAll("text")
-        .data(dataSet.labels)
+        .data(dataSet.labelsCat)
         .enter()
         .append("text")
         .attr("x", function(d) 

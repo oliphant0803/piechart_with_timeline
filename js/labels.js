@@ -132,6 +132,7 @@ function labelChart() {
 
     timeLabelArcs
     .append("g:text")
+    .classed("rotateTime", true)
     .classed("innerText", function(d) {
         return d.data.selected;
     })
@@ -150,16 +151,16 @@ function labelChart() {
             return "none";
         }
     });
-    //textPath doesnt support transform
 
-    // timeLabelArcs
-    // .select('.try')
-    // .attr("transform", function(d) {
-    //     var box = d3.select(this).node().getBoundingClientRect();
-    //     console.log(box.x, width)
-    //     //console.log((box.x-width), (box.y-width));
-    //     return "rotate(" + timeAngle(d) + "," + (-20) + "," + (20) + ")";
-    // })
+    timeLabelArcs
+    .select('.rotateTime')
+    .attr("transform", function(d) {
+        var box = d3.select(this).node().getBBox();
+        // console.log(box.x, box.y)
+        // console.log(box);
+        return "rotate(" + timeAngle(d) + "," + (box.x+box.width/2) + "," + (box.y+box.height/2-2) + ")";
+        // translate(" + (box.x) + "," + (box.y) + ") 
+    })
 }
 
 function timeAngle(d) {
@@ -191,14 +192,5 @@ function abbreviateNumber(num) {
 
 function angle(d) {
     var a = (d.startAngle + d.endAngle) * 90 / Math.PI;
-    return a > 90 ? a - 180 : a;
+    return a > 90 && a < 270 ? a - 180 : a;
 }
-
-// alignemtn on baseline
-// text on path
-
-// task: change label
-// start survey questions
-//shorten the value
-//current year in center
-//tooltip anywhere

@@ -68,8 +68,18 @@ svg.pieChartSvg{
 }
 
 .innerText {
-    fill: whitesmoke
+    fill: whitesmoke;
 }
+
+text {
+    pointer-events: none;
+    animation: fadeIn 4s;
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
 
 .flipTime {
     -moz-transform: scale(-1, 1);

@@ -627,10 +627,10 @@ var config =
 
         timeOppArc = d3.arc()
         .innerRadius(function (d){
-            return d.data.outer/scale - 14; 
+            return d.data.outer/scale - 20; 
         })
         .outerRadius(function (d) { 
-            return d.data.outer/scale - 14;
+            return d.data.outer/scale - 20;
         });
 
         timeFirstArc = d3.arc()
@@ -743,9 +743,6 @@ var config =
             })
 
             arcs
-            // .filter(function(d) { 
-            //     return d.endAngle - d.startAngle < Math.PI/8; 
-            // })
             .filter(function(d) { 
                 return !d.data.dummy; 
             })
@@ -760,23 +757,9 @@ var config =
                 .select("#value")
                 d3.select("#tooltip").html(
                             "Title: " + (d.data.label) + " " + cat_title
-                            + "<br/>" + "Percentage: " + (d.value/sumA).toFixed(2)*100 + "% (" + d.value + ")"
+                            + "<br/>" + "Percentage: " + (d.value/sumA).toFixed(1)*100 + "% (" + d.value + ")"
                             + "<br/>" + "time: " + d.data.time
                             + "<br/>" + "Value: " + d.data.radius)
-            })
-            
-            arcs.on("click", function(event, d) {
-                d3.select('#align').html("align");
-                alignMode = false;
-                //console.log(d.data);
-                currTime = d.data.time;
-                config.setData(d.data.time);
-                config.setData(d.data.time);
-                config.prepareChart();
-                config.prepareData();
-                config.plotPie();
-                //event.stopPropagation();
-                //updateChart();
             })
             .on("mouseout", function () {
             // Hide the tooltip
@@ -786,36 +769,39 @@ var config =
                 d3.select("#tooltip")
                 .style("opacity", 0);
             })
-            .on("contextmenu", function (event, d) {
+
+            arcs
+            .filter(function(d) { 
+                return !d.data.selected
+            })
+            .on("click", function(event, d) {
+                if(!d.data.selected){
+                    alignMode = false;
+                    currTime = d.data.time;
+                    config.setData(d.data.time);
+                    config.setData(d.data.time);
+                    config.prepareChart();
+                    config.prepareData();
+                    config.plotPie();
+                    //event.stopPropagation();
+                    //updateChart();
+                }
+            })
+
+            arcs
+            .filter(function(d) { 
+                return d.data.selected
+            })
+            .on("dblclick", function (event, d) {
                 event.preventDefault();
                 if(d.data.selected){
-                    d3.select('.custom-menu')
-                    .style("left", event.pageX + "px")
-                    .style("top", event.pageY + "px")
-                    .style("opacity", 1);
-                }
-                //check if compare is clicked
-                d3.select('#compare')
-                .on("click", function(){
-                    d3.select('.custom-menu')
-                    .style("opacity", 0);
-                    d3.select("#tooltip")
-                    .style("opacity", 0);
-                    config.compare(d.data.time);
-                })
-                d3.select('#align')
-                .on("click", function(){
-                    d3.select('.custom-menu')
-                    .style("opacity", 0);
                     d3.select("#tooltip")
                     .style("opacity", 0);
                     alignMode = !alignMode;
                     if(alignMode == true){
-                        d3.select('#align').html("back");
                         config.align(piedata, d.data.time);
                         updateChart();
                     }else{
-                        d3.select('#align').html("align");
                         currTime = d.data.time;
                         config.setData(d.data.time);
                         config.setData(d.data.time);
@@ -824,11 +810,11 @@ var config =
                         config.plotPie();
                     }
 
-                })
-                d3.select("#tooltip")
-                .style("opacity", 0);
+                    d3.select("#tooltip")
+                    .style("opacity", 0);
+                }
+                
             })
-            
             labelCatChart();
             labelChart();
             

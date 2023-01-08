@@ -635,18 +635,18 @@ var config =
 
         timeFirstArc = d3.arc()
         .innerRadius(function (d){
-            return d.data.outer/scale - 26; 
+            return d.data.outer/scale - 30; 
         })
         .outerRadius(function (d) { 
-            return d.data.outer/scale - 26;
+            return d.data.outer/scale - 30;
         });
 
         timeFronArc = d3.arc()
         .innerRadius(function (d){
-            return d.data.outer/scale - 16; 
+            return d.data.outer/scale - 26; 
         })
         .outerRadius(function (d) { 
-            return d.data.outer/scale - 16;
+            return d.data.outer/scale - 26;
         });
 
 

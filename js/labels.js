@@ -197,7 +197,9 @@ function labelArcs(dataArcs) {
     .each(function(d, i) {
         //console.log(d3.select(this).node());
         var currNode = d3.select(this).node();
+        console.log(d3.select(this));
         if(d3.select(this).node().childNodes.length == 3){
+            console.log(currNode.childNodes[0]);
             var arcPathNode = currNode.childNodes[0];
             var arcTextNode = currNode.childNodes[1];
             var arcTimeNode = currNode.childNodes[2];

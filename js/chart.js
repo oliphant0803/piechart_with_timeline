@@ -757,7 +757,7 @@ var config =
                 .select("#value")
                 d3.select("#tooltip").html(
                             "Title: " + (d.data.label) + " " + cat_title
-                            + "<br/>" + "Percentage: " + (d.value/sumA).toFixed(1)*100 + "% (" + d.value + ")"
+                            + "<br/>" + "Percentage: " + parseInt(parseFloat(d.value/sumA).toFixed(2)*100) + "% (" + d.value + ")"
                             + "<br/>" + "time: " + d.data.time
                             + "<br/>" + "Value: " + d.data.radius)
             })

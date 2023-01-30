@@ -203,7 +203,7 @@ function labelArcs(dataArcs) {
             var arcPathNode = currNode.childNodes[0];
             var arcTextNode = currNode.childNodes[1];
             var arcTimeNode = currNode.childNodes[2];
-            if(arcPathNode.getBBox().width <= arcTextNode.getBBox().width * 1.5 || arcPathNode.getBBox().width <= arcTimeNode.getBBox().width * 1.5){
+            if(arcPathNode.getBBox().width <= arcTextNode.getBBox().width * 1.75 || arcPathNode.getBBox().width <= arcTimeNode.getBBox().width * 1.75){
                 arcTextNode.style.display = "none";
                 arcTimeNode.style.display = "none";
             }

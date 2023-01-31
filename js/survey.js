@@ -820,6 +820,11 @@ function draw_pie_o(time){
         return d.data.color;
     })
 
+    var sumO = 0;
+    compareSet.stats.forEach(stat => {
+        sumO += stat.value;
+    });
+
     arcChart
     .on("mouseover", function (event, d) {
         d3.select("#tooltip")
@@ -829,7 +834,7 @@ function draw_pie_o(time){
         .select("#value")
         d3.select("#tooltip").html(
                     "Title: " + (d.data.label) + " " + cat_title
-                    + "<br/>" + "Percentage: " + (d.value/sumA).toFixed(2)*100 + "% (" + d.value + ")"
+                    + "<br/>" + "Percentage: " + parseInt(parseFloat(d.value/sumO).toFixed(2)*100) + "% (" + d.value + ")"
                     + "<br/>" + "time: " + time
                     + "<br/>" + "Value: " + d.data.price)
     })

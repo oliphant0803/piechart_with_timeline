@@ -2,7 +2,7 @@ import * as d3 from "d3"
 
 import {selectNodeUpdate, hoverNodeUpdate} from "./provenanceSetup"
 
-import { data, data2007, graphData } from "./data";
+import { data, data2007, data2008, data2009, data2010, data2011, data2012, graphData } from "./data";
 
 import { angle, abbreviateNumber } from "./utils";
 
@@ -21,25 +21,22 @@ export default class TimeSeriesPlot{
     // this.svg = d3.select("#mainDiv")
     //   .append("svg")
 
-    this.draw_pie_o(2007)
-    // this.draw_pie_o(2008)
-    // this.draw_pie_o(2009)
-    // this.draw_pie_o(2010)
-    // this.draw_pie_o(2011)
-    // this.draw_pie_o(2012)
+    this.draw_pie_o(2007, data2007);
+    this.draw_pie_o(2008, data2008);
+    this.draw_pie_o(2009, data2009);
+    this.draw_pie_o(2010, data2010);
+    this.draw_pie_o(2011, data2011);
+    this.draw_pie_o(2012, data2012);
   }
 
-  draw_pie_o(time:number){
+  draw_pie_o(time:number, compareSet:any){
 
     // var width = d3.select('.pieChart').node().getBoundingClientRect().width;
     // var height = width;
     var cat_title = "Bedroom"
-    var widthO = d3.select('.pieChart2007').node().getBoundingClientRect().width;
+    var widthO = (d3.select('.pieChart2007').node()! as HTMLElement).getBoundingClientRect().width;
     var heightO = widthO;
 
-
-    //find the data of the given time
-    var compareSet = data2007;
 
     var chartO = d3.select(".pieChartSvg"+time)
     .attr('width',widthO)
@@ -48,7 +45,7 @@ export default class TimeSeriesPlot{
     var pieO = 
     d3.pie()
     .sort(null)
-    .value(function(d) 
+    .value(function(d:any) 
     {
         return d.value; 
     });
@@ -67,7 +64,7 @@ export default class TimeSeriesPlot{
     .outerRadius(Math.min(widthO, heightO) / 2 - 55);
 
     var arcChart = chartO.selectAll('.arc'+time)
-    .data(pieO(compareSet.stats))
+    .data(pieO(compareSet.stats as any))
     .enter()
     .append("g")
     .attr('transform', 'translate(' + widthO/2 +  ',' + heightO/2 +')')
@@ -76,21 +73,27 @@ export default class TimeSeriesPlot{
     .attr("id", function(d, i) { 
         return i+"time"+time; 
     })
-    .attr('d',arcO)
-    .style('fill', function(d) {
+    .attr('d',arcO as any)
+    .style('fill', function(d:any) {
         return d.data.color;
     })
 
+    var sumO = 0;
+    compareSet.stats.forEach((stat: { value: number; }) => {
+        sumO += stat.value;
+    });
+
+
     arcChart
-    .on("mouseover", function (event, d) {
+    .on("mouseover", function (event:any, d:any) {
         d3.select("#tooltip")
-        .style("left", event.pageX-widthO/4 + "px")
-        .style("top", event.pageY-widthO/4 + "px")
+        .style("left", event.pageX + "px")
+        .style("top", event.pageY + "px")
         .style("opacity", 1)
         .select("#value")
         d3.select("#tooltip").html(
                     "Title: " + (d.data.label) + " " + cat_title
-                    + "<br/>" + "Percentage: " + (d.value/sumA).toFixed(2)*100 + "% (" + d.value + ")"
+                    + "<br/>" + "Percentage: " + Number.parseInt(((d.value/sumO)*100).toString()) + "% (" + d.value + ")"
                     + "<br/>" + "time: " + time
                     + "<br/>" + "Value: " + d.data.price)
     })
@@ -109,29 +112,29 @@ export default class TimeSeriesPlot{
     .text(time);
 
     chartO.selectAll('.arc'+time)
-    .filter(function(d) { 
+    .filter(function(d:any) { 
         return d.endAngle - d.startAngle >= Math.PI/8; 
     })
     .append("text")
     .classed("innerText", true)
-    .attr("transform", function(d) {
+    .attr("transform", function(d:any) {
         return "translate(" + arcPriceO.centroid(d) + ")rotate(" + angle(d) + ")";
     })
     .attr("text-anchor", "middle")
-    .text( function(d) {
+    .text( function(d:any) {
         return abbreviateNumber(d.data.price);    
     });
 
     chartO.selectAll('.arc'+time)
-    .filter(function(d) { 
+    .filter(function(d:any) { 
         return d.endAngle - d.startAngle >= Math.PI/8; 
     })
     .append("text")
-    .attr("transform", function(d) {
+    .attr("transform", function(d:any) {
         return "translate(" + arcLabelO.centroid(d) + ")rotate(" + angle(d) + ")";
     })
     .attr("text-anchor", "middle")
-    .text( function(d) {
+    .text( function(d:any) {
         if(!isNaN(d.data.label)){
             return d.data.label + " " + cat_title;
         }
@@ -139,10 +142,10 @@ export default class TimeSeriesPlot{
     })
 
     //need to assign id to each node first
-    chartO.selectAll('.arc'+time)
-    .on("click", d => selectNodeUpdate("node_" + d.id))
-    .on("mouseover", d => hoverNodeUpdate("node_" + d.id))
-    .on("mouseout", d => hoverNodeUpdate(""))
+    // chartO.selectAll('.arc'+time)
+    // .on("click", d => selectNodeUpdate("node_" + d.id))
+    // .on("mouseover", d => hoverNodeUpdate("node_" + d.id))
+    // .on("mouseout", d => hoverNodeUpdate(""))
   }
 
   

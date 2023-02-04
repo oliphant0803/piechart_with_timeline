@@ -5,7 +5,9 @@ import
   NodeID
 } from '@visdesignlab/trrack';
 
-import TimeSeriesPlot from "./timeSeriesPieChart"
+import OriginalPlot from "./originalChart"
+
+import TimeSeriesPlot from './timeSeriesChart';
 
 import * as d3 from "d3"
 
@@ -17,6 +19,7 @@ import { ProvVisCreator } from '@visdesignlab/trrack-vis';
 export interface NodeState {
   selectedNode:string;
   hoveredNode:string;
+  dblClickedNode:string;
 };
 
 /**
@@ -25,10 +28,11 @@ export interface NodeState {
 
 const initialState: NodeState = {
   selectedNode: 'none',
-  hoveredNode: 'none'
+  hoveredNode: 'none',
+  dblClickedNode: 'none'
 }
 
-type EventTypes = "Select Node" | "Hover Node"
+type EventTypes = "Select Node" | "Hover Node" | "DblClick Node"
 
 //initialize provenance with the first state
 let prov = initProvenance<NodeState, EventTypes, string>(initialState, false);
@@ -86,12 +90,29 @@ export function hoverNodeUpdate(newHover: string){
     .applyAction();
 }
 
-// Create our TimeSeriesPlot class which handles the actual vis.
-// TimeSeriesPlot contains 3 primary functions, 
+/**
+* Function called when a node is double clicked. Applies an action to provenance.
+*/
+
+export function dblClickNodeUpdate(newDbl: string){
+  prov.addAction(
+       `${newDbl} DblClicked`,
+      (state:NodeState) => {
+        state.selectedNode = newDbl;
+        return state;
+      }
+    )
+    .addEventType("DblClick Node")
+    .applyAction();
+}
+
+// Create our OriginalPlot class which handles the actual vis.
+// OriginalPlot contains 3 primary functions, 
 
 // changeQuartet(string) - updates the current quartet
 // selectNode(string) - selects a new node
 // hoverNode(string) - hovers over a node or removes hover of empty string
+let op = new OriginalPlot();
 let tsp = new TimeSeriesPlot();
 
 // Set up observers for the three keys in state. These observers will get called either when an applyAction
@@ -105,23 +126,25 @@ prov.addGlobalObserver(() => {
   provVisUpdate();
 })
 /**
-* Observer for when the quartet state is changed. Calls changeQuartet in TimeSeriesPlot to update vis.
+* Observer for when the quartet state is changed. Calls changeQuartet in OriginalPlot to update vis.
 */
 // prov.addObserver(["selectedQuartet"], () => {
-//   tsp.changeQuartet(prov.current().getState().selectedQuartet);
+//   op.changeQuartet(prov.current().getState().selectedQuartet);
 // });
 
 /**
-* Observer for when the selected node state is changed. Calls selectNode in TimeSeriesPlot to update vis.
+* Observer for when the selected node state is changed. Calls selectNode in OriginalPlot to update vis.
 */
 prov.addObserver(["selectedNode"], () => {
+  op.selectNode(prov.current().getState().selectedNode);
   tsp.selectNode(prov.current().getState().selectedNode);
 });
 
 /**
-* Observer for when the hovered node state is changed. Calls hoverNode in TimeSeriesPlot to update vis.
+* Observer for when the hovered node state is changed. Calls hoverNode in OriginalPlot to update vis.
 */
 prov.addObserver(["hoveredNode"], () => {
+  op.hoverNode(prov.current().getState().hoveredNode);
   tsp.hoverNode(prov.current().getState().hoveredNode);
 });
 

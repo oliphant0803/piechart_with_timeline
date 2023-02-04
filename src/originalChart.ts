@@ -6,7 +6,7 @@ import { data, data2007, data2008, data2009, data2010, data2011, data2012, graph
 
 import { angle, abbreviateNumber } from "./utils";
 
-export default class TimeSeriesPlot{
+export default class OriginalPlot{
 
   margin:any;
   width:number;
@@ -69,6 +69,9 @@ export default class TimeSeriesPlot{
     .append("g")
     .attr('transform', 'translate(' + widthO/2 +  ',' + heightO/2 +')')
     .classed('arc'+time,true)
+    .attr("id", function(d:any) {
+        return "donut_" + d.data.label.trim() + "_" + time;
+    })
     .append('path')
     .attr("id", function(d, i) { 
         return i+"time"+time; 
@@ -83,9 +86,23 @@ export default class TimeSeriesPlot{
         sumO += stat.value;
     });
 
+    var timeout: number | any;
+    //var hovered=false;
+    var currentHoveredSection="";
 
+    
     arcChart
+    // .on("click", function(d:any){
+    //   return selectNodeUpdate("donut_" + d.data.label.trim() + "_" + time)
+    // })
     .on("mouseover", function (event:any, d:any) {
+        //initialize the timeout if first time
+        currentHoveredSection = "donut_" + d.data.label.trim() + "_" + time;
+        timeout = event.timeStamp;
+        // if (hovered == false){
+        //   hovered = true;
+          
+        // }
         d3.select("#tooltip")
         .style("left", event.pageX + "px")
         .style("top", event.pageY + "px")
@@ -96,11 +113,46 @@ export default class TimeSeriesPlot{
                     + "<br/>" + "Percentage: " + Number.parseInt(((d.value/sumO)*100).toString()) + "% (" + d.value + ")"
                     + "<br/>" + "time: " + time
                     + "<br/>" + "Value: " + d.data.price)
+        
+        //console.log(event.timeStamp);
+        // if (!timeout) {
+        //   timeout = window.setTimeout(function() {
+        //       timeout = null;
+        //       hovered = true;
+        //       hoverNodeUpdate("donut_" + d.data.label.trim() + "_" + time);
+        //   }, 2000);
+        // }
+
+        // // if (timeout) {
+        // //     window.clearTimeout(timeout);
+        // //     timeout = null;
+        // // }
+        // // else {
+        // //     hoverNodeUpdate("donut_" + d.data.label.trim() + "_" + time);
+        // // }
+        // clearTimeout(timeout);
+        // timeout = setTimeout(function() {
+        //   hovered = true;
+        //   hoverNodeUpdate("donut_" + d.data.label.trim() + "_" + time);
+        // }, 2000);
+        //return hoverNodeUpdate("donut_" + d.data.label.trim() + "_" + time)
     })
-    .on("mouseout", function () {
+    .on("mouseout", function (event:any, d:any) {
         // Hide the tooltip
             d3.select("#tooltip")
             .style("opacity", 0);
+        console.log("outevent "+ event.timeStamp);
+        console.log("overevent "+ timeout);
+        if(event.timeStamp - timeout >= 1500 && currentHoveredSection=="donut_" + d.data.label.trim() + "_" + time){
+            console.log(currentHoveredSection, event.timeStamp - timeout);
+            hoverNodeUpdate(currentHoveredSection);
+            
+              currentHoveredSection="";
+
+              hoverNodeUpdate("")
+        }else{
+          timeout = event.timeStamp;
+        }
     })
 
     chartO
@@ -140,12 +192,6 @@ export default class TimeSeriesPlot{
         }
         return d.data.label;     
     })
-
-    //need to assign id to each node first
-    // chartO.selectAll('.arc'+time)
-    // .on("click", d => selectNodeUpdate("node_" + d.id))
-    // .on("mouseover", d => hoverNodeUpdate("node_" + d.id))
-    // .on("mouseout", d => hoverNodeUpdate(""))
   }
 
   

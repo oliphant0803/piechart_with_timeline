@@ -210,6 +210,7 @@ function find_inner(radius){
 // 
 function generate_current_data(radius, length, labels, timeList, currTime){ 
     update_graphData(radius, timeList, currTime)
+    console.log(graphData);
 
     data = [];
     for(var i=0; i<length; i++){
@@ -429,7 +430,7 @@ var config =
 
         //console.log(radius, labels);
         data = generate_current_data(radius, graphData.rows.length, labels, graphData.rows, time);
-        //console.log(data);
+        console.log(data);
 
 
     },
@@ -588,7 +589,8 @@ var config =
 
     },
     "prepareChart": function ()
-    {
+    {   
+
         sumA = 0;
         for(var i=0; i<dataSet.radius.length; i++){
             sumA += dataSet.radius[i].value;

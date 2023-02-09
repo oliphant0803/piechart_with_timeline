@@ -1,6 +1,6 @@
 import * as d3 from "d3"
 
-import {selectNodeUpdate, hoverNodeUpdate} from "./provenanceSetup"
+import {selectNodeUpdate, hoverNodeUpdate, dblClickNodeUpdate} from "./provenanceSetup"
 
 import { graphData } from "./data";
 
@@ -18,10 +18,10 @@ export default class TimeSeriesPlot{
   svg:any;
   legend:any;
   arc:any;
-  labelArc:any;
-  timeOppArc:any;
-  timeFronArc:any;
-  timeFirstArc:any;
+//   labelArc:any;
+//   timeOppArc:any;
+//   timeFronArc:any;
+//   timeFirstArc:any;
   emptyArc:any;
   piedata:any;
   dataSet:any;
@@ -265,39 +265,7 @@ export default class TimeSeriesPlot{
         return d.data.outer/this.scale;
     });
 
-    this.labelArc = d3.arc()
-    .innerRadius(function (d:any){
-        return d.data.outer/this.scale + 20;
-    })
-    .outerRadius(function (d:any) { 
-        return d.data.outer/this.scale + 25;
-    });
-
-    this.timeOppArc = d3.arc()
-    .innerRadius(function (d:any){
-        return d.data.outer/this.scale - 20; 
-    })
-    .outerRadius(function (d:any) { 
-        return d.data.outer/this.scale - 20;
-    });
-
-    this.timeFirstArc = d3.arc()
-    .innerRadius(function (d:any){
-        return d.data.outer/this.scale - 30; 
-    })
-    .outerRadius(function (d:any) { 
-        return d.data.outer/this.scale - 30;
-    });
-
-    this.timeFronArc = d3.arc()
-    .innerRadius(function (d:any){
-        return d.data.outer/this.scale - 26; 
-    })
-    .outerRadius(function (d:any) { 
-        return d.data.outer/this.scale - 26;
-    });
-
-
+    
     this.emptyArc = d3.arc()
     .innerRadius(0)
     .outerRadius(0);
@@ -357,7 +325,11 @@ export default class TimeSeriesPlot{
         {
             return (2 / 2) + "em";
         })
+        .attr("id", function(d:any){
+            return "label_" + d.title.trim() + "_" + d.firstTime;
+        })
         .on("click", (event:any, d:any) => {
+            selectNodeUpdate("label_" + d.title.trim() + "_" + d.firstTime)
             this.setData(d.firstTime);
             this.setData(d.firstTime);
             this.prepareChart();
@@ -456,15 +428,21 @@ export default class TimeSeriesPlot{
                 return d.data.color;
             }
         })
+        var self = this;
+        var timeout: number | any;
+        var currentHoveredSection="";
 
         arcs
         .filter(function(d:any) { 
             return !d.data.dummy; 
         })
-        .on("mouseover", (event:any, d:any, i:any, n:any) => {
-            d3.select(n[i])
+        .on("mouseover", (event:any, d:any) => {
+            d3.select(event.currentTarget)
             .style("stroke", "black")
             .attr("stroke-width", 4)
+            currentHoveredSection = "donut_" + d.data.label.trim() + "_" + d.data.time;
+            timeout = event.timeStamp;
+
             d3.select("#tooltip")
             .style("left", event.pageX-this.width/4 + "px")
             .style("top", event.pageY-this.width/4 + "px")
@@ -476,13 +454,23 @@ export default class TimeSeriesPlot{
                         + "<br/>" + "time: " + d.data.time
                         + "<br/>" + "Value: " + d.data.radius)
         })
-        .on("mouseout", function (d:any, i:any, n:any) {
+        .on("mouseout", function (event:any, d:any) {
         // Hide the tooltip
-            d3.select(n[i])
+            d3.select(event.currentTarget)
             .style("stroke", "white")
             .attr("stroke-width", 0.5)
             d3.select("#tooltip")
             .style("opacity", 0);
+            if(event.timeStamp - timeout >= 1500 && currentHoveredSection=="donut_" + d.data.label.trim() + "_" + d.data.time){
+                console.log(currentHoveredSection, event.timeStamp - timeout);
+                hoverNodeUpdate(currentHoveredSection, 0);
+                
+                  currentHoveredSection="";
+    
+                  hoverNodeUpdate("", Number.parseInt(((event.timeStamp - timeout)/1000).toString()))
+            }else{
+              timeout = event.timeStamp;
+            }
         })
 
         arcs
@@ -493,6 +481,7 @@ export default class TimeSeriesPlot{
             if(!d.data.selected){
                 this.alignMode = false;
                 this.currTime = d.data.time;
+                selectNodeUpdate("arc_" + d.data.label.trim() + "_" + this.currTime)
                 this.setData(d.data.time);
                 this.setData(d.data.time);
                 this.prepareChart();
@@ -514,9 +503,11 @@ export default class TimeSeriesPlot{
                 .style("opacity", 0);
                 this.alignMode = !this.alignMode;
                 if(this.alignMode == true){
+                    dblClickNodeUpdate("year_" + this.currTime);
                     this.align(this.piedata, d.data.time);
                     this.updateChart();
                 }else{
+                    dblClickNodeUpdate("reset_" + this.currTime);
                     this.currTime = d.data.time;
                     this.setData(d.data.time);
                     this.setData(d.data.time);
@@ -545,6 +536,16 @@ export default class TimeSeriesPlot{
 
   labelCatChart() {
 
+    var self = this;
+
+    var labelArc = d3.arc()
+    .innerRadius(function (d:any){
+        return d.data.outer/self.scale + 20;
+    })
+    .outerRadius(function (d:any) { 
+        return d.data.outer/self.scale + 25;
+    });
+
     var paras = document.getElementsByClassName('arcLabelWedge');
 
     while(paras[0]) {
@@ -564,12 +565,9 @@ export default class TimeSeriesPlot{
     .attr('fill', 'none')
 
     catLabelArcs
-    // .filter(function(d) { 
-    //     return d.endAngle - d.startAngle >= Math.PI/8; 
-    // })
     .append("g:text")
-    .attr("transform", (d:any) => {
-        return "translate(" + this.labelArc.centroid(d) + ")rotate(" + angle(d) + ")";
+    .attr("transform", function(d:any){
+        return "translate(" + labelArc.centroid(d) + ")rotate(" + angle(d) + ")";
     })
     .attr("text-anchor", "middle")
     .text( function(d:any) {
@@ -632,6 +630,33 @@ labelChart() {
 }
 
 labelArcs(dataArcs:any) {
+
+    var self = this;
+
+    var timeOppArc = d3.arc()
+    .innerRadius(function (d:any){
+        return d.data.outer/self.scale - 20; 
+    })
+    .outerRadius(function (d:any) { 
+        return d.data.outer/self.scale - 20;
+    });
+
+    var timeFirstArc = d3.arc()
+    .innerRadius(function (d:any){
+        return d.data.outer/self.scale - 30; 
+    })
+    .outerRadius(function (d:any) { 
+        return d.data.outer/self.scale - 30;
+    });
+
+    var timeFronArc = d3.arc()
+    .innerRadius(function (d:any){
+        return d.data.outer/self.scale - 26; 
+    })
+    .outerRadius(function (d:any) { 
+        return d.data.outer/self.scale - 26;
+    });
+
     dataArcs.append('path')
     .attr('d', this.arc)
     .attr("id", function(d:any, i:any) { 
@@ -648,8 +673,8 @@ labelArcs(dataArcs:any) {
     .classed("innerText", function(d:any) {
         return d.data.selected;
     })
-    .attr("transform", (d:any) => {
-        return "translate(" + this.timeFirstArc.centroid(d) + ")rotate(" + angle(d) + ")";
+    .attr("transform", function(d:any){
+        return "translate(" + timeFirstArc.centroid(d) + ")rotate(" + angle(d) + ")";
     })
     .attr("text-anchor", "middle")
     .classed('timeLabelText', true)
@@ -666,8 +691,8 @@ labelArcs(dataArcs:any) {
     .classed("innerText", function(d:any) {
         return d.data.selected;
     })
-    .attr("transform", (d:any) => {
-        return "translate(" + this.timeOppArc.centroid(d) + ")rotate(" + angle(d) + ")";
+    .attr("transform", function(d:any) {
+        return "translate(" + timeOppArc.centroid(d) + ")rotate(" + angle(d) + ")";
     })
     .attr("text-anchor", "middle")
     .classed('timeLabelText', true)
@@ -684,8 +709,8 @@ labelArcs(dataArcs:any) {
     .classed("innerText", function(d:any) {
         return d.data.selected;
     })
-    .attr("transform", (d:any) => {
-        return "translate(" + this.timeFronArc.centroid(d) + ")rotate(" + angle(d) + ")";
+    .attr("transform", function(d:any){
+        return "translate(" + timeFronArc.centroid(d) + ")rotate(" + angle(d) + ")";
     })
     .attr("text-anchor", "middle")
     .classed('timeLabelText', true)

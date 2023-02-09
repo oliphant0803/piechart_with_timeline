@@ -19,7 +19,7 @@ import { ProvVisCreator } from '@visdesignlab/trrack-vis';
 export interface NodeState {
   selectedNode:string;
   hoveredNode:string;
-  dblClickedNode:string;
+  dblClickNode:string;
 };
 
 /**
@@ -29,7 +29,7 @@ export interface NodeState {
 const initialState: NodeState = {
   selectedNode: 'none',
   hoveredNode: 'none',
-  dblClickedNode: 'none'
+  dblClickNode: 'none'
 }
 
 type EventTypes = "Select Node" | "Hover Node" | "DblClick Node"
@@ -78,9 +78,9 @@ export function selectNodeUpdate(newSelected: string){
 * Function called when a node is hovered. Applies an action to provenance.
 */
 
-export function hoverNodeUpdate(newHover: string){
+export function hoverNodeUpdate(newHover: string, hoverTime:number){
   prov.addAction(
-      newHover === "" ? `Hover Removed` : `Node ${newHover} Hovered`, //Assign a label
+      newHover === "" ? `Hovered for ${hoverTime} s` : `${newHover} Hovered`, //Assign a label
       (state : NodeState) => {
         state.hoveredNode = newHover; //Change the desired portion of the state
         return state;
@@ -96,7 +96,7 @@ export function hoverNodeUpdate(newHover: string){
 
 export function dblClickNodeUpdate(newDbl: string){
   prov.addAction(
-       `${newDbl} DblClicked`,
+       `Compare ${newDbl}`,
       (state:NodeState) => {
         state.selectedNode = newDbl;
         return state;
@@ -136,7 +136,6 @@ prov.addGlobalObserver(() => {
 * Observer for when the selected node state is changed. Calls selectNode in OriginalPlot to update vis.
 */
 prov.addObserver(["selectedNode"], () => {
-  op.selectNode(prov.current().getState().selectedNode);
   tsp.selectNode(prov.current().getState().selectedNode);
 });
 
@@ -145,6 +144,13 @@ prov.addObserver(["selectedNode"], () => {
 */
 prov.addObserver(["hoveredNode"], () => {
   op.hoverNode(prov.current().getState().hoveredNode);
+  tsp.hoverNode(prov.current().getState().hoveredNode);
+});
+
+/**
+* Observer for when the double clicked node state is changed. Calls dblClickNode in OriginalPlot to update vis.
+*/
+prov.addObserver(["dblClickNode"], () => {
   tsp.hoverNode(prov.current().getState().hoveredNode);
 });
 

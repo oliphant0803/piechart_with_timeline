@@ -24,6 +24,8 @@ function labelCatChart() {
     // })
     .append("g:text")
     .attr("transform", function(d) {
+        console.log(d);
+        console.log(self.labelArc);
         return "translate(" + labelArc.centroid(d) + ")rotate(" + angle(d) + ")";
     })
     .attr("text-anchor", "middle")

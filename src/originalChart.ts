@@ -87,22 +87,14 @@ export default class OriginalPlot{
     });
 
     var timeout: number | any;
-    //var hovered=false;
     var currentHoveredSection="";
 
     
     arcChart
-    // .on("click", function(d:any){
-    //   return selectNodeUpdate("donut_" + d.data.label.trim() + "_" + time)
-    // })
     .on("mouseover", function (event:any, d:any) {
         //initialize the timeout if first time
         currentHoveredSection = "donut_" + d.data.label.trim() + "_" + time;
         timeout = event.timeStamp;
-        // if (hovered == false){
-        //   hovered = true;
-          
-        // }
         d3.select("#tooltip")
         .style("left", event.pageX + "px")
         .style("top", event.pageY + "px")
@@ -113,43 +105,20 @@ export default class OriginalPlot{
                     + "<br/>" + "Percentage: " + Number.parseInt(((d.value/sumO)*100).toString()) + "% (" + d.value + ")"
                     + "<br/>" + "time: " + time
                     + "<br/>" + "Value: " + d.data.price)
-        
-        //console.log(event.timeStamp);
-        // if (!timeout) {
-        //   timeout = window.setTimeout(function() {
-        //       timeout = null;
-        //       hovered = true;
-        //       hoverNodeUpdate("donut_" + d.data.label.trim() + "_" + time);
-        //   }, 2000);
-        // }
-
-        // // if (timeout) {
-        // //     window.clearTimeout(timeout);
-        // //     timeout = null;
-        // // }
-        // // else {
-        // //     hoverNodeUpdate("donut_" + d.data.label.trim() + "_" + time);
-        // // }
-        // clearTimeout(timeout);
-        // timeout = setTimeout(function() {
-        //   hovered = true;
-        //   hoverNodeUpdate("donut_" + d.data.label.trim() + "_" + time);
-        // }, 2000);
-        //return hoverNodeUpdate("donut_" + d.data.label.trim() + "_" + time)
     })
     .on("mouseout", function (event:any, d:any) {
         // Hide the tooltip
             d3.select("#tooltip")
             .style("opacity", 0);
-        console.log("outevent "+ event.timeStamp);
-        console.log("overevent "+ timeout);
+        // console.log("outevent "+ event.timeStamp);
+        // console.log("overevent "+ timeout);
         if(event.timeStamp - timeout >= 1500 && currentHoveredSection=="donut_" + d.data.label.trim() + "_" + time){
             console.log(currentHoveredSection, event.timeStamp - timeout);
-            hoverNodeUpdate(currentHoveredSection);
+            hoverNodeUpdate(currentHoveredSection, 0);
             
               currentHoveredSection="";
 
-              hoverNodeUpdate("")
+              hoverNodeUpdate("", Number.parseInt(((event.timeStamp - timeout)/1000).toString()))
         }else{
           timeout = event.timeStamp;
         }

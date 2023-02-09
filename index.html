@@ -29,96 +29,100 @@
     </div> -->
 
 
-    <div id="parent">
-      <div id="mainDiv">
-        <div class="card mb-4">
-          <div class="card-header">
-              <i class="fas fa-chart-pie me-1"></i>
-              Time Series Pie Chart
-              
+    <div id="parent" class="row">
+      <div id="mainDiv" class="col-xl-8">
+        <div class="row">
+          <div class="card mb-4 col-xl-12">
+            <div class="card-header">
+                <i class="fas fa-chart-pie me-1"></i>
+                Time Series Pie Chart
+                
+            </div>
+            <div class="card-body pieChart" id="1">
+                <svg class="pieChartSvg">
+        
+                </svg>
+                
+            </div>
           </div>
-          <div class="card-body pieChart" id="1">
-              <svg class="pieChartSvg">
-      
-              </svg>
-              
+  
+          <div class="card mb-4 col-xl-12">
+            <div class="card-header">
+                <i class="fas fa-chart-pie me-1"></i>
+                Legend
+            </div>
+            <div class="card-body">
+        
+                <svg class="pieLegendSvg">
+        
+                </svg>
+                
+            </div>
           </div>
+          <div class="card mb-4 col-xl-12">
+            <div class="card-header">
+                <i class="fas fa-chart-pie me-1"></i>
+                Set of Pie Charts
+                
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="pieChart2007">
+                            <svg class="pieChartSvg2007">
+                    
+                            </svg>
+                        </div>
+                    </div>
+  
+                    <div class="col-sm-6">
+                        <div class="pieChart2008">
+                            <svg class="pieChartSvg2008">
+                    
+                            </svg>
+                        </div>
+                    </div>
+  
+                    <div class="col-sm-6">
+                        <div class="pieChart2009">
+                            <svg class="pieChartSvg2009">
+                    
+                            </svg>
+                        </div>
+                    </div>
+  
+                    <div class="col-sm-6">
+                        <div class="pieChart2010">
+                            <svg class="pieChartSvg2010">
+                    
+                            </svg>
+                        </div>
+                    </div>
+  
+                    <div class="col-sm-6">
+                        <div class="pieChart2011">
+                            <svg class="pieChartSvg2011">
+                    
+                            </svg>
+                        </div>
+                    </div>
+  
+                    <div class="col-sm-6">
+                        <div class="pieChart2012">
+                            <svg class="pieChartSvg2012">
+                    
+                            </svg>
+                        </div>
+                    </div>
+  
+                </div>
+                
+            </div>
+            
+          </div>
+
         </div>
-
-        <div class="card mb-4">
-          <div class="card-header">
-              <i class="fas fa-chart-pie me-1"></i>
-              Legend
-          </div>
-          <div class="card-body">
-      
-              <svg class="pieLegendSvg">
-      
-              </svg>
-              
-          </div>
-        </div>
-        <div class="card mb-4">
-          <div class="card-header">
-              <i class="fas fa-chart-pie me-1"></i>
-              Set of Pie Charts
-              
-          </div>
-          <div class="card-body">
-              <div class="row">
-                  <div class="col-sm">
-                      <div class="pieChart2007">
-                          <svg class="pieChartSvg2007">
-                  
-                          </svg>
-                      </div>
-                  </div>
-
-                  <div class="col-sm">
-                      <div class="pieChart2008">
-                          <svg class="pieChartSvg2008">
-                  
-                          </svg>
-                      </div>
-                  </div>
-
-                  <div class="col-sm">
-                      <div class="pieChart2009">
-                          <svg class="pieChartSvg2009">
-                  
-                          </svg>
-                      </div>
-                  </div>
-
-                  <div class="col-sm">
-                      <div class="pieChart2010">
-                          <svg class="pieChartSvg2010">
-                  
-                          </svg>
-                      </div>
-                  </div>
-
-                  <div class="col-sm">
-                      <div class="pieChart2011">
-                          <svg class="pieChartSvg2011">
-                  
-                          </svg>
-                      </div>
-                  </div>
-
-                  <div class="col-sm">
-                      <div class="pieChart2012">
-                          <svg class="pieChartSvg2012">
-                  
-                          </svg>
-                      </div>
-                  </div>
-
-              </div>
-              
-          </div>
-          
-        </div>
+        
 
         <div id="tooltip" class="hidden">
           <p><strong>Stats</strong>
@@ -129,7 +133,7 @@
 
       </div>
 
-      <div id="provDiv">
+      <div id="provDiv" class="col-xl-4">
       </div>
     </div>
 

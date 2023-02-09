@@ -16,8 +16,8 @@
 }
 
 #mainDiv{
-  border: 1px solid black;
-  max-height: 800px;
+  /* border: 1px solid black; */
+  /* max-height: 800px; */
   display: flex;
   float:left
 }
@@ -29,6 +29,7 @@
 }
 
 #provDiv{
+  margin-left: 5rem;
   max-width: 300px;
   display: flex;
   float: right;

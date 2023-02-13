@@ -690,6 +690,14 @@ labelArcs(dataArcs:any) {
 
     var self = this;
 
+    this.arc = d3.arc()
+    .innerRadius(function (d:any){
+        return d.data.inner/self.scale;
+    })
+    .outerRadius(function (d:any) { 
+        return d.data.outer/self.scale;
+    });
+
     var timeOppArc = d3.arc()
     .innerRadius(function (d:any){
         return d.data.outer/self.scale - 20; 

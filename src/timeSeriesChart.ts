@@ -4,7 +4,7 @@ import {selectNodeUpdate, hoverNodeUpdate, dblClickNodeUpdate} from "./provenanc
 
 import { graphData } from "./data";
 
-import { angle, abbreviateNumber, flat_data, reScale, shallow_copy, check_dummy, get_time, get_curr_radius, find_inner, timeAngle } from "./utils";
+import { angle, abbreviateNumber, flat_data, reScale, shallow_copy, check_dummy, get_time, get_curr_radius, find_inner, timeAngle, getSumYear } from "./utils";
 
 export default class TimeSeriesPlot{
 
@@ -13,7 +13,6 @@ export default class TimeSeriesPlot{
   height:number;
   pie:any;
   currTime:any;
-  sumA:any;
   scale:any;
   svg:any;
   legend:any;
@@ -73,7 +72,7 @@ export default class TimeSeriesPlot{
         var filtered = graphData.cols[i].stats.filter(function(x) { return x.time == time;})
         // console.log(filtered);
         if (filtered.length > 0)
-        {
+        {   
             if (filtered[0].frequency > 0)
             {   
                 this.dataSet.labelList.push({label: graphData.cols[i].title, value: filtered[0].frequency});
@@ -294,10 +293,6 @@ export default class TimeSeriesPlot{
 
   prepareChart()
   {
-    this.sumA = 0;
-    for(var i=0; i<this.dataSet.radius.length; i++){
-        this.sumA += this.dataSet.radius[i].value;
-    }
 
     this.scale = reScale(this.width, this.data);
 
@@ -494,6 +489,7 @@ export default class TimeSeriesPlot{
             return !d.data.dummy; 
         })
         .on("mouseover", (event:any, d:any) => {
+            //console.log(d.data, d);
             d3.select(event.currentTarget)
             .style("stroke", "black")
             .attr("stroke-width", 4)
@@ -505,9 +501,13 @@ export default class TimeSeriesPlot{
             .style("top", event.pageY-this.width/4 + "px")
             .style("opacity", 1)
             .select("#value")
+
+            var thatYear = graphData.cols.find(o => o.title == d.data.label);
+            var actual = thatYear!.stats.find(o => o.time == d.data.time)
+
             d3.select("#tooltip").html(
                         "Title: " + (d.data.label) + " " + "bedroom"
-                        + "<br/>" + "Percentage: " + Number.parseInt(((d.value/this.sumA)*100).toString()) + "% (" + d.value + ")"
+                        + "<br/>" + "Percentage: " + Number.parseInt(((actual!.frequency/getSumYear(d.data.time))*100).toString()) + "% (" + actual!.frequency + ")"
                         + "<br/>" + "time: " + d.data.time
                         + "<br/>" + "Value: " + d.data.radius)
         })

@@ -109,6 +109,24 @@ function get_curr_radius(labels:any, time:number){
   return new_radius;
 }
 
+function getSumYear(time:number){
+    if (time == 2007){
+        return 20
+    }else if (time == 2008){
+        return 27
+    }else if(time == 2009){
+        return 20
+    }else if(time == 2010){
+        return 20
+    }else if(time == 2011){
+        return 27
+    }else if(time == 2012){
+        return 30
+    }else{
+        return 0
+    }
+}
+
 function timeAngle(d:any) {
   var middle_angle = (d.startAngle + d.endAngle)/2
   if ((d.startAngle <= 3*Math.PI/2 && d.startAngle >= Math.PI )|| (middle_angle >= Math.PI && middle_angle <= 3/2*Math.PI)){
@@ -127,4 +145,6 @@ export { angle,
   check_dummy, 
   get_curr_radius, 
   find_inner,
-  timeAngle };
+  timeAngle,
+  getSumYear 
+};

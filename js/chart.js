@@ -146,7 +146,7 @@ function sortData(){
 }
 
 function update_graphData(radius, timeList, currTime){
-    prevTime = timeList.slice(0, timeList.indexOf(currTime));
+    var prevTime = timeList.slice(0, timeList.indexOf(currTime));
     prevTime = prevTime.sort();
     for(var i=0; i<graphData.cols.length; i++){
         prevTime.forEach((time) => {

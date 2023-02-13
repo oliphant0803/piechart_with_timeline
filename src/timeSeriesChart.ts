@@ -40,7 +40,11 @@ export default class TimeSeriesPlot{
     this.firstTimeOrder=[];
     this.combinedStats = [];
     this.alignMode = false;
-
+    graphData.rows.forEach(row => {
+        this.setData(row);
+    })
+    this.currTime = graphData.rows[0];
+    this.setData(graphData.rows[0]);
     this.setData(graphData.rows[0]);
     this.prepareChart();
     this.prepareData();
@@ -94,9 +98,6 @@ export default class TimeSeriesPlot{
     for (var i = 0; i < graphData.rows.length; i++)
     {   
         var currtime = graphData.rows[i];
-        // if(currtime == time){
-        //     continue;
-        // }
         
         var currStats : any = {
             time: currtime, 
@@ -139,12 +140,11 @@ export default class TimeSeriesPlot{
 
     var labels = this.dataSet.labelList.map(function(d:any) { return d["label"]; });
 
-    //console.log(radius, labels);
     this.data = this.generate_current_data(radius, graphData.rows.length, labels, graphData.rows, time);
   }
 
   generate_current_data(radius:any, length:any, labels:any, timeList:any, currTime:any){ 
-
+        this.update_graphData(radius, timeList, currTime)
         this.data = [];
         for(var i=0; i<length; i++){
             var newRs = get_curr_radius(labels, i);
@@ -201,7 +201,64 @@ export default class TimeSeriesPlot{
         }
         return this.data;
     }
-
+    
+    update_graphData(radius:any, timeList:any, currTime:any){
+        var prevTime = timeList.slice(0, timeList.indexOf(currTime));
+        prevTime = prevTime.sort();
+        for(var i=0; i<graphData.cols.length; i++){
+            prevTime.forEach((time:number) => {
+                const unique = Array.from(new Set(graphData.cols[i].stats.map(item => item.time)));
+                if(unique.indexOf(time) == -1){
+                    //insert new data of the year
+                    var dummy = {
+                        time: 0, 
+                        average: 0, 
+                        frequency:0, 
+                    };
+                    dummy.time = time;
+                    
+                    dummy.frequency = 0;
+                    graphData.cols[i].stats.unshift(dummy);
+                }
+            });
+        }
+        //update the average if the frequency is 0
+        //sort the values of radius
+        for(var i=0; i<graphData.cols.length; i++){
+            var filtered = graphData.cols[i].stats.filter(function(x) { return x.frequency == 0;})
+            filtered.forEach((dummy) => {
+                var dummyData = shallow_copy(radius)
+                dummyData.sort((a:any,b:any)=> {
+                    if (a.value == b.value){
+                        return a.radius > b.radius ? -1 : 1
+                    } else {
+                        return a.value > b.value ? 1 : -1
+                    }
+                });
+                //console.log(dummyData);
+                //find the title 
+                var currTitle = graphData.cols[i].title;
+                var index = dummyData.findIndex(function(o:any) {
+                    return o.label == currTitle;
+                });
+                if(dummy.time > currTime){
+                    //console.log(getAvg(i));
+                    dummy.average = find_inner(radius); 
+                }else
+                if(index == 0){
+                    //the next one
+                    dummy.average = dummyData[index+1].radius;
+                }else if(index != -1){
+                    //console.log(dummyData, index);
+                    dummy.average = dummyData[index-1].radius;
+                }else{
+                    dummy.average = 1;
+                }
+            });
+                
+            
+        }
+    }
 
   align(piedata:any, time: any)
   {
@@ -440,7 +497,7 @@ export default class TimeSeriesPlot{
             d3.select(event.currentTarget)
             .style("stroke", "black")
             .attr("stroke-width", 4)
-            currentHoveredSection = "donut_" + d.data.label.trim() + "_" + d.data.time;
+            currentHoveredSection = "arc_" + d.data.label.trim() + "_" + d.data.time;
             timeout = event.timeStamp;
 
             d3.select("#tooltip")
@@ -461,7 +518,7 @@ export default class TimeSeriesPlot{
             .attr("stroke-width", 0.5)
             d3.select("#tooltip")
             .style("opacity", 0);
-            if(event.timeStamp - timeout >= 1500 && currentHoveredSection=="donut_" + d.data.label.trim() + "_" + d.data.time){
+            if(event.timeStamp - timeout >= 1500 && currentHoveredSection=="arc_" + d.data.label.trim() + "_" + d.data.time){
                 console.log(currentHoveredSection, event.timeStamp - timeout);
                 hoverNodeUpdate(currentHoveredSection, 0);
                 

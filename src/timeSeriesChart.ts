@@ -83,8 +83,6 @@ export default class TimeSeriesPlot{
         }
 
         var unfiltered = graphData.cols[i].stats
-        // .filter(function(x) { return x.time != time;})
-        // console.log(unfiltered);
         for (var j = 0; j < unfiltered.length; j++)
         {
             filteredtime.push({label: graphData.cols[i].title, time: unfiltered[j].time, radius: unfiltered[j].average});

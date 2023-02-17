@@ -1,10 +1,15 @@
 const path = require('path');
+var webpack = require('webpack');
 
 module.exports = {
     entry: path.join(__dirname, '/src/provenanceSetup.ts'),
     output: {
         filename: 'bundle.js',
-        path: __dirname
+        path: __dirname,
+        libraryTarget: 'umd',
+        library: 'EntryPoint',
+        umdNamedDefine: true,
+        libraryExport: 'default'
     },
     module: {
         rules: [

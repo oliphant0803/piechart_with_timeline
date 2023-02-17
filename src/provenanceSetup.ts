@@ -73,6 +73,50 @@ export function selectNodeUpdate(newSelected: string){
     .addEventType("Select Node")
     .applyAction();
 }
+export function chartInit(){
+  let op = new OriginalPlot();
+  let tsp = new TimeSeriesPlot();
+  provVisUpdate();
+  // Set up observers for the three keys in state. These observers will get called either when an applyAction
+  // function changes the associated keys value.
+
+  // Also will be called when an internal graph change such as goBackNSteps, goBackOneStep or goToNode
+  // change the keys value.
+
+
+  prov.addGlobalObserver(() => {
+    provVisUpdate();
+  })
+  /**
+  * Observer for when the quartet state is changed. Calls changeQuartet in OriginalPlot to update vis.
+  */
+  // prov.addObserver(["selectedQuartet"], () => {
+  //   op.changeQuartet(prov.current().getState().selectedQuartet);
+  // });
+
+  /**
+  * Observer for when the selected node state is changed. Calls selectNode in OriginalPlot to update vis.
+  */
+  prov.addObserver(["selectedNode"], () => {
+    tsp.selectNode(prov.current().getState().selectedNode);
+  });
+
+  /**
+  * Observer for when the hovered node state is changed. Calls hoverNode in OriginalPlot to update vis.
+  */
+  prov.addObserver(["hoveredNode"], () => {
+    op.hoverNode(prov.current().getState().hoveredNode);
+    tsp.hoverNode(prov.current().getState().hoveredNode);
+  });
+
+  /**
+  * Observer for when the double clicked node state is changed. Calls dblClickNode in OriginalPlot to update vis.
+  */
+  prov.addObserver(["dblClickNode"], () => {
+    tsp.hoverNode(prov.current().getState().hoveredNode);
+  });
+}
+
 
 /**
 * Function called when a node is hovered. Applies an action to provenance.
@@ -112,50 +156,52 @@ export function dblClickNodeUpdate(newDbl: string){
 // changeQuartet(string) - updates the current quartet
 // selectNode(string) - selects a new node
 // hoverNode(string) - hovers over a node or removes hover of empty string
-let op = new OriginalPlot();
-let tsp = new TimeSeriesPlot();
+// let op = new OriginalPlot();
+// let tsp = new TimeSeriesPlot();
 
-// Set up observers for the three keys in state. These observers will get called either when an applyAction
-// function changes the associated keys value.
+// // Set up observers for the three keys in state. These observers will get called either when an applyAction
+// // function changes the associated keys value.
 
-// Also will be called when an internal graph change such as goBackNSteps, goBackOneStep or goToNode
-// change the keys value.
+// // Also will be called when an internal graph change such as goBackNSteps, goBackOneStep or goToNode
+// // change the keys value.
 
 
-prov.addGlobalObserver(() => {
-  provVisUpdate();
-})
-/**
-* Observer for when the quartet state is changed. Calls changeQuartet in OriginalPlot to update vis.
-*/
-// prov.addObserver(["selectedQuartet"], () => {
-//   op.changeQuartet(prov.current().getState().selectedQuartet);
+// prov.addGlobalObserver(() => {
+//   provVisUpdate();
+// })
+// /**
+// * Observer for when the quartet state is changed. Calls changeQuartet in OriginalPlot to update vis.
+// */
+// // prov.addObserver(["selectedQuartet"], () => {
+// //   op.changeQuartet(prov.current().getState().selectedQuartet);
+// // });
+
+// /**
+// * Observer for when the selected node state is changed. Calls selectNode in OriginalPlot to update vis.
+// */
+// prov.addObserver(["selectedNode"], () => {
+//   tsp.selectNode(prov.current().getState().selectedNode);
 // });
 
-/**
-* Observer for when the selected node state is changed. Calls selectNode in OriginalPlot to update vis.
-*/
-prov.addObserver(["selectedNode"], () => {
-  tsp.selectNode(prov.current().getState().selectedNode);
-});
+// /**
+// * Observer for when the hovered node state is changed. Calls hoverNode in OriginalPlot to update vis.
+// */
+// prov.addObserver(["hoveredNode"], () => {
+//   op.hoverNode(prov.current().getState().hoveredNode);
+//   tsp.hoverNode(prov.current().getState().hoveredNode);
+// });
 
-/**
-* Observer for when the hovered node state is changed. Calls hoverNode in OriginalPlot to update vis.
-*/
-prov.addObserver(["hoveredNode"], () => {
-  op.hoverNode(prov.current().getState().hoveredNode);
-  tsp.hoverNode(prov.current().getState().hoveredNode);
-});
-
-/**
-* Observer for when the double clicked node state is changed. Calls dblClickNode in OriginalPlot to update vis.
-*/
-prov.addObserver(["dblClickNode"], () => {
-  tsp.hoverNode(prov.current().getState().hoveredNode);
-});
+// /**
+// * Observer for when the double clicked node state is changed. Calls dblClickNode in OriginalPlot to update vis.
+// */
+// prov.addObserver(["dblClickNode"], () => {
+//   tsp.hoverNode(prov.current().getState().hoveredNode);
+// });
 
 //Setup ProvVis once initially
-provVisUpdate()
+// export function chartInit(){
+//   provVisUpdate()
+// }
 
 
 // Undo function which simply goes one step backwards in the graph.
@@ -195,3 +241,6 @@ document.onkeydown = function(e){
     redo();
   }
 }
+
+let n: number;
+n = window.setTimeout(function () { chartInit()  }, 10000);

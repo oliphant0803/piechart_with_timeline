@@ -4,7 +4,7 @@ var webpack = require('webpack');
 module.exports = {
     entry: path.join(__dirname, '/src/provenanceSetup.ts'),
     output: {
-        filename: 'bundle.js',
+        filename: 'bundle2.js',
         path: __dirname,
         libraryTarget: 'umd',
         library: 'EntryPoint',

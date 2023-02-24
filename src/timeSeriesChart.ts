@@ -208,7 +208,10 @@ export default class TimeSeriesPlot{
         prevTime = prevTime.sort();
         for(var i=0; i<this.graphData.cols.length; i++){
             prevTime.forEach((time:number) => {
-                const unique = Array.from(new Set(this.graphData.cols[i].stats.map((item:any) => item.time)));
+                // const unique = [...new Set(this.graphData.cols[i].stats.map((item:any) => item.time))];
+                const unique = this.graphData.cols[i].stats
+                .map((item:any) => item.age)
+                .filter((value:any, index:any, self:any) => self.indexOf(value) === index);
                 console.log("Unique is", unique, this.graphData.cols[i].stats);
                 if(unique.indexOf(time) == -1){
                     //insert new data of the year

@@ -1,4 +1,4 @@
-import { graphData } from "./data";
+import { graph } from "./data";
 
 
 function abbreviateNumber(num:number) {
@@ -55,12 +55,12 @@ function shallow_copy(item:any){
 function check_dummy(label:any, time:any){
   var dummies : any[] = [];
   var isDum = false;
-  for(var i=0; i<graphData.cols.length; i++){
-      graphData.cols[i].stats.forEach((stat:any) => {
+  for(var i=0; i<graph.cols.length; i++){
+      graph.cols[i].stats.forEach((stat:any) => {
           if(stat != undefined && stat.frequency == 0){
               dummies.push({
                   'stat':stat, 
-                  'label':graphData.cols[i].title
+                  'label':graph.cols[i].title
               });
           }
       })
@@ -75,11 +75,11 @@ function check_dummy(label:any, time:any){
 }
 
 function get_time(label:any, radius:any){
-  for(var i=0; i<graphData.cols.length; i++){
-      if(graphData.cols[i]["title"] == label){
-          for(var j=0; j<graphData.cols[i].stats.length; j++){
-              if(graphData.cols[i].stats[j].average == radius){
-                  return graphData.cols[i].stats[j]["time"];
+  for(var i=0; i<graph.cols.length; i++){
+      if(graph.cols[i]["title"] == label){
+          for(var j=0; j<graph.cols[i].stats.length; j++){
+              if(graph.cols[i].stats[j].average == radius){
+                  return graph.cols[i].stats[j]["time"];
               }
           }
       }
@@ -98,10 +98,10 @@ function find_inner(radius:any){
 function get_curr_radius(labels:any, time:number){
   var new_radius = []
   for(var i=0; i<labels.length; i++){
-      for(var j=0; j<graphData.cols.length; j++){
-          if(graphData.cols[j].title == labels[i] && typeof graphData.cols[j].stats[time] != "undefined"){
-              new_radius.push(graphData.cols[j].stats[time]["average"]);
-          }else if(graphData.cols[j].title == labels[i] && typeof graphData.cols[j].stats[time] == "undefined"){
+      for(var j=0; j<graph.cols.length; j++){
+          if(graph.cols[j].title == labels[i] && typeof graph.cols[j].stats[time] != "undefined"){
+              new_radius.push(graph.cols[j].stats[time]["average"]);
+          }else if(graph.cols[j].title == labels[i] && typeof graph.cols[j].stats[time] == "undefined"){
               new_radius.push(0);
           }
       }

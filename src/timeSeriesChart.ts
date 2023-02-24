@@ -2,7 +2,7 @@ import * as d3 from "d3"
 
 import {selectNodeUpdate, hoverNodeUpdate, dblClickNodeUpdate} from "./provenanceSetup"
 
-import { graphData } from "./data";
+import { graph } from "./data";
 
 import { angle, abbreviateNumber, flat_data, reScale, shallow_copy, check_dummy, get_time, get_curr_radius, find_inner, timeAngle, getSumYear } from "./utils";
 
@@ -28,6 +28,7 @@ export default class TimeSeriesPlot{
   firstTimeOrder: any;
   combinedStats:any;
   alignMode:boolean;
+  graphData:any;
 
   //svg:d3.Selection<SVGSVGElement, any, HTMLElement, any>;
 
@@ -39,11 +40,12 @@ export default class TimeSeriesPlot{
     this.firstTimeOrder=[];
     this.combinedStats = [];
     this.alignMode = false;
-    graphData.rows.forEach(row => {
+    this.graphData = graph;
+    this.graphData.rows.forEach((row:any) => {
         this.setData(row);
     })
-    this.currTime = graphData.rows[0];
-    this.setData(graphData.rows[0]);
+    this.currTime = this.graphData.rows[0];
+    this.setData(this.graphData.rows[0]);
     this.prepareChart();
     this.prepareData();
     this.plotPie();
@@ -64,36 +66,36 @@ export default class TimeSeriesPlot{
     var filteredtime = [];
     this.combinedStats = [];
 
-    for (var i = 0; i < graphData.cols.length; i++)
+    for (var i = 0; i < this.graphData.cols.length; i++)
     {   
 
-        this.dataSet.labelsCat.push({title: graphData.cols[i].title, color: graphData.cols[i].color, firstTime: i});
-        var filtered = graphData.cols[i].stats.filter(function(x) { return x.time == time;})
+        this.dataSet.labelsCat.push({title: this.graphData.cols[i].title, color: this.graphData.cols[i].color, firstTime: i});
+        var filtered = this.graphData.cols[i].stats.filter(function(x:any) { return x.time == time;})
         console.log(filtered);
         if (filtered.length > 0)
         {   
             if (filtered[0].frequency > 0)
             {   
-                this.dataSet.labelList.push({label: graphData.cols[i].title, value: filtered[0].frequency});
-                this.dataSet.labels.push({title: graphData.cols[i].title, color: graphData.cols[i].color});
-                this.dataSet.stats.push({label: graphData.cols[i].title, value: filtered[0].frequency, radius: 0, color: graphData.cols[i].color});
-                this.dataSet.radius.push({label: graphData.cols[i].title, value: filtered[0].frequency, radius: graphData.cols[i].stats[0].average, color: graphData.cols[i].color}); 	
+                this.dataSet.labelList.push({label: this.graphData.cols[i].title, value: filtered[0].frequency});
+                this.dataSet.labels.push({title: this.graphData.cols[i].title, color: this.graphData.cols[i].color});
+                this.dataSet.stats.push({label: this.graphData.cols[i].title, value: filtered[0].frequency, radius: 0, color: this.graphData.cols[i].color});
+                this.dataSet.radius.push({label: this.graphData.cols[i].title, value: filtered[0].frequency, radius: this.graphData.cols[i].stats[0].average, color: this.graphData.cols[i].color}); 	
             }
         }
 
-        var unfiltered = graphData.cols[i].stats
+        var unfiltered = this.graphData.cols[i].stats
         for (var j = 0; j < unfiltered.length; j++)
         {
-            filteredtime.push({label: graphData.cols[i].title, time: unfiltered[j].time, radius: unfiltered[j].average});
+            filteredtime.push({label: this.graphData.cols[i].title, time: unfiltered[j].time, radius: unfiltered[j].average});
         }
         
     }
 
 
     //generate list of data corresponding the different times
-    for (var i = 0; i < graphData.rows.length; i++)
+    for (var i = 0; i < this.graphData.rows.length; i++)
     {   
-        var currtime = graphData.rows[i];
+        var currtime = this.graphData.rows[i];
         
         var currStats : any = {
             time: currtime, 
@@ -121,7 +123,7 @@ export default class TimeSeriesPlot{
     }
 
     var radius = this.dataSet.radius;
-    if(time == graphData.rows[0]){
+    if(time == this.graphData.rows[0]){
         radius.sort((a:any, b:any) => (a.value > b.value) ? 1 : -1)
         this.dataSet.labelList.sort((a:any, b:any) => (a.value > b.value) ? 1 : -1)
         this.firstTimeOrder = this.dataSet.labelList.map(function(d:any) { return d["label"]; });
@@ -136,7 +138,7 @@ export default class TimeSeriesPlot{
 
     var labels = this.dataSet.labelList.map(function(d:any) { return d["label"]; });
     console.log("dataset is", this.dataSet);
-    this.data = this.generate_current_data(radius, graphData.rows.length, labels, graphData.rows, time);
+    this.data = this.generate_current_data(radius, this.graphData.rows.length, labels, this.graphData.rows, time);
   }
 
   generate_current_data(radius:any, length:any, labels:any, timeList:any, currTime:any){ 
@@ -202,9 +204,9 @@ export default class TimeSeriesPlot{
     update_graphData(radius:any, timeList:any, currTime:any){
         var prevTime = timeList.slice(0, timeList.indexOf(currTime));
         prevTime = prevTime.sort();
-        for(var i=0; i<graphData.cols.length; i++){
+        for(var i=0; i<this.graphData.cols.length; i++){
             prevTime.forEach((time:number) => {
-                const unique = Array.from(new Set(graphData.cols[i].stats.map(item => item.time)));
+                const unique = Array.from(new Set(this.graphData.cols[i].stats.map((item:any) => item.time)));
                 if(unique.indexOf(time) == -1){
                     //insert new data of the year
                     var dummy = {
@@ -215,15 +217,15 @@ export default class TimeSeriesPlot{
                     dummy.time = time;
                     
                     dummy.frequency = 0;
-                    graphData.cols[i].stats.unshift(dummy);
+                    this.graphData.cols[i].stats.unshift(dummy);
                 }
             });
         }
         //update the average if the frequency is 0
         //sort the values of radius
-        for(var i=0; i<graphData.cols.length; i++){
-            var filtered = graphData.cols[i].stats.filter(function(x) { return x.frequency == 0;})
-            filtered.forEach((dummy) => {
+        for(var i=0; i<this.graphData.cols.length; i++){
+            var filtered = this.graphData.cols[i].stats.filter(function(x:any) { return x.frequency == 0;})
+            filtered.forEach((dummy:any) => {
                 var dummyData = shallow_copy(radius)
                 dummyData.sort((a:any,b:any)=> {
                     if (a.value == b.value){
@@ -234,7 +236,7 @@ export default class TimeSeriesPlot{
                 });
                 //console.log(dummyData);
                 //find the title 
-                var currTitle = graphData.cols[i].title;
+                var currTitle = this.graphData.cols[i].title;
                 var index = dummyData.findIndex(function(o:any) {
                     return o.label == currTitle;
                 });
@@ -344,10 +346,10 @@ export default class TimeSeriesPlot{
         this.dataSet.labelsCat.forEach((a:any) => {
             var i = a.firstTime
             var j = 0;
-            while(graphData.cols[i].stats[j].frequency == 0){
+            while(this.graphData.cols[i].stats[j].frequency == 0){
                 j += 1;
             }
-            a.firstTime = graphData.cols[i].stats[j].time;
+            a.firstTime = this.graphData.cols[i].stats[j].time;
         })
 
         this.legend
@@ -500,8 +502,8 @@ export default class TimeSeriesPlot{
             .style("opacity", 1)
             .select("#value")
 
-            var thatYear = graphData.cols.find(o => o.title == d.data.label);
-            var actual = thatYear!.stats.find(o => o.time == d.data.time)
+            var thatYear = this.graphData.cols.find((o:any) => o.title == d.data.label);
+            var actual = thatYear!.stats.find((o:any) => o.time == d.data.time)
 
             d3.select("#tooltip").html(
                         "Title: " + (d.data.label) + " " + "bedroom"

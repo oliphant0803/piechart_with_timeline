@@ -721,7 +721,7 @@ var data = [
     }
 ]
 
-var graphData = {
+var graph = {
     "cols": [
         {
             "title": "4\r",
@@ -1196,4 +1196,4 @@ var data2012 = {
     ]
 }
 
-export { data, graphData, data2007, data2008, data2009, data2010, data2011, data2012 };
+export { data, graph, data2007, data2008, data2009, data2010, data2011, data2012 };

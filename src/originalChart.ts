@@ -2,7 +2,7 @@ import * as d3 from "d3"
 
 import {selectNodeUpdate, hoverNodeUpdate} from "./provenanceSetup"
 
-import { data, data2007, data2008, data2009, data2010, data2011, data2012, graphData } from "./data";
+import { data, data2007, data2008, data2009, data2010, data2011, data2012} from "./data";
 
 import { angle, abbreviateNumber } from "./utils";
 

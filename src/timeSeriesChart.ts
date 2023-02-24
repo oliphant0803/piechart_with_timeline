@@ -585,7 +585,9 @@ export default class TimeSeriesPlot{
 
     var target = this.pie(this.data[0]);
     this.data = [].concat(...this.data);
+    console.log("original data", this.data);
     this.piedata = this.pie(this.data);
+    console.log("unflated data", this.piedata);
     flat_data(target, this.piedata);
   }
 

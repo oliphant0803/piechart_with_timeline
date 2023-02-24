@@ -69,7 +69,7 @@ export default class TimeSeriesPlot{
 
         this.dataSet.labelsCat.push({title: graphData.cols[i].title, color: graphData.cols[i].color, firstTime: i});
         var filtered = graphData.cols[i].stats.filter(function(x) { return x.time == time;})
-        // console.log(filtered);
+        console.log(filtered);
         if (filtered.length > 0)
         {   
             if (filtered[0].frequency > 0)

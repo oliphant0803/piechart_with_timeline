@@ -43,6 +43,7 @@ export default class TimeSeriesPlot{
         this.setData(row);
     })
     this.currTime = graphData.rows[0];
+    console.log("graphData", graphData);
     this.setData(graphData.rows[0]);
     this.setData(graphData.rows[0]);
     this.prepareChart();
@@ -136,7 +137,7 @@ export default class TimeSeriesPlot{
     }
 
     var labels = this.dataSet.labelList.map(function(d:any) { return d["label"]; });
-
+    console.log("dataset is", this.dataSet);
     this.data = this.generate_current_data(radius, graphData.rows.length, labels, graphData.rows, time);
   }
 
@@ -196,6 +197,7 @@ export default class TimeSeriesPlot{
             }
             this.data.push(currData);
         }
+        console.log("generate current data", this.data);
         return this.data;
     }
     

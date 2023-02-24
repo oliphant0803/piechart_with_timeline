@@ -209,6 +209,7 @@ export default class TimeSeriesPlot{
         for(var i=0; i<this.graphData.cols.length; i++){
             prevTime.forEach((time:number) => {
                 const unique = Array.from(new Set(this.graphData.cols[i].stats.map((item:any) => item.time)));
+                console.log("Unique is", unique);
                 if(unique.indexOf(time) == -1){
                     //insert new data of the year
                     var dummy = {

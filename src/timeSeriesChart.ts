@@ -43,8 +43,6 @@ export default class TimeSeriesPlot{
         this.setData(row);
     })
     this.currTime = graphData.rows[0];
-    console.log("graphData", graphData);
-    this.setData(graphData.rows[0]);
     this.setData(graphData.rows[0]);
     this.prepareChart();
     this.prepareData();

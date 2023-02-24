@@ -412,7 +412,7 @@ export default class TimeSeriesPlot{
   updateChart() 
   {
     var local = d3.local();
-    //console.log(' pieData', piedata)
+    console.log(' pieData', this.piedata)
 
 
     let arcs = this.svg.selectAll('.arcWedge')

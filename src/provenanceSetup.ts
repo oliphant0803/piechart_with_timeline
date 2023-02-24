@@ -242,7 +242,7 @@ document.onkeydown = function(e){
   }
 }
 
-//chartInit();
+chartInit();
 
-let n: number;
-n = window.setTimeout(function () { chartInit()  }, 10000);
+// let n: number;
+// n = window.setTimeout(function () { chartInit()  }, 10000);

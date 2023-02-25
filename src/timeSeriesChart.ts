@@ -44,10 +44,10 @@ export default class TimeSeriesPlot{
     this.graphData.rows.forEach((row:any) => {
         this.setData(row);
     })
-    console.log("GraphData", this.graphData);
+    //console.log("GraphData", this.graphData);
     this.currTime = this.graphData.rows[0];
     this.setData(this.graphData.rows[0]);
-    console.log("GraphData", this.graphData);
+    //console.log("GraphData", this.graphData);
     this.prepareChart();
     this.prepareData();
     this.plotPie();
@@ -73,7 +73,7 @@ export default class TimeSeriesPlot{
 
         this.dataSet.labelsCat.push({title: this.graphData.cols[i].title, color: this.graphData.cols[i].color, firstTime: i});
         var filtered = this.graphData.cols[i].stats.filter(function(x:any) { return x.time == time;})
-        console.log(filtered);
+        //console.log(filtered);
         if (filtered.length > 0)
         {   
             if (filtered[0].frequency > 0)
@@ -139,7 +139,7 @@ export default class TimeSeriesPlot{
     }
 
     var labels = this.dataSet.labelList.map(function(d:any) { return d["label"]; });
-    console.log("dataset is", this.dataSet);
+    //console.log("dataset is", this.dataSet);
     this.data = this.generate_current_data(radius, this.graphData.rows.length, labels, this.graphData.rows, time);
   }
 
@@ -199,7 +199,7 @@ export default class TimeSeriesPlot{
             }
             this.data.push(currData);
         }
-        console.log("generate current data", this.data);
+        //console.log("generate current data", this.data);
         return this.data;
     }
     
@@ -215,7 +215,7 @@ export default class TimeSeriesPlot{
                         unique.push(stat.time);
                     }
                 });
-                console.log("Unique is", unique, this.graphData.cols[i].stats);
+                //console.log("Unique is", unique, this.graphData.cols[i].stats);
                 if(unique.indexOf(time) == -1){
                     //insert new data of the year
                     var dummy = {
@@ -423,7 +423,7 @@ export default class TimeSeriesPlot{
   updateChart() 
   {
     var local = d3.local();
-    console.log(' pieData', this.piedata)
+    //console.log(' pieData', this.piedata)
 
 
     let arcs = this.svg.selectAll('.arcWedge')
@@ -439,7 +439,7 @@ export default class TimeSeriesPlot{
             .attr('transform', 'translate(' + this.width/2 +  ',' + this.height/2 +')')},
 
         (update:any)=>{ 
-            console.log(' update selection' , update.size()); 
+            //console.log(' update selection' , update.size()); 
             return update
         },
 
@@ -528,7 +528,7 @@ export default class TimeSeriesPlot{
             d3.select("#tooltip")
             .style("opacity", 0);
             if(event.timeStamp - timeout >= 1500 && currentHoveredSection=="arc_" + d.data.label.trim() + "_" + d.data.time){
-                console.log(currentHoveredSection, event.timeStamp - timeout);
+                //console.log(currentHoveredSection, event.timeStamp - timeout);
                 hoverNodeUpdate(currentHoveredSection, 0);
                 
                   currentHoveredSection="";
@@ -596,9 +596,9 @@ export default class TimeSeriesPlot{
 
     var target = this.pie(this.data[0]);
     this.data = [].concat(...this.data);
-    console.log("original data", this.data);
+    //console.log("original data", this.data);
     this.piedata = this.pie(this.data);
-    console.log("unflated data", this.piedata);
+    //console.log("unflated data", this.piedata);
     flat_data(target, this.piedata);
   }
 

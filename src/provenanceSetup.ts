@@ -12,6 +12,9 @@ import TimeSeriesPlot from './timeSeriesChart';
 import * as d3 from "d3"
 
 import { ProvVisCreator } from '@visdesignlab/trrack-vis';
+import { download } from './utils';
+
+import * as fs from "fs"
 
 /**
 * interface representing the state of the application
@@ -57,6 +60,19 @@ let prov = initProvenance<NodeState, EventTypes, string>(initialState, false);
 //     .alwaysStoreState(true)
 //     .applyAction();
 // }
+var collectedData;
+
+
+export function updateJSON(){
+  collectedData = prov.exportProvenanceGraph(); 
+  download(collectedData, 'json.txt', 'text/plain');
+  // var fs = require('fs');
+  // fs.writeFile("test.txt", collectedData, function(err:any) {
+  //   if (err) {
+  //       console.log(err);
+  //   }
+  // });
+}
 
 /**
 * Function called when a node is selected. Applies an action to provenance.
@@ -72,7 +88,7 @@ export function selectNodeUpdate(newSelected: string){
     )
     .addEventType("Select Node")
     .applyAction();
-  console.log(prov.exportProvenanceGraph())
+  updateJSON();
 }
 export function chartInit(){
   let op = new OriginalPlot();
@@ -133,6 +149,7 @@ export function hoverNodeUpdate(newHover: string, hoverTime:number){
     )
     .addEventType("Hover Node")
     .applyAction();
+    updateJSON()
 }
 
 /**
@@ -149,6 +166,7 @@ export function dblClickNodeUpdate(newDbl: string){
     )
     .addEventType("DblClick Node")
     .applyAction();
+    updateJSON()
 }
 
 // Create our OriginalPlot class which handles the actual vis.
@@ -244,6 +262,8 @@ document.onkeydown = function(e){
 }
 
 chartInit();
+
+// export default collectedData;
 
 // let n: number;
 // n = window.setTimeout(function () { chartInit()  }, 10000);

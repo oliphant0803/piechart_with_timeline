@@ -136,6 +136,15 @@ function timeAngle(d:any) {
   }
 }
 
+function download(content:any, fileName:any, contentType:any) {
+    var a = document.createElement("a");
+    var file = new Blob([content], {type: contentType});
+    a.href = URL.createObjectURL(file);
+    a.download = fileName;
+    a.click();
+}
+
+
 export { angle, 
   abbreviateNumber, 
   flat_data, 
@@ -146,5 +155,6 @@ export { angle,
   get_curr_radius, 
   find_inner,
   timeAngle,
-  getSumYear 
+  getSumYear,
+  download
 };

@@ -72,6 +72,7 @@ export function selectNodeUpdate(newSelected: string){
     )
     .addEventType("Select Node")
     .applyAction();
+  console.log(prov.exportProvenanceGraph())
 }
 export function chartInit(){
   let op = new OriginalPlot();

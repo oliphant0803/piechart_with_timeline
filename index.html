@@ -8,7 +8,12 @@
     <link href="styles/bootstrapv5.1.3.css" rel="stylesheet"/>
     <link href="styles/style.css" rel="stylesheet"/>
     <link rel="stylesheet" href="styles/trrack.css">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shepherd.js/8.0.0/css/shepherd.min.css"
+    integrity="sha512-zNOBFuXnJUnyPDwC1sN92qTVoFhONNoanpfr1tY8o5akFsqocpPSnxem7yPEqQ4NNkYpgtLomg3rqyuK8XCzKg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/shepherd.js/8.0.0/js/shepherd.min.js"
+      integrity="sha512-g6UoKc+cPrVq13/iMhDdv+shNha5ZZ9HeEc+qPK7zFulktsi82ajrlXt14o6qFGG504f5U3+B16JtwGIAUAgfQ=="
+      crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
   </head>
   <body>
@@ -24,7 +29,7 @@
                 
             </div>
             <div class="card-body pieChart" id="1">
-                <svg class="pieChartSvg">
+                <svg class="pieChartSvg" id="pieChartMainDiv">
         
                 </svg>
                 
@@ -38,7 +43,7 @@
             </div>
             <div class="card-body">
         
-                <svg class="pieLegendSvg">
+                <svg class="pieLegendSvg" id="pieChartLegendDiv">
         
                 </svg>
                 
@@ -128,8 +133,10 @@
 
     <script type="text/javascript" src="js/export_trrack.js"></script>
     <script type="module" src="./bundle2.js"></script>
-    <!-- <script>
-      updateJSON();
-    </script> -->
+    <script type="text/javascript" src="js/guided_tour.js"></script>
+    <script type="text/javascript" src="js/start_guide.js"></script>
+    <script>
+      startGuide()
+    </script>
   </body>
 </html>

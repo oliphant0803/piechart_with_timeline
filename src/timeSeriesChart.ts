@@ -458,6 +458,7 @@ export default class TimeSeriesPlot{
                 d3.select(n[i]).classed('selected',false)
             }
         })
+        .attr("id", function(d:any) { return "arc_" + d.data.label.trim() + "_" + d.data.time; })
         .transition()
         .duration(1000)
         .attrTween('d', (d:any, i:any, n:any) => {
@@ -679,6 +680,7 @@ labelChart() {
     .attr("transform","translate("+this.width/2 +","+(this.height+10)/2+")")
     .append("text")
     .classed("currTimeLabel", true)
+    .attr("id", "currLabelSvg")
    .attr("text-anchor", "middle")
    .text(this.currTime);
 

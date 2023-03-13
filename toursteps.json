@@ -1,0 +1,77 @@
+{
+    "simple": [
+    {
+      "id": "#pieChartMainDiv",
+      "location": "bottom",
+      "title": "Unvaccinated Bar Chart",
+      "text": "This is a bar chart showing data for <b>unvaccinated</b> people.  <br> <br>  <b>Your turn:</b> Hover over a bar to see the data for the corresponding week.",
+      "class": "first-vis-step",
+      "disabled": false
+    },
+    {
+      "id": "#currLabelSvg",
+      "location": "top",
+      "title": "Current Year Label",
+      "text": "This is a bar chart showing data for <b>vaccinated</b> people.  <br> <br>  <b>Your turn:</b> Once again, you can hover over a bar to see the data for the corresponding week. <br><br> That's it, have fun exploring the data!",
+      "class": "second-vis-step",
+      "disabled": false
+    },
+    {
+      "id": "#arc_1_2007",
+      "location": "top",
+      "title": "Current Selected Year",
+      "text": "This is a bar chart showing data for <b>vaccinated</b> people.  <br> <br>  <b>Your turn:</b> Once again, you can hover over a bar to see the data for the corresponding week. <br><br> That's it, have fun exploring the data!",
+      "class": "third-vis-step",
+      "disabled": false
+    },
+    {
+      "id": "#arc_3_2012",
+      "location": "top",
+      "title": "One Category Over Time",
+      "text": "This is a bar chart showing data for <b>vaccinated</b> people.  <br> <br>  <b>Your turn:</b> Once again, you can hover over a bar to see the data for the corresponding week. <br><br> That's it, have fun exploring the data!",
+      "class": "fourth-vis-step",
+      "disabled": false
+    },
+        {
+      "id": "#arc_1_2012",
+      "location": "left",
+      "title": "Hover on Arc",
+      "text": "You can adjust the filter either by resizing the selection (on the left or right) or by dragging the entire filter.<br><br><b>Your turn:</b> Adjust the filter you have created.",
+      "class": "move-step",
+      "disabled": true
+    },
+    {
+      "id": "#arc_1_2012",
+      "location": "left",
+      "title": "Click on Arc",
+      "text": "You can adjust the filter either by resizing the selection (on the left or right) or by dragging the entire filter.<br><br><b>Your turn:</b> Adjust the filter you have created.",
+      "class": "move-step",
+      "disabled": true
+    },
+    {
+      "id": "#arc_1_2012",
+      "location": "left",
+      "title": "Double Click on Arc to Compare",
+      "text": "You can adjust the filter either by resizing the selection (on the left or right) or by dragging the entire filter.<br><br><b>Your turn:</b> Adjust the filter you have created.",
+      "class": "move-step",
+      "disabled": true
+    },
+    {
+      "id": "#pieChartLegendDiv",
+      "location": "right",
+      "title": "Legends",
+      "text": "You can adjust the filter either by resizing the selection (on the left or right) or by dragging the entire filter.<br><br><b>Your turn:</b> Adjust the filter you have created.",
+      "class": "move-step",
+      "disabled": true
+    },
+    {
+      "id": "#label_2_2008",
+      "location": "right",
+      "title": "Click on Legend",
+      "text": "You can adjust the filter either by resizing the selection (on the left or right) or by dragging the entire filter.<br><br><b>Your turn:</b> Adjust the filter you have created.",
+      "class": "move-step",
+      "disabled": true
+    }
+
+  ]
+}

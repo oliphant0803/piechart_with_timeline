@@ -38,7 +38,7 @@
       "title": "Hover on Arc",
       "text": "You can adjust the filter either by resizing the selection (on the left or right) or by dragging the entire filter.<br><br><b>Your turn:</b> Adjust the filter you have created.",
       "class": "move-step",
-      "disabled": true
+      "disabled": false
     },
     {
       "id": "#arc_1_2012",
@@ -46,7 +46,7 @@
       "title": "Click on Arc",
       "text": "You can adjust the filter either by resizing the selection (on the left or right) or by dragging the entire filter.<br><br><b>Your turn:</b> Adjust the filter you have created.",
       "class": "move-step",
-      "disabled": true
+      "disabled": false
     },
     {
       "id": "#arc_1_2012",
@@ -54,7 +54,15 @@
       "title": "Double Click on Arc to Compare",
       "text": "You can adjust the filter either by resizing the selection (on the left or right) or by dragging the entire filter.<br><br><b>Your turn:</b> Adjust the filter you have created.",
       "class": "move-step",
-      "disabled": true
+      "disabled": false
+    },
+    {
+      "id": "#arc_1_2012",
+      "location": "left",
+      "title": "Double Click Again on Arc to reset",
+      "text": "You can adjust the filter either by resizing the selection (on the left or right) or by dragging the entire filter.<br><br><b>Your turn:</b> Adjust the filter you have created.",
+      "class": "move-step",
+      "disabled": false
     },
     {
       "id": "#pieChartLegendDiv",
@@ -62,7 +70,7 @@
       "title": "Legends",
       "text": "You can adjust the filter either by resizing the selection (on the left or right) or by dragging the entire filter.<br><br><b>Your turn:</b> Adjust the filter you have created.",
       "class": "move-step",
-      "disabled": true
+      "disabled": false
     },
     {
       "id": "#label_2_2008",
@@ -70,7 +78,7 @@
       "title": "Click on Legend",
       "text": "You can adjust the filter either by resizing the selection (on the left or right) or by dragging the entire filter.<br><br><b>Your turn:</b> Adjust the filter you have created.",
       "class": "move-step",
-      "disabled": true
+      "disabled": false
     }
 
   ]

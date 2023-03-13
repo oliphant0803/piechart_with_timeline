@@ -20,13 +20,19 @@ export default class OriginalPlot{
     this.height = 0;
     // this.svg = d3.select("#mainDiv")
     //   .append("svg")
-
-    this.draw_pie_o(2007, data2007);
-    this.draw_pie_o(2008, data2008);
-    this.draw_pie_o(2009, data2009);
-    this.draw_pie_o(2010, data2010);
-    this.draw_pie_o(2011, data2011);
-    this.draw_pie_o(2012, data2012);
+    var hasPieChart = document.getElementsByClassName('pieChart2007');
+    if (hasPieChart.length > 0) {
+      this.draw_pie_o(2007, data2007);
+      this.draw_pie_o(2008, data2008);
+      this.draw_pie_o(2009, data2009);
+      this.draw_pie_o(2010, data2010);
+      this.draw_pie_o(2011, data2011);
+      this.draw_pie_o(2012, data2012);
+    }
+    else{
+      document.getElementById("pieVis")!.style.visibility = "hidden";
+    }
+    
   }
 
   draw_pie_o(time:number, compareSet:any){

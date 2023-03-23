@@ -24,3 +24,7 @@ function get_curr_output(currElement){
     var textTag = firstG.children.item(2);
     return textTag.textContent;
 }
+
+function export_object(){
+    return document.getElementById("objDiv").innerHTML;
+}

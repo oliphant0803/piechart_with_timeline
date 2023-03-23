@@ -4,7 +4,7 @@
       "id": "#pieChartMainDiv",
       "location": "bottom",
       "title": "Time Series Pie Chart",
-      "text": "This is a new visualization of pie chart which shows <b>data changes over time<b>.  <br> <br>  <b>Dataset:</b> The graph shows the number of each types of house sold from year 2007 to 2012",
+      "text": "This is a new visualization of pie chart which shows <b>data changes over time<b>.  <br> <br>  <b>Dataset:</b> The graph shows the number of each type of house sold from 2007 to 2012",
       "class": "first-vis-step",
       "disabled": false
     },
@@ -20,7 +20,7 @@
       "id": "#arc_1_2007",
       "location": "top",
       "title": "Current Selected Year",
-      "text": "This is the year of the current visualization.  <br> <br>  all the data from current year are shaded",
+      "text": "This is the year of the current visualization.  <br> <br>  all the data from current year are fully highlighted",
       "class": "third-vis-step",
       "disabled": false
     },
@@ -28,7 +28,7 @@
       "id": "#arc_3_2012",
       "location": "top",
       "title": "One Category Over Time",
-      "text": "This is the information visualization of 3 bedrooms sold.  <br> <br> Each arc contains the year houses were sold and total revenue of that year <br>  <br> the area of each arc is porportional to each other arcs. <br> <br> You can compare the area to visualize the difference in revenue of different types of houses in different years",
+      "text": "This is the section of the pie chart for 3 bedroom house sold.  <br> <br> the area of each arc is porportional to the revenue of sales from that year.",
       "class": "fourth-vis-step",
       "disabled": false
     },
@@ -36,7 +36,7 @@
       "id": "#arc_1_2012",
       "location": "left",
       "title": "Hover on Arc",
-      "text": "To know more information of a specific category of a year, hover on the arc you want to know more about <br> <br> In this case, the tooltip suggests that in the year 2012, 3% of the total house sold was 1 bedroom houses, there was only 1 bedroom house sold in 2012, and it was sold for 52.7k",
+      "text": "To know more information of a specific category of a year, hover over any arc to see more information <br> <br> For example, hovering over the highlighted part highlights the tooltip suggests that in the year 2012, 3% of the total house sold was 1 bedroom houses, there was only 1 bedroom house sold in 2012, and it was sold for 52.7k",
       "class": "move-step",
       "disabled": false
     },
@@ -44,7 +44,7 @@
       "id": "#arc_1_2012",
       "location": "left",
       "title": "Click on Arc",
-      "text": "Click on an arc with different year than the current year allows the visualization transform into the selected year. <br> <br> Click on the arc to change from 2007 to 2012",
+      "text": "You can changing the slected year by clicking on a new arc.<br> <br> For example, Click on the arc to change from 2007 to 2012",
       "class": "move-step",
       "disabled": false
     },
@@ -52,7 +52,7 @@
       "id": "#arc_1_2012",
       "location": "left",
       "title": "Double Click on Arc to Compare",
-      "text": "To compare all the current year's arc, double click on the arc you want to compare, all the arcs will be aligned on baseline for better visualiation",
+      "text": "You can compare all arcs in a given year by double click on anhy arc of that year to align the bases.",
       "class": "move-step",
       "disabled": false
     },
@@ -60,7 +60,7 @@
       "id": "#arc_1_2012",
       "location": "left",
       "title": "Double Click Again on Arc to reset",
-      "text": "To go back to the original view, simply double click on the same arc again <br> <br> Single click on any other year's arc would automatically reset as well",
+      "text": "To reset the visualization, simply click on the any arc on any arc of the given year",
       "class": "move-step",
       "disabled": false
     },
@@ -76,7 +76,7 @@
       "id": "#label_2_2008",
       "location": "right",
       "title": "Click on Legend",
-      "text": "You can click on any category to go to the earliest timestamp where the category appears <br> <br> In this case, click on 2 bedroom label would allow you to go to 2008's visualization (as 2 bedroom houses were first sold in 2008)",
+      "text": "You can click on any category to go to the earliest timestamp where the house type appears in the data <br> <br> Click on 2 bedroom label to go to 2008's visualization (as 2 bedroom houses were first sold in 2008)",
       "class": "move-step",
       "disabled": false
     }

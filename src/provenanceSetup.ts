@@ -65,6 +65,7 @@ var collectedData;
 
 export function updateJSON(){
   collectedData = prov.exportProvenanceGraph(); 
+  document.getElementById("objDiv")!.innerHTML = collectedData;
   //download(collectedData, 'json.txt', 'text/plain');
   // var fs = require('fs');
   // fs.writeFile("test.txt", collectedData, function(err:any) {

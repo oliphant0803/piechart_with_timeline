@@ -12,7 +12,7 @@
       "id": "#currLabelSvg",
       "location": "top",
       "title": "Current Year Label",
-      "text": "This is a bar chart showing data for <b>vaccinated</b> people.  <br> <br>  <b>Your turn:</b> Once again, you can hover over a bar to see the data for the corresponding week. <br><br> That's it, have fun exploring the data!",
+      "text": "This is the year of the current visualization. ",
       "class": "second-vis-step",
       "disabled": false
     },
@@ -20,7 +20,7 @@
       "id": "#arc_1_2007",
       "location": "top",
       "title": "Current Selected Year",
-      "text": "This is the year of the current visualization.  <br> <br>  all the data from current year are fully highlighted",
+      "text": "All the data from current year are fully highlighted",
       "class": "third-vis-step",
       "disabled": false
     },
@@ -60,7 +60,7 @@
       "id": "#arc_1_2012",
       "location": "left",
       "title": "Double Click Again on Arc to reset",
-      "text": "To reset the visualization, simply click on the any arc on any arc of the given year",
+      "text": "To reset the visualization, simply click on the any arc of the given year",
       "class": "move-step",
       "disabled": false
     },

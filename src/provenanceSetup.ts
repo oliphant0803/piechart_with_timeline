@@ -73,6 +73,7 @@ export function updateJSON(){
   //       console.log(err);
   //   }
   // });
+  return collectedData;
 }
 
 /**

@@ -621,6 +621,18 @@ export default class TimeSeriesPlot{
         paras[0].parentNode!.removeChild(paras[0]);
     }
 
+    //current cat g
+    let selectedLabelArcs = this.svg.append('g')
+    
+    selectedLabelArcs
+    .selectAll(".selectedArcWedge")
+    .data(this.piedata.slice(0, this.dataSet.radius.length))
+    .enter()
+    .append("path")
+    .classed('selectedArcWedge',true)
+    .attr('d', this.arc)
+    .attr('fill', 'none')
+
     //outer cat label
     let catLabelArcs = this.svg.selectAll('.arcLabelWedge')
     .data(this.piedata.slice(-this.dataSet.radius.length))

@@ -17,7 +17,7 @@
       "disabled": false
     },
     {
-      "id": "#arc_1_2007",
+      "id": "#selectedArcs2007",
       "location": "top",
       "title": "Current Selected Year",
       "text": "All the data from current year are fully highlighted",
@@ -59,7 +59,7 @@
     {
       "id": "#arc_1_2012",
       "location": "left",
-      "title": "Double Click Again on Arc to reset",
+      "title": "Click Again on Current Year's Arc to reset",
       "text": "To reset the visualization, simply click on the any arc of the given year",
       "class": "move-step",
       "disabled": false

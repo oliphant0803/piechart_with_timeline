@@ -557,6 +557,16 @@ export default class TimeSeriesPlot{
                 //event.stopPropagation();
                 //updateChart();
             }
+            if(this.alignMode == true){
+                this.alignMode = false;
+                dblClickNodeUpdate("reset_" + this.currTime);
+                this.currTime = d.data.time;
+                this.setData(d.data.time);
+                this.setData(d.data.time);
+                this.prepareChart();
+                this.prepareData();
+                this.plotPie();
+            }
         })
 
         arcs
@@ -621,18 +631,7 @@ export default class TimeSeriesPlot{
         paras[0].parentNode!.removeChild(paras[0]);
     }
 
-    //current cat g
-    let selectedLabelArcs = this.svg.append('g')
     
-    selectedLabelArcs
-    .selectAll(".selectedArcWedge")
-    .data(this.piedata.slice(0, this.dataSet.radius.length))
-    .enter()
-    .append("path")
-    .classed('selectedArcWedge',true)
-    .attr('d', this.arc)
-    .attr('fill', 'none')
-
     //outer cat label
     let catLabelArcs = this.svg.selectAll('.arcLabelWedge')
     .data(this.piedata.slice(-this.dataSet.radius.length))
@@ -700,6 +699,19 @@ labelChart() {
         return !d.data.dummy && d.data.radius != 0;
     })
 
+    //current cat g
+    let selectedSvg = this.svg.append("g")
+    .attr("id", "selectedArcs2007")
+
+    let selectedLabelArcs = selectedSvg.selectAll('.selectedLabelArc')
+    .data(this.piedata.slice(0, this.dataSet.radius.length))
+    .enter()
+    .append('g')
+    .classed('selectedArcWedge',true)
+    .attr('transform', 'translate(' + this.width/2 +  ',' + this.height/2 +')')
+    
+    this.labelSelectedArcs(selectedLabelArcs);
+
     //do label
     let timeLabelArcs = this.svg.selectAll('.arcTimeWedge')
     .data(selected_data)
@@ -709,6 +721,22 @@ labelChart() {
     .attr('transform', 'translate(' + this.width/2 +  ',' + this.height/2 +')')
 
     this.labelArcs(timeLabelArcs);
+}
+
+labelSelectedArcs(dataArcs:any){
+    var self = this;
+
+    this.arc = d3.arc()
+    .innerRadius(function (d:any){
+        return d.data.inner/self.scale;
+    })
+    .outerRadius(function (d:any) { 
+        return d.data.outer/self.scale;
+    });
+
+    dataArcs.append('path')
+    .attr('d', this.arc)
+    .attr('fill', 'none')
 }
 
 labelArcs(dataArcs:any) {

@@ -92,48 +92,58 @@ export function selectNodeUpdate(newSelected: string){
     .applyAction();
   updateJSON();
 }
-export function chartInit(){
-  let op = new OriginalPlot();
-  let tsp = new TimeSeriesPlot();
-  provVisUpdate();
-  // Set up observers for the three keys in state. These observers will get called either when an applyAction
-  // function changes the associated keys value.
-
-  // Also will be called when an internal graph change such as goBackNSteps, goBackOneStep or goToNode
-  // change the keys value.
-
-
-  prov.addGlobalObserver(() => {
+export function chartInit(type:any){
+  if(type=="pie"){
+    let op = new OriginalPlot();
     provVisUpdate();
-  })
-  /**
-  * Observer for when the quartet state is changed. Calls changeQuartet in OriginalPlot to update vis.
-  */
-  // prov.addObserver(["selectedQuartet"], () => {
-  //   op.changeQuartet(prov.current().getState().selectedQuartet);
-  // });
 
-  /**
-  * Observer for when the selected node state is changed. Calls selectNode in OriginalPlot to update vis.
-  */
-  prov.addObserver(["selectedNode"], () => {
-    tsp.selectNode(prov.current().getState().selectedNode);
-  });
+    prov.addGlobalObserver(() => {
+      provVisUpdate();
+    })
+    prov.addObserver(["hoveredNode"], () => {
+      op.hoverNode(prov.current().getState().hoveredNode);
+    });
+  }else if(type=="timeseries"){
+    let tsp = new TimeSeriesPlot();
+    provVisUpdate();
 
-  /**
-  * Observer for when the hovered node state is changed. Calls hoverNode in OriginalPlot to update vis.
-  */
-  prov.addObserver(["hoveredNode"], () => {
-    op.hoverNode(prov.current().getState().hoveredNode);
-    tsp.hoverNode(prov.current().getState().hoveredNode);
-  });
+    prov.addGlobalObserver(() => {
+      provVisUpdate();
+    })
 
-  /**
-  * Observer for when the double clicked node state is changed. Calls dblClickNode in OriginalPlot to update vis.
-  */
-  prov.addObserver(["dblClickNode"], () => {
-    tsp.hoverNode(prov.current().getState().hoveredNode);
-  });
+    prov.addObserver(["selectedNode"], () => {
+      tsp.selectNode(prov.current().getState().selectedNode);
+    });
+
+    prov.addObserver(["hoveredNode"], () => {
+      tsp.hoverNode(prov.current().getState().hoveredNode);
+    });
+
+    prov.addObserver(["dblClickNode"], () => {
+      tsp.hoverNode(prov.current().getState().hoveredNode);
+    });
+  }else{
+    let op = new OriginalPlot();
+    let tsp = new TimeSeriesPlot();
+    provVisUpdate();
+
+    prov.addGlobalObserver(() => {
+      provVisUpdate();
+    })
+
+    prov.addObserver(["selectedNode"], () => {
+      tsp.selectNode(prov.current().getState().selectedNode);
+    });
+
+    prov.addObserver(["hoveredNode"], () => {
+      op.hoverNode(prov.current().getState().hoveredNode);
+      tsp.hoverNode(prov.current().getState().hoveredNode);
+    });
+
+    prov.addObserver(["dblClickNode"], () => {
+      tsp.hoverNode(prov.current().getState().hoveredNode);
+    });
+  }
 }
 
 
@@ -263,7 +273,7 @@ document.onkeydown = function(e){
   }
 }
 
-chartInit();
+
 
 // export default collectedData;
 

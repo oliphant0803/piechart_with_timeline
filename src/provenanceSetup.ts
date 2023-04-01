@@ -104,25 +104,6 @@ export function chartInit(type:any){
       op.hoverNode(prov.current().getState().hoveredNode);
     });
   }else if(type=="timeseries"){
-    let tsp = new TimeSeriesPlot();
-    provVisUpdate();
-
-    prov.addGlobalObserver(() => {
-      provVisUpdate();
-    })
-
-    prov.addObserver(["selectedNode"], () => {
-      tsp.selectNode(prov.current().getState().selectedNode);
-    });
-
-    prov.addObserver(["hoveredNode"], () => {
-      tsp.hoverNode(prov.current().getState().hoveredNode);
-    });
-
-    prov.addObserver(["dblClickNode"], () => {
-      tsp.hoverNode(prov.current().getState().hoveredNode);
-    });
-  }else{
     let op = new OriginalPlot();
     let tsp = new TimeSeriesPlot();
     provVisUpdate();

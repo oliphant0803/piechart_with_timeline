@@ -95,3 +95,7 @@ text {
     font-size: 20px;
     font-family: sans-serif;
 }
+
+.shepherd-text {
+    overflow: hidden!important
+}

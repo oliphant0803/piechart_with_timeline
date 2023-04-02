@@ -4,5 +4,10 @@ function startGuide(){
     request.send(null)
     var toursteps = JSON.parse(request.responseText);
 
-    createTour('simple', toursteps)
+    createTour('simple', toursteps);
+
+    //change button from disabled to enabled
+    //id: step-5-description: shepherd-button-primary
+    //id: step-6-description
+    //id: step-7-description
 }

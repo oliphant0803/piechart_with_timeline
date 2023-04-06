@@ -46,7 +46,7 @@
       "title": "Click on Arc",
       "text": "You can changing the slected year by clicking on a new arc.<br> <br> For example, Click on this arc to change from 2007 to 2012",
       "class": "move-step",
-      "disabled": false
+      "disabled": true
     },
     {
       "id": "#arc_1_2012",
@@ -54,7 +54,7 @@
       "title": "Double Click on Arc to Compare",
       "text": "You can compare all arcs in a given year by double click on any arc of that year to align the bases.",
       "class": "move-step",
-      "disabled": false
+      "disabled": true
     },
     {
       "id": "#arc_1_2012",
@@ -62,7 +62,7 @@
       "title": "Click Again on Current Year's Arc to reset",
       "text": "To reset the visualization, simply click on any arc for the given year",
       "class": "move-step",
-      "disabled": false
+      "disabled": true
     },
     {
       "id": "#pieChartLegendDiv",

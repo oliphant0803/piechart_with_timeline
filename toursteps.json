@@ -2,7 +2,7 @@
     "simple": [
     {
       "id": "#pieChartMainDiv",
-      "location": "bottom",
+      "location": "left",
       "title": "Time Series Pie Chart",
       "text": "This is a new visualization of pie chart which shows <b>data changes over time<b>.  <br> <br>  <b>Dataset:</b> The graph shows the number of each type of house sold from 2007 to 2012",
       "class": "first-vis-step",

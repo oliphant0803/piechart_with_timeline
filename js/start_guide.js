@@ -71,3 +71,8 @@ waitForElm('[data-shepherd-step-id="step-7"]').then((elm) => {
     enableClick('[data-shepherd-step-id="step-7"]');
 });
 
+waitForElm('[data-shepherd-step-id="step-8"]').then((elm) => {
+    var el = document.getElementById('pieChartLegendDiv');
+    el.scrollIntoView(true);
+});
+

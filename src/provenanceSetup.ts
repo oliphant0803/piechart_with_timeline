@@ -29,6 +29,10 @@ export interface NodeState {
 * Initial state
 */
 
+type CollectedData<T> = {
+  [key: string]: T;
+}
+
 const initialState: NodeState = {
   selectedNode: 'none',
   hoveredNode: 'none',
@@ -36,6 +40,8 @@ const initialState: NodeState = {
 }
 
 type EventTypes = "Select Node" | "Hover Node" | "DblClick Node"
+
+var startTime: Date, endTime: Date;
 
 //initialize provenance with the first state
 let prov = initProvenance<NodeState, EventTypes, string>(initialState, false);
@@ -65,7 +71,6 @@ var collectedData;
 
 export function updateJSON(){
   collectedData = prov.exportProvenanceGraph(); 
-  document.getElementById("objDiv")!.innerHTML = collectedData;
   //download(collectedData, 'json.txt', 'text/plain');
   // var fs = require('fs');
   // fs.writeFile("test.txt", collectedData, function(err:any) {
@@ -73,6 +78,10 @@ export function updateJSON(){
   //       console.log(err);
   //   }
   // });
+  endTime = new Date();
+  console.log((endTime.getTime() - startTime.getTime()).toString());
+  collectedData = collectedData.concat((endTime.getTime() - startTime.getTime()).toString());
+  document.getElementById("objDiv")!.innerHTML = collectedData;
   return collectedData;
 }
 
@@ -93,6 +102,8 @@ export function selectNodeUpdate(newSelected: string){
   updateJSON();
 }
 export function chartInit(type:any){
+  //start timer
+	startTime = new Date();
   if(type=="pie"){
     let op = new OriginalPlot();
     provVisUpdate();

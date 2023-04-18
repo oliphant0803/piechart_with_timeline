@@ -30,7 +30,7 @@ export default class OriginalPlot{
       this.draw_pie_o(2012, data2012);
     }
     else{
-      document.getElementById("pieVis")!.style.visibility = "hidden";
+      document.getElementById("pieVis")!.style.display = "none";
     }
     
   }

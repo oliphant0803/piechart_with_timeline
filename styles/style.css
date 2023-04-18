@@ -99,3 +99,7 @@ text {
 .shepherd-text {
     overflow: hidden!important
 }
+
+.disabled-button {
+    background-color: gray !important;
+}

@@ -139,6 +139,7 @@
     <script type="text/javascript" src="js/guided_tour.js"></script>
     <script type="text/javascript" src="js/start_guide.js"></script>
     <script>
+      let tsp;
       function onLoaded(fn) {
         if (document.readyState == 'complete' || document.readyState == 'interactive')
           setTimeout(fn, 1);
@@ -147,7 +148,7 @@
       }
 
       onLoaded(function () {
-        eTrack.chartInit("timeseries");
+        tsp = eTrack.chartInit("timeseries");
       });
 
       startGuide();

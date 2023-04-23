@@ -114,6 +114,7 @@ export function chartInit(type:any){
     prov.addObserver(["hoveredNode"], () => {
       op.hoverNode(prov.current().getState().hoveredNode);
     });
+    return op;
   }else if(type=="timeseries"){
     let op = new OriginalPlot();
     let tsp = new TimeSeriesPlot();
@@ -135,6 +136,7 @@ export function chartInit(type:any){
     prov.addObserver(["dblClickNode"], () => {
       tsp.hoverNode(prov.current().getState().hoveredNode);
     });
+    return tsp;
   }
 }
 

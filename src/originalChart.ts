@@ -118,7 +118,7 @@ export default class OriginalPlot{
             .style("opacity", 0);
         // console.log("outevent "+ event.timeStamp);
         // console.log("overevent "+ timeout);
-        if(event.timeStamp - timeout >= 1500 && currentHoveredSection=="donut_" + d.data.label.trim() + "_" + time){
+        if(event.timeStamp - timeout >= 1000 && currentHoveredSection=="donut_" + d.data.label.trim() + "_" + time){
             console.log(currentHoveredSection, event.timeStamp - timeout);
             hoverNodeUpdate(currentHoveredSection, 0);
             

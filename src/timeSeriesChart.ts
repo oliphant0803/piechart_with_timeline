@@ -528,7 +528,7 @@ export default class TimeSeriesPlot{
             .attr("stroke-width", 0.5)
             d3.select("#tooltip")
             .style("opacity", 0);
-            if(event.timeStamp - timeout >= 1500 && currentHoveredSection=="arc_" + d.data.label.trim() + "_" + d.data.time){
+            if(event.timeStamp - timeout >= 1000 && currentHoveredSection=="arc_" + d.data.label.trim() + "_" + d.data.time){
                 //console.log(currentHoveredSection, event.timeStamp - timeout);
                 hoverNodeUpdate(currentHoveredSection, 0);
                 

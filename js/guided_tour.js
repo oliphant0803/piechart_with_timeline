@@ -35,7 +35,7 @@ function createTour(type, steps, provData=null){
               label: 'tour_back',
               step: i
             })
-            return tour.back();
+            return backStep(tour);
           }
         });
       }
@@ -51,7 +51,7 @@ function createTour(type, steps, provData=null){
               label: 'tour_next',
               step: i
             })
-            return tour.next();
+            return nextStep(tour);
           }
         });
       } else {

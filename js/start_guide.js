@@ -74,6 +74,14 @@ function backStep(tour) {
     //return tour.back but with disabled:true make disabled:false
     tour.back();
     var step = tour.getCurrentStep();
+    // if its step 4
+    if (step.options.id == 'step-4') {
+        tsp.setData(2007);
+        tsp.setData(2007);
+        tsp.prepareChart();
+        tsp.prepareData();
+        tsp.plotPie();
+    }
     // if its step 5
     if (step.options.id == 'step-5') {
         tsp.setData(2007);

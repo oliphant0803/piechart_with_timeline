@@ -7,11 +7,9 @@
 .selectedNode
 {
   r: 10;
-  fill: blue
 }
 
 .hoverNode{
-  fill: blue;
   opacity: .5
 }
 
@@ -49,4 +47,9 @@
 #parent{
   display: flex;
   justify-content: center;
+}
+
+.noselect:active .nonselect:hover {
+  
+  outline: none
 }

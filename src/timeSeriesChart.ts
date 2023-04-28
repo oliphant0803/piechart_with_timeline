@@ -51,7 +51,83 @@ export default class TimeSeriesPlot{
     this.prepareChart();
     this.prepareData();
     this.plotPie();
+    this.legend = d3.select(".pieLegendSvg");
+    
+    this.legend
+    .html("")
+    .style("height", function(d:any) {
+        return ((2 * 5) + 2) + "em";
+    }); 
 
+    this.dataSet.labelsCat.sort((a:any, b:any) => a.title.localeCompare(b.title))
+    this.dataSet.labelsCat.forEach((a:any) => {
+        var i = a.firstTime
+        var j = 0;
+        while(this.graphData.cols[i].stats[j].frequency == 0){
+            j += 1;
+        }
+        a.firstTime = this.graphData.cols[i].stats[j].time;
+    })
+
+    this.legend
+    .selectAll("rect")
+    .data(this.dataSet.labelsCat)
+    .enter()
+    .append("rect")
+    .attr("x", function(d:any) 
+    {
+        return 2 + "em";
+    })
+    .attr("y", function(d:any, i:any) 
+    {
+        return ((2 * i) + 1)  + "em";
+    })
+    .attr("fill", function(d:any) 
+    {
+        return d.color;
+    })
+    .attr("width", function(d:any) 
+    {
+        return (2 / 2) + "em";
+    })
+    .attr("height", function(d:any) 
+    {
+        return (2 / 2) + "em";
+    })
+    .attr("id", function(d:any){
+        return "label_" + d.title.trim() + "_" + d.firstTime;
+    })
+    .attr("class", "noselect")
+    .on("click", (event:any, d:any) => {
+        selectNodeUpdate("label_" + d.title.trim() + "_" + d.firstTime)
+        this.currTime = d.firstTime;
+        this.setData(d.firstTime);
+        this.setData(d.firstTime);
+        this.prepareChart();
+        this.prepareData();
+        this.plotPie();
+    });
+
+    this.legend
+    .selectAll("text")
+    .data(this.dataSet.labelsCat)
+    .enter()
+    .append("text")
+    .attr("x", function(d:any) 
+    {
+        return (2 * 2) + "em";
+    })
+    .attr("y", function(d:any, i:any) 
+    {
+        return ((2 * i) + 2)  + "em";
+    })
+    .text(function(d:any) 
+    {   
+        if(!isNaN(d.title)){
+            return d.title + " " + "bedroom";
+        }
+        return d.title;
+    });
   }
 
 
@@ -310,13 +386,7 @@ export default class TimeSeriesPlot{
     .attr('width',this.width)
     .attr('height',this.height)
 
-    this.legend = d3.select(".pieLegendSvg");
     
-    this.legend
-    .html("")
-    .style("height", function(d:any) {
-        return ((2 * 5) + 2) + "em";
-    }); 
 
     this.arc = d3.arc()
     .innerRadius(function (d:any){
@@ -351,73 +421,7 @@ export default class TimeSeriesPlot{
 
         
 
-        this.dataSet.labelsCat.sort((a:any, b:any) => a.title.localeCompare(b.title))
-        this.dataSet.labelsCat.forEach((a:any) => {
-            var i = a.firstTime
-            var j = 0;
-            while(this.graphData.cols[i].stats[j].frequency == 0){
-                j += 1;
-            }
-            a.firstTime = this.graphData.cols[i].stats[j].time;
-        })
-
-        this.legend
-        .selectAll("rect")
-        .data(this.dataSet.labelsCat)
-        .enter()
-        .append("rect")
-        .attr("x", function(d:any) 
-        {
-            return 2 + "em";
-        })
-        .attr("y", function(d:any, i:any) 
-        {
-            return ((2 * i) + 1)  + "em";
-        })
-        .attr("fill", function(d:any) 
-        {
-            return d.color;
-        })
-        .attr("width", function(d:any) 
-        {
-            return (2 / 2) + "em";
-        })
-        .attr("height", function(d:any) 
-        {
-            return (2 / 2) + "em";
-        })
-        .attr("id", function(d:any){
-            return "label_" + d.title.trim() + "_" + d.firstTime;
-        })
-        .on("click", (event:any, d:any) => {
-            selectNodeUpdate("label_" + d.title.trim() + "_" + d.firstTime)
-            this.setData(d.firstTime);
-            this.setData(d.firstTime);
-            this.prepareChart();
-            this.prepareData();
-            this.plotPie();
-        });
-
-        this.legend
-        .selectAll("text")
-        .data(this.dataSet.labelsCat)
-        .enter()
-        .append("text")
-        .attr("x", function(d:any) 
-        {
-            return (2 * 2) + "em";
-        })
-        .attr("y", function(d:any, i:any) 
-        {
-            return ((2 * i) + 2)  + "em";
-        })
-        .text(function(d:any) 
-        {   
-            if(!isNaN(d.title)){
-                return d.title + " " + "bedroom";
-            }
-            return d.title;
-        });
+        
   }
 
   updateChart() 
@@ -518,8 +522,8 @@ export default class TimeSeriesPlot{
             d3.select("#tooltip").html(
                         "Title: " + (d.data.label) + " " + "bedroom"
                         + "<br/>" + "Percentage: " + Number.parseInt(((actual!.frequency/getSumYear(d.data.time))*100).toString()) + "% (" + actual!.frequency + ")"
-                        + "<br/>" + "time: " + d.data.time
-                        + "<br/>" + "Value: " + d.data.radius)
+                        + "<br/>" + "Time: " + d.data.time
+                        + "<br/>" + "Sale Price: " + d3.format("($.2f")(d.data.radius))
         })
         .on("mouseout", function (event:any, d:any) {
         // Hide the tooltip
@@ -684,6 +688,7 @@ labelChart() {
     while(paras[0]) {
         paras[0].parentNode!.removeChild(paras[0]);
     }
+
 
     this.svg
     .append("g")

@@ -12,7 +12,7 @@
       "id": "#currLabelSvg",
       "location": "top",
       "title": "Current Year Label",
-      "text": "This is the year of the current visualization. ",
+      "text": "This shows the current highlighted year. ",
       "class": "second-vis-step",
       "disabled": false
     },
@@ -36,7 +36,7 @@
       "id": "#arc_1_2012",
       "location": "left",
       "title": "Hover on Arc",
-      "text": " Hovering over this arc shows that year 2012, 3% of the total houses sold were 1-bedroom houses. There was only one 1-bedroom house sold in 2012, and it sold for 52.7k",
+      "text": " Hover over the highlighted arc. The tooltip shows that in 2012 3% of the total houses sold were 1-bedroom houses. <br> <br> There was only one 1-bedroom house sold in 2012, and it sold for 52.7k",
       "class": "move-step",
       "disabled": false
     },
@@ -52,7 +52,7 @@
       "id": "#arc_1_2012",
       "location": "left",
       "title": "Double Click on Arc to Compare",
-      "text": "You can compare all arcs in a given year by double click on any arc of that year to align the bases.",
+      "text": "You can compare all arcs in a given year by double click on any arc of that year to align the bases. <br><br>  Try yourself by double clicking on this arc to compare all arcs in 2012",
       "class": "move-step",
       "disabled": true
     },
@@ -60,7 +60,7 @@
       "id": "#arc_1_2012",
       "location": "left",
       "title": "Click Again on Current Year's Arc to reset",
-      "text": "To reset the visualization, simply click on any arc for the given year",
+      "text": "To reset the visualization, simply click on any arc for the given year <br><br> Try yourself by clicking on this arc to reset the visualization",
       "class": "move-step",
       "disabled": true
     },
@@ -74,7 +74,7 @@
     },
     {
       "id": "#label_2_2008",
-      "location": "right",
+      "location": "bottom",
       "title": "Click on Legend",
       "text": "You can click on any category to go to the earliest year where the house type appears in the data <br> <br> Click on the 2-bedroom label to go to 2008's visualization (2 bedroom houses were first sold in 2008)",
       "class": "move-step",

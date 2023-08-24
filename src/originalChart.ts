@@ -110,7 +110,8 @@ export default class OriginalPlot{
                     "Title: " + (d.data.label) + " " + cat_title
                     + "<br/>" + "Percentage: " + Number.parseInt(((d.value/sumO)*100).toString()) + "% (" + d.value + ")"
                     + "<br/>" + "time: " + time
-                    + "<br/>" + "Value: " + d.data.price)
+                    + "<br/>" + "Total Revenue: " + d.data.price * d.value
+                    + "<br/>" + "Average: " + d.data.price)
     })
     .on("mouseout", function (event:any, d:any) {
         // Hide the tooltip

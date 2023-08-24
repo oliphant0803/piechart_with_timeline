@@ -523,7 +523,8 @@ export default class TimeSeriesPlot{
                         "Title: " + (d.data.label) + " " + "bedroom"
                         + "<br/>" + "Percentage: " + Number.parseInt(((actual!.frequency/getSumYear(d.data.time))*100).toString()) + "% (" + actual!.frequency + ")"
                         + "<br/>" + "Time: " + d.data.time
-                        + "<br/>" + "Sale Price: " + d3.format("($.2f")(d.data.radius))
+                        + "<br/>" + "Total Revenue: " + d3.format("($.2f")(d.data.radius*actual!.frequency)
+                        + "<br/>" + "Average Price: " + d3.format("($.2f")(d.data.radius))
         })
         .on("mouseout", function (event:any, d:any) {
         // Hide the tooltip
@@ -802,7 +803,7 @@ labelArcs(dataArcs:any) {
     .attr("text-anchor", "middle")
     .classed('timeLabelText', true)
     .text( function(d:any) {
-        return abbreviateNumber(d.data.radius);    
+        return abbreviateNumber(d.data.radius * d.value);    
     });
 
     dataArcs
@@ -820,7 +821,7 @@ labelArcs(dataArcs:any) {
     .attr("text-anchor", "middle")
     .classed('timeLabelText', true)
     .text( function(d:any) {
-        return abbreviateNumber(d.data.radius);    
+        return abbreviateNumber(d.data.radius * d.value);     
     });
 
     dataArcs
@@ -838,7 +839,7 @@ labelArcs(dataArcs:any) {
     .attr("text-anchor", "middle")
     .classed('timeLabelText', true)
     .text( function(d:any) {
-        return  abbreviateNumber(d.data.radius);    
+        return  abbreviateNumber(d.data.radius * d.value); 
     });
 
     dataArcs

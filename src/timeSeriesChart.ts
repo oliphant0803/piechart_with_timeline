@@ -511,8 +511,8 @@ export default class TimeSeriesPlot{
             timeout = event.timeStamp;
 
             d3.select("#tooltip")
-            .style("left", (event.pageX-this.width/4+10) + "px")
-            .style("top", (event.pageY-this.width/4+10) + "px")
+            .style("left", (event.pageX-this.width/4+50) + "px")
+            .style("top", (event.pageY-this.width/4+50) + "px")
             .style("opacity", 1)
             .select("#value")
 
@@ -520,11 +520,13 @@ export default class TimeSeriesPlot{
             var actual = thatYear!.stats.find((o:any) => o.time == d.data.time)
 
             d3.select("#tooltip").html(
-                        "Title: " + (d.data.label) + " " + "bedroom"
-                        + "<br/>" + "Percentage: " + Number.parseInt(((actual!.frequency/getSumYear(d.data.time))*100).toString()) + "% (" + actual!.frequency + ")"
-                        + "<br/>" + "Time: " + d.data.time
-                        + "<br/>" + "Total Revenue: " + d3.format("($.2f")(d.data.radius*actual!.frequency)
-                        + "<br/>" + "Average Price: " + d3.format("($.2f")(d.data.radius))
+                "<div class='tooltip-title'>" + (d.data.label) + " bedroom for <strong>" + d.data.time + "</strong></div>"
+                + "<div class='tooltip-body'>"
+                + "<strong>Units Sold: </strong>" +  actual!.frequency + " units"
+                + "<br/><strong>Percentage: </strong>" + Number.parseInt(((actual!.frequency/getSumYear(d.data.time))*100).toString()) + "%"
+                + "<br/><strong>Total Revenue: </strong>" + abbreviateNumber(d.data.radius*actual!.frequency)
+                + "<br/><strong>Average Price: </strong>" + abbreviateNumber(d.data.radius)
+                + "</div>")
         })
         .on("mouseout", function (event:any, d:any) {
         // Hide the tooltip
@@ -759,26 +761,26 @@ labelArcs(dataArcs:any) {
 
     var timeOppArc = d3.arc()
     .innerRadius(function (d:any){
-        return d.data.outer/self.scale - 20; 
+        return d.data.outer/self.scale - 10; 
     })
     .outerRadius(function (d:any) { 
-        return d.data.outer/self.scale - 20;
+        return d.data.outer/self.scale - 10;
     });
 
     var timeFirstArc = d3.arc()
     .innerRadius(function (d:any){
-        return d.data.outer/self.scale - 30; 
+        return d.data.outer/self.scale - 24; 
     })
     .outerRadius(function (d:any) { 
-        return d.data.outer/self.scale - 30;
+        return d.data.outer/self.scale - 24;
     });
 
     var timeFronArc = d3.arc()
     .innerRadius(function (d:any){
-        return d.data.outer/self.scale - 26; 
+        return d.data.outer/self.scale - 16; 
     })
     .outerRadius(function (d:any) { 
-        return d.data.outer/self.scale - 26;
+        return d.data.outer/self.scale - 16;
     });
 
     dataArcs.append('path')

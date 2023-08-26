@@ -33,6 +33,18 @@ svg.pieChartSvg{
     -mox-box-shadow: 4px 4px 4px 10px rgba(0, 0, 0, 0.4);
     box-shadow: 4px 4px 10px rbga(0, 0, 0, 0.4);
     pointer-events: none;
+    font: 12px sans-serif;
+    border: solid 2px rgba(0, 174, 255, 0.61);
+}
+
+.tooltip-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: rgba(0, 174, 255, 0.849);
+}
+.tooltip-body {
+    font-size: 14px;
+    margin-top: 5px;
 }
 
 #tooltip.hidden {
@@ -74,6 +86,10 @@ svg.pieChartSvg{
 text {
     pointer-events: none;
     animation: fadeIn 4s;
+}
+
+.timeLabelText{
+    font-size:10px;
 }
 
 @keyframes fadeIn {

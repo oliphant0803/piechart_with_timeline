@@ -777,10 +777,10 @@ labelArcs(dataArcs:any) {
 
     var timeFronArc = d3.arc()
     .innerRadius(function (d:any){
-        return d.data.outer/self.scale - 16; 
+        return d.data.outer/self.scale - 32; 
     })
     .outerRadius(function (d:any) { 
-        return d.data.outer/self.scale - 16;
+        return d.data.outer/self.scale - 32;
     });
 
     dataArcs.append('path')

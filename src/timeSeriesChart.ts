@@ -769,18 +769,18 @@ labelArcs(dataArcs:any) {
 
     var timeFirstArc = d3.arc()
     .innerRadius(function (d:any){
-        return d.data.outer/self.scale - 24; 
+        return d.data.outer/self.scale - 14; 
     })
     .outerRadius(function (d:any) { 
-        return d.data.outer/self.scale - 24;
+        return d.data.outer/self.scale - 14;
     });
 
     var timeFronArc = d3.arc()
     .innerRadius(function (d:any){
-        return d.data.outer/self.scale - 32; 
+        return d.data.outer/self.scale - 26; 
     })
     .outerRadius(function (d:any) { 
-        return d.data.outer/self.scale - 32;
+        return d.data.outer/self.scale - 26;
     });
 
     dataArcs.append('path')

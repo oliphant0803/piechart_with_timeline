@@ -511,8 +511,8 @@ export default class TimeSeriesPlot{
             timeout = event.timeStamp;
 
             d3.select("#tooltip")
-            .style("left", event.pageX-this.width/4 + "px")
-            .style("top", event.pageY-this.width/4 + "px")
+            .style("left", (event.pageX-this.width/4+50) + "px")
+            .style("top", (event.pageY-this.width/4+50) + "px")
             .style("opacity", 1)
             .select("#value")
 
@@ -520,10 +520,13 @@ export default class TimeSeriesPlot{
             var actual = thatYear!.stats.find((o:any) => o.time == d.data.time)
 
             d3.select("#tooltip").html(
-                        "Title: " + (d.data.label) + " " + "bedroom"
-                        + "<br/>" + "Percentage: " + Number.parseInt(((actual!.frequency/getSumYear(d.data.time))*100).toString()) + "% (" + actual!.frequency + ")"
-                        + "<br/>" + "Time: " + d.data.time
-                        + "<br/>" + "Sale Price: " + d3.format("($.2f")(d.data.radius))
+                "<div class='tooltip-title'>" + (d.data.label) + " bedroom for <strong>" + d.data.time + "</strong></div>"
+                + "<div class='tooltip-body'>"
+                + "<strong>Units Sold: </strong>" +  actual!.frequency + " units"
+                + "<br/><strong>Percentage: </strong>" + Number.parseInt(((actual!.frequency/getSumYear(d.data.time))*100).toString()) + "%"
+                + "<br/><strong>Total Revenue: </strong>" + abbreviateNumber(d.data.radius*actual!.frequency)
+                + "<br/><strong>Average Price: </strong>" + abbreviateNumber(d.data.radius)
+                + "</div>")
         })
         .on("mouseout", function (event:any, d:any) {
         // Hide the tooltip
@@ -758,18 +761,18 @@ labelArcs(dataArcs:any) {
 
     var timeOppArc = d3.arc()
     .innerRadius(function (d:any){
-        return d.data.outer/self.scale - 20; 
+        return d.data.outer/self.scale - 10; 
     })
     .outerRadius(function (d:any) { 
-        return d.data.outer/self.scale - 20;
+        return d.data.outer/self.scale - 10;
     });
 
     var timeFirstArc = d3.arc()
     .innerRadius(function (d:any){
-        return d.data.outer/self.scale - 30; 
+        return d.data.outer/self.scale - 14; 
     })
     .outerRadius(function (d:any) { 
-        return d.data.outer/self.scale - 30;
+        return d.data.outer/self.scale - 14;
     });
 
     var timeFronArc = d3.arc()
@@ -801,8 +804,25 @@ labelArcs(dataArcs:any) {
     })
     .attr("text-anchor", "middle")
     .classed('timeLabelText', true)
-    .text( function(d:any) {
-        return abbreviateNumber(d.data.radius);    
+    // .text( (d:any) => {
+    //     var thatYear = this.graphData.cols.find((o:any) => o.title == d.data.label);
+    //     var actual = thatYear!.stats.find((o:any) => o.time == d.data.time)
+    //     var value = abbreviateNumber(d.data.radius * actual!.frequency);
+    //     var year = d.data.time;
+    //     return `${value} - ${year}`;    
+    // });
+    .text( (d:any) => {
+        var thatYear = this.graphData.cols.find((o:any) => o.title == d.data.label);
+        var actual = thatYear!.stats.find((o:any) => o.time == d.data.time)
+        var value = abbreviateNumber(d.data.radius * actual!.frequency);
+        var year = d.data.time;
+        return value;    
+    }) 
+    .append("tspan")
+    .attr("dy", "1em") 
+    .attr("x", 0)
+    .text(function(d:any) {
+        return d.data.time;
     });
 
     dataArcs
@@ -819,8 +839,25 @@ labelArcs(dataArcs:any) {
     })
     .attr("text-anchor", "middle")
     .classed('timeLabelText', true)
-    .text( function(d:any) {
-        return abbreviateNumber(d.data.radius);    
+    // .text( (d:any) => {
+    //     var thatYear = this.graphData.cols.find((o:any) => o.title == d.data.label);
+    //     var actual = thatYear!.stats.find((o:any) => o.time == d.data.time)
+    //     var value = abbreviateNumber(d.data.radius * actual!.frequency);
+    //     var year = d.data.time;
+    //     return `${value} - ${year}`;    
+    // });
+    .text( (d:any) => {
+        var thatYear = this.graphData.cols.find((o:any) => o.title == d.data.label);
+        var actual = thatYear!.stats.find((o:any) => o.time == d.data.time)
+        var value = abbreviateNumber(d.data.radius * actual!.frequency);
+        var year = d.data.time;
+        return value;    
+    }) 
+    .append("tspan")
+    .attr("dy", "1em") 
+    .attr("x", 0)
+    .text(function(d:any) {
+        return d.data.time;
     });
 
     dataArcs
@@ -837,41 +874,58 @@ labelArcs(dataArcs:any) {
     })
     .attr("text-anchor", "middle")
     .classed('timeLabelText', true)
-    .text( function(d:any) {
-        return  abbreviateNumber(d.data.radius);    
+    // .text( (d:any) => {
+    //     var thatYear = this.graphData.cols.find((o:any) => o.title == d.data.label);
+    //     var actual = thatYear!.stats.find((o:any) => o.time == d.data.time)
+    //     var value = abbreviateNumber(d.data.radius * actual!.frequency);
+    //     var year = d.data.time;
+    //     return `${value} - ${year}`;      
+    // });
+    .text( (d:any) => {
+        var thatYear = this.graphData.cols.find((o:any) => o.title == d.data.label);
+        var actual = thatYear!.stats.find((o:any) => o.time == d.data.time)
+        var value = abbreviateNumber(d.data.radius * actual!.frequency);
+        var year = d.data.time;
+        return value;    
+    }) 
+    .append("tspan")
+    .attr("dy", "1em") 
+    .attr("x", 0)
+    .text(function(d:any) {
+        return d.data.time;
     });
 
-    dataArcs
-    .append("g:text")
-    .classed("rotateTime", true)
-    .classed("innerText", function(d:any) {
-        return d.data.selected;
-    })
-    .append("textPath")
-    .attr("href", function(d:any, i:any){
-        return '#'+i;
-    })
-    .attr("alignment-baseline", "hanging")
-    .attr("text-anchor", "start")
-    //transition angle if d.startangle is larger than Math.PI and smaller than 3*Math.PI/2
-    .text( function(d:any) {
-        return d.data.time;    
-    })
-    .attr('fill', function(d:any) {
-        if(d.data.selected){
-            return "none";
-        }
-    });
+    // dataArcs
+    // .append("g:text")
+    // .classed("rotateTime", true)
+    // .classed("innerText", function(d:any) {
+    //     return d.data.selected;
+    // })
+    // .append("textPath")
+    // .attr("href", function(d:any, i:any){
+    //     return '#'+i;
+    // })
+    // .attr("alignment-baseline", "hanging")
+    // .attr("text-anchor", "start")
+    // //transition angle if d.startangle is larger than Math.PI and smaller than 3*Math.PI/2
+    // .text( function(d:any) {
+    //     return d.data.time;    
+    // })
+    // .attr('fill', function(d:any) {
+    //     if(d.data.selected){
+    //         return "none";
+    //     }
+    // });
 
-    dataArcs
-    .select('.rotateTime')
-    .attr("transform", function(d:any, i: any, n:any) {
-        var box = d3.select(n[i]).node().getBBox();
-        // console.log(box.x, box.y)
-        // console.log(box);
-        return "rotate(" + timeAngle(d) + "," + (box.x+box.width/2) + "," + (box.y+box.height/2-2) + ")";
-        // translate(" + (box.x) + "," + (box.y) + ") 
-    })
+    // dataArcs
+    // .select('.rotateTime')
+    // .attr("transform", function(d:any, i: any, n:any) {
+    //     var box = d3.select(n[i]).node().getBBox();
+    //     // console.log(box.x, box.y)
+    //     // console.log(box);
+    //     return "rotate(" + timeAngle(d) + "," + (box.x+box.width/2) + "," + (box.y+box.height/2-2) + ")";
+    //     // translate(" + (box.x) + "," + (box.y) + ") 
+    // })
 
     this.svg.selectAll('.arcTimeWedge')
     .each(function(d:any, i: any, n:any) {
@@ -883,7 +937,7 @@ labelArcs(dataArcs:any) {
             var arcPathNode = currNode.childNodes[0];
             var arcTextNode = currNode.childNodes[1];
             var arcTimeNode = currNode.childNodes[2];
-            if(arcPathNode.getBBox().width <= arcTextNode.getBBox().width * 1.75 || arcPathNode.getBBox().width <= arcTimeNode.getBBox().width * 1.75){
+            if(arcPathNode.getBBox().width <= arcTextNode.getBBox().width || arcPathNode.getBBox().width <= arcTimeNode.getBBox().width){
                 arcTextNode.style.display = "none";
                 arcTimeNode.style.display = "none";
             }

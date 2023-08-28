@@ -760,8 +760,9 @@ var config =
                 d3.select("#tooltip").html(
                             "Title: " + (d.data.label) + " " + cat_title
                             + "<br/>" + "Percentage: " + parseInt(parseFloat(d.value/sumA).toFixed(2)*100) + "% (" + d.value + ")"
-                            + "<br/>" + "time: " + d.data.time
-                            + "<br/>" + "Value: " + d.data.radius)
+                            + "<br/>" + "Time: " + d.data.time
+                            + "<br/>" + "Total Revenue: " +  d.data.radius * d.value
+                            + "<br/>" + "Average Price: " +  d.data.radius)
             })
             .on("mouseout", function () {
             // Hide the tooltip

@@ -124,7 +124,7 @@ function labelArcs(dataArcs) {
     .attr("text-anchor", "middle")
     .classed('timeLabelText', true)
     .text( function(d) {
-        return abbreviateNumber(d.data.radius);    
+        return abbreviateNumber(d.data.radius * d.value);    
     });
 
     dataArcs
@@ -142,7 +142,7 @@ function labelArcs(dataArcs) {
     .attr("text-anchor", "middle")
     .classed('timeLabelText', true)
     .text( function(d) {
-        return abbreviateNumber(d.data.radius);    
+        return abbreviateNumber(d.data.radius * d.value);      
     });
 
     dataArcs
@@ -160,7 +160,7 @@ function labelArcs(dataArcs) {
     .attr("text-anchor", "middle")
     .classed('timeLabelText', true)
     .text( function(d) {
-        return  abbreviateNumber(d.data.radius);    
+        return  abbreviateNumber(d.data.radius * d.value);   
     });
 
     dataArcs

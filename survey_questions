@@ -50,3 +50,22 @@ upload the data with raw data
 make a function that will render the visualization
 
 Trial Questions for Timeseries:
+
+changing years
+reading values
+align baseline,
+number of units vs revenue,
+reinforce the meaning of area = total revenue, which makes comparing revenue across the years easier)
+
+1. You are on the 2007's plot. Click on the wedge to go to the 2010's plot. Answer the following questions
+
+Which type of bedroom is not being sold in 2010
+
+Which type of bedroom sold the most units in 2010
+
+Which type of bedroom generated the most revenue in 2010
+
+Which type of bedroom had the most expensive average price in 2010
+
+
+

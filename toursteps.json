@@ -28,7 +28,7 @@
       "id": "#arc_3_2012",
       "location": "top",
       "title": "One Category Over Time",
-      "text": "This is the section of the pie chart for 3-bedroom house sold.  <br> <br> The area of each arc is porportional to the revenue of sales from that year.",
+      "text": "This is the section of the pie chart for 3-bedroom house sold.  <br> <br> The area of each arc  (not the height) is porportional to the revenue of sales from that year.",
       "class": "fourth-vis-step",
       "disabled": false
     },
@@ -36,7 +36,7 @@
       "id": "#arc_1_2012",
       "location": "left",
       "title": "Hover on Arc",
-      "text": " Hover over the highlighted arc. The tooltip shows that in 2012 3% of the total houses sold were 1-bedroom houses. <br> <br> There was only one 1-bedroom house sold in 2012, and it sold for 52.7k",
+      "text": " Hover over the highlighted arc. The tooltip shows that in 2012 3% of the total houses sold were 1-bedroom houses. <br> <br> There was only one 1-bedroom house sold in 2012, and it sold for 527k",
       "class": "move-step",
       "disabled": false
     },
@@ -44,7 +44,7 @@
       "id": "#arc_1_2012",
       "location": "left",
       "title": "Click on Arc",
-      "text": "You can changing the slected year by clicking on a new arc.<br> <br> For example, Click on this arc to change from 2007 to 2012",
+      "text": "You can changing the selected year by clicking on a new arc.<br> <br> For example, Click on this arc to change from 2007 to 2012",
       "class": "move-step",
       "disabled": true
     },
@@ -52,7 +52,7 @@
       "id": "#arc_1_2012",
       "location": "left",
       "title": "Double Click on Arc to Compare",
-      "text": "You can compare all arcs in a given year by double click on any arc of that year to align the bases. <br><br>  Try yourself by double clicking on this arc to compare all arcs in 2012",
+      "text": "The average price per unit is proportional to the height of the arc. <br><br> You can compare all arcs' average selling price in a given year by double click on any arc of that year to align the bases.  <br><br>  Try yourself by double clicking on this arc to compare all arcs in 2012",
       "class": "move-step",
       "disabled": true
     },
@@ -77,6 +77,14 @@
       "location": "bottom",
       "title": "Click on Legend",
       "text": "You can click on any category to go to the earliest year where the house type appears in the data <br> <br> Click on the 2-bedroom label to go to 2008's visualization (2 bedroom houses were first sold in 2008)",
+      "class": "move-step",
+      "disabled": false
+    },
+    {
+      "id": "#label_2_2008",
+      "location": "bottom",
+      "title": "Recap",
+      "text": "The angle of a wedge represents the number of units sold in that type/year.  <br><br> The area represents the total revenue from those sales.  <br><br> As a result, the tall wedges are those with high revenue (area) but low units sold (angle), leading to a higher average price per unit",
       "class": "move-step",
       "disabled": false
     }

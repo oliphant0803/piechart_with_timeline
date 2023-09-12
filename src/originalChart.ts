@@ -107,11 +107,13 @@ export default class OriginalPlot{
         .style("opacity", 1)
         .select("#value")
         d3.select("#tooltip").html(
-                    "Title: " + (d.data.label) + " " + cat_title
-                    + "<br/>" + "Percentage: " + Number.parseInt(((d.value/sumO)*100).toString()) + "% (" + d.value + ")"
-                    + "<br/>" + "time: " + time
-                    + "<br/>" + "Total Revenue: " + d.data.price * d.value
-                    + "<br/>" + "Average: " + d.data.price)
+          "<div class='tooltip-title'>" + (d.data.label) + " bedroom for <strong>" + d.data.time + "</strong></div>"
+          + "<div class='tooltip-body'>"
+          + "<strong>Units Sold: </strong>" +  d.value + " units"
+          + "<br/><strong>Percentage: </strong>" + Number.parseInt(((d.value/sumO)*100).toString()) + "%"
+          + "<br/><strong>Total Revenue: </strong>" + abbreviateNumber(d.data.price * d.value)
+          + "<br/><strong>Average Price: </strong>" + abbreviateNumber(d.data.radius)
+          + "</div>")
     })
     .on("mouseout", function (event:any, d:any) {
         // Hide the tooltip
@@ -150,7 +152,7 @@ export default class OriginalPlot{
     })
     .attr("text-anchor", "middle")
     .text( function(d:any) {
-        return abbreviateNumber(d.data.price);    
+        return abbreviateNumber(d.data.price * d.value);    
     });
 
     chartO.selectAll('.arc'+time)

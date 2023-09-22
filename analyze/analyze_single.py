@@ -5,24 +5,16 @@ import re
 
 # df = pd.read_excel("analyze/data/data10.xlsx")
 # df = pd.read_excel("analyze/data/data25_2.xlsx")
-df = pd.read_excel("analyze/data/data33.xlsx")
+df = pd.read_excel("analyze/data/data_new50.xlsx")
 df.fillna(0, inplace=True)
 
 def process_value(value):
-    if pd.notnull(value) and isinstance(value, (int, float)):
-        if len(str(value)) > 3:
-            rounded_value = round(value / 1000000) * 1000000
-            if int(str(rounded_value)[0]) < 1:
-                first_digit = int(str(value)[0])
-                second_digit = int(str(value)[1])
-                if second_digit > 4:
-                    return str(first_digit + 1)
-                else:
-                    return str(first_digit)
-            else:
-                return str(rounded_value)[0]
-        else:
-            return str(value).split(".")[0]
+    if value == 28 or value == 27:
+        return 29
+    if value == 30:
+        return 29
+    if value == 2.9 or value == 290:
+        return 29
     return value
 
 # Apply the function to the desired columns
@@ -60,10 +52,10 @@ def expected_value(column_name):
     elif (column_name == 'Q8_4') or (column_name == 'Q27_4'): return 44
     elif (column_name == 'Q8_5') or (column_name == 'Q27_5'): return 3
     elif (column_name == 'Q9_1') or (column_name == 'Q28_1'): return 4
-    elif (column_name == 'Q9_2') or (column_name == 'Q28_2'): return 2
-    elif (column_name == 'Q10') or (column_name == 'Q29'): return 68
+    elif (column_name == 'Q9_2') or (column_name == 'Q28_2'): return 1
+    elif (column_name == 'Q10') or (column_name == 'Q29'): return 5
     elif (column_name == 'Q11') or (column_name == 'Q30'): return '1,2,3'
-    elif (column_name == 'Q12') or (column_name == 'Q31'): return 3
+    elif (column_name == 'Q12') or (column_name == 'Q31'): return 29
     else: return False
 
 def get_result(selected_column_names):
@@ -182,10 +174,10 @@ def get_result_by_pid(condition):
                 elif column == 'Duration (in seconds)':
                     time = row[column]
                 else:
-                    if expected_value(row[column]) == str(row[column]).split(".")[0]:
+                    num = str(row[column]).split(".")[0]
+                    if (str(expected_value(column)) == num):
                         total_success += 1
                     total_response += 1
-
         # Calculate the total score for the row
         total_score = round((total_success / total_response) * 100, 2)
 
@@ -302,5 +294,8 @@ def get_average_time_per_question(condition):
     
 # main()
 
+
 get_result_by_condition('pie')
 get_result_by_condition('timeseries')
+
+get_result_by_pid('timeseries')

@@ -202,16 +202,13 @@ export default class TimeSeriesPlot{
 
     var radius = this.dataSet.radius;
     if(time == this.graphData.rows[0]){
-        radius.sort((a:any, b:any) => (a.value > b.value) ? 1 : -1)
-        this.dataSet.labelList.sort((a:any, b:any) => (a.value > b.value) ? 1 : -1)
+        radius.sort((a:any, b:any) => (a.label < b.label) ? 1 : -1)
+        this.dataSet.labelList.sort((a:any, b:any) => (a.label < b.label) ? 1 : -1)
         this.firstTimeOrder = this.dataSet.labelList.map(function(d:any) { return d["label"]; });
     }else{
-        radius.sort((a:any, b:any) => {  
-            return this.firstTimeOrder.indexOf(a.label) - this.firstTimeOrder.indexOf(b.label);
-        });
-        this.dataSet.labelList.sort((a:any, b:any) => {  
-            return this.firstTimeOrder.indexOf(a.label) - this.firstTimeOrder.indexOf(b.label);
-        });
+        radius.sort((a:any, b:any) => (a.label < b.label) ? 1 : -1)
+        this.dataSet.labelList.sort((a:any, b:any) => (a.label < b.label) ? 1 : -1)
+        this.firstTimeOrder = this.dataSet.labelList.map(function(d:any) { return d["label"]; });
     }
 
     var labels = this.dataSet.labelList.map(function(d:any) { return d["label"]; });

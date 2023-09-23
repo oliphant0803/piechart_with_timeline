@@ -758,10 +758,10 @@ labelArcs(dataArcs:any) {
 
     var timeOppArc = d3.arc()
     .innerRadius(function (d:any){
-        return d.data.outer/self.scale - 10; 
+        return d.data.outer/self.scale - 18; 
     })
     .outerRadius(function (d:any) { 
-        return d.data.outer/self.scale - 10;
+        return d.data.outer/self.scale - 18;
     });
 
     var timeFirstArc = d3.arc()
@@ -774,10 +774,10 @@ labelArcs(dataArcs:any) {
 
     var timeFronArc = d3.arc()
     .innerRadius(function (d:any){
-        return d.data.outer/self.scale - 26; 
+        return d.data.outer/self.scale - 12; 
     })
     .outerRadius(function (d:any) { 
-        return d.data.outer/self.scale - 26;
+        return d.data.outer/self.scale - 12;
     });
 
     dataArcs.append('path')
